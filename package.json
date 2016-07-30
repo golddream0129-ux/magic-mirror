@@ -1,0 +1,23 @@
+{
+  "name": "magic-mirror",
+  "version": "0.0.1",
+  "description": "A small HTML / JS / Pi / Kinnect project to build a magic mirror",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/toby-griffiths/magic-mirror.git"
+  },
+  "keywords": [
+    "art",
+    "digital-art"
+  ],
+  "author": "Toby Griffiths <toby@cubicmushroom.co.uk>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/toby-griffiths/magic-mirror/issues"
+  },
+  "homepage": "https://github.com/toby-griffiths/magic-mirror#readme"
+}
