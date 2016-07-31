@@ -2,12 +2,13 @@
 
 var gulp       = require('gulp'),
     Config     = require('./gulp.config'),
-    tsc        = require('gulp-typescript'),
     del        = require('del'),
-    sourcemaps = require('gulp-sourcemaps');
+    sourcemaps = require('gulp-sourcemaps'),
+    tsc        = require('gulp-typescript'),
+    tslint     = require('gulp-tslint');
 
-var tsProject = tsc.createProject('tsconfig.json'),
-    config    = new Config();
+var config    = new Config(),
+    tsProject = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
     gulp.src(['./gulp.config.ts'])
@@ -26,7 +27,16 @@ gulp.task('ts:clean', function (cb) {
     del(typeScriptGenFiles, cb);
 });
 
-gulp.task('ts:compile', ['ts:clean'], function () {
+/**
+ * Lint all custom TypeScript files.
+ */
+gulp.task('ts:lint', function () {
+    return gulp.src(config.allTypeScript)
+        .pipe(tslint())
+        .pipe(tslint.report({formatter: 'prose'}));
+});
+
+gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
     var srcTsFiles = config.allTypeScript;
 
     var tscResult = gulp.src(srcTsFiles)
