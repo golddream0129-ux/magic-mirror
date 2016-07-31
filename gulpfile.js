@@ -26,7 +26,7 @@ gulp.task('ts:clean', function (cb) {
     del(typeScriptGenFiles, cb);
 });
 
-gulp.task('ts:compile', function () {
+gulp.task('ts:compile', ['ts:clean'], function () {
     var srcTsFiles = config.allTypeScript;
 
     var tscResult = gulp.src(srcTsFiles)
