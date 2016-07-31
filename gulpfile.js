@@ -49,3 +49,7 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(config.tsOutputPath));
 });
+
+gulp.task('ts:watch', function(){
+    gulp.watch(config.allTypeScript, ['ts:compile']);
+});
