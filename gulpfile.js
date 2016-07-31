@@ -1,9 +1,10 @@
 'use strict';
 
-var gulp   = require('gulp'),
-    Config = require('./gulp.config'),
-    tsc    = require('gulp-typescript'),
-    del    = require('del');
+var gulp       = require('gulp'),
+    Config     = require('./gulp.config'),
+    tsc        = require('gulp-typescript'),
+    del        = require('del'),
+    sourcemaps = require('gulp-sourcemaps');
 
 var tsProject = tsc.createProject('tsconfig.json'),
     config    = new Config();
@@ -23,4 +24,18 @@ gulp.task('ts:clean', function (cb) {
 
     // delete the files
     del(typeScriptGenFiles, cb);
+});
+
+gulp.task('ts:compile', function () {
+    var srcTsFiles = config.allTypeScript;
+
+    var tscResult = gulp.src(srcTsFiles)
+        .pipe(sourcemaps.init())
+        .pipe(tsc(tsProject));
+
+    tscResult.dts.pipe(gulp.dest(config.tsOutputPath));
+
+    return tscResult.js
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.tsOutputPath));
 });
