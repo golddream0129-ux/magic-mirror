@@ -78,3 +78,7 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
 gulp.task('ts:watch', function () {
     gulp.watch(config.allTypeScript, ['ts:compile']);
 });
+
+gulp.task('watch', ['ts:watch']);
+
+gulp.task('default', ['ts:compile']);
