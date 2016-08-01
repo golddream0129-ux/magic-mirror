@@ -32,10 +32,12 @@ gulp.task('ts:clean', function (cb) {
 /**
  * Lint all custom TypeScript files.
  */
-gulp.task('ts:lint', function () {
-    return gulp.src(config.allTypeScript)
+gulp.task('ts:lint', function (cb) {
+    gulp.src(config.allTypeScript)
         .pipe(tslint())
         .pipe(tslint.report({formatter: 'prose'}));
+
+    cb();
 });
 
 /**
