@@ -73,6 +73,6 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
         .pipe(gulp.dest(config.tsOutputPath));
 });
 
-gulp.task('ts:watch', function(){
+gulp.task('ts:watch', function () {
     gulp.watch(config.allTypeScript, ['ts:compile']);
 });
