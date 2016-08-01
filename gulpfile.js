@@ -13,12 +13,12 @@ var config    = new Config(),
     tsProject = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
-    gulp.src(['./gulp.config.ts'])
+    return gulp.src(['./gulp.config.ts'])
         .pipe(tsc(tsProject))
         .pipe(gulp.dest('.'));
 });
 
-gulp.task('ts:clean', function (cb) {
+gulp.task('ts:clean', function () {
     var typeScriptGenFiles = [
         config.tsOutputPath + '/**/*.js',    // path to all JS files auto gen'd by editor
         config.tsOutputPath + '/**/*.js.map', // path to all sourcemap files auto gen'd by editor
@@ -26,28 +26,27 @@ gulp.task('ts:clean', function (cb) {
     ];
 
     // delete the files
-    del(typeScriptGenFiles, cb);
+    return del(typeScriptGenFiles);
 });
 
 /**
  * Lint all custom TypeScript files.
  */
-gulp.task('ts:lint', function (cb) {
-    gulp.src(config.allTypeScript)
+gulp.task('ts:lint', function () {
+    return gulp.src(config.allTypeScript)
         .pipe(tslint())
         .pipe(tslint.report({formatter: 'prose'}));
-
-    cb();
 });
 
 /**
  * Generates the app.d.ts references file dynamically from all application *.ts files.
  */
-gulp.task('ts:refs:gen', function (cb) {
+gulp.task('ts:refs:gen', function () {
     var target  = gulp.src(config.appTypeScriptReferences);
     var sources = gulp.src(config.allTypeScript, {read: false});
+
     //noinspection SpellCheckingInspection
-    target
+    return target
         .pipe(debug)
         .pipe(inject(sources, {
             starttag : '//{',
@@ -57,8 +56,6 @@ gulp.task('ts:refs:gen', function (cb) {
             }
         }))
         .pipe(gulp.dest(config.typings));
-
-    cb();
 });
 
 gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
