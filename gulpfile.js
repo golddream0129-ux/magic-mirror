@@ -2,7 +2,9 @@
 
 var gulp       = require('gulp'),
     Config     = require('./gulp.config'),
+    debug      = require('gulp-debug'),
     del        = require('del'),
+    inject     = require('gulp-inject'),
     sourcemaps = require('gulp-sourcemaps'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
@@ -34,6 +36,27 @@ gulp.task('ts:lint', function () {
     return gulp.src(config.allTypeScript)
         .pipe(tslint())
         .pipe(tslint.report({formatter: 'prose'}));
+});
+
+/**
+ * Generates the app.d.ts references file dynamically from all application *.ts files.
+ */
+gulp.task('ts:refs:gen', function (cb) {
+    var target  = gulp.src(config.appTypeScriptReferences);
+    var sources = gulp.src(config.allTypeScript, {read: false});
+    //noinspection SpellCheckingInspection
+    target
+        .pipe(debug)
+        .pipe(inject(sources, {
+            starttag : '//{',
+            endtag   : '//}',
+            transform: function (filepath) {
+                return '/// <reference path="../..' + filepath + '" />';
+            }
+        }))
+        .pipe(gulp.dest(config.typings));
+
+    cb();
 });
 
 gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
