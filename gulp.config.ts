@@ -20,7 +20,7 @@ class Config {
         this.allJavaScript = [this.source + "/js/**/*.js"];
         this.allTypeScript = [this.sourceApp + "/**/*.ts"];
         this.typings = "./typings";
-        this.appTypeScriptReferences = this.typings + "/typescriptApp.d.ts";
+        this.appTypeScriptReferences = this.typings + "/app.d.ts";
         this.libraryTypeScriptDefinitions = [this.typings + "/main/**/*.ts"];
     }
 }
