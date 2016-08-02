@@ -4,6 +4,10 @@
  * When editing the config, make sure you edit the gulp.config.ts file, rather than the generated .js file
  */
 class Config {
+    public spec: string;
+    public specAllTypeScript: string[];
+    public specTsOutputPath: string;
+    public specAllJavaScript: string[];
     public source: string;
     public srcAllTypeScript: string[];
     public srcTsOutputPath: string;
@@ -13,6 +17,10 @@ class Config {
     public libraryTypeScriptDefinitions: string[];
 
     constructor() {
+        this.spec = "./spec";
+        this.specAllTypeScript = [this.spec + "/ts/**/*.ts"];
+        this.specTsOutputPath = this.spec + "/js";
+        this.specAllJavaScript = [this.spec + "/js/**/*.js"];
         this.source = "./src";
         this.srcAllTypeScript = [this.source + "/ts/**/*.ts"];
         this.srcTsOutputPath = this.source + "/js";
