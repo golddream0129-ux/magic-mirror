@@ -21,9 +21,9 @@ gulp.task('setup', function () {
 
 gulp.task('ts:clean', function () {
     var typeScriptGenFiles = [
-        config.srcTtsOutputPath + '/**/*.js',    // path to all JS files auto gen'd by editor
-        config.srcTtsOutputPath + '/**/*.js.map', // path to all sourcemap files auto gen'd by editor
-        '!' + config.srcTtsOutputPath + '/lib'
+        config.srcTsOutputPath + '/**/*.js',    // path to all JS files auto gen'd by editor
+        config.srcTsOutputPath + '/**/*.js.map', // path to all sourcemap files auto gen'd by editor
+        '!' + config.srcTsOutputPath + '/lib'
     ];
 
     // delete the files
@@ -34,7 +34,7 @@ gulp.task('ts:clean', function () {
  * Lint all custom TypeScript files.
  */
 gulp.task('ts:lint', function () {
-    return gulp.src(config.allTypeScript)
+    return gulp.src(config.srcAllTypeScript)
         .pipe(tslint())
         .pipe(tslint.report({formatter: 'prose'}));
 });
@@ -44,7 +44,7 @@ gulp.task('ts:lint', function () {
  */
 gulp.task('ts:refs:gen', function () {
     var target  = gulp.src(config.appTypeScriptReferences);
-    var sources = gulp.src(config.allTypeScript, {read: false});
+    var sources = gulp.src(config.srcAllTypeScript, {read: false});
 
     //noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
     return target
@@ -59,17 +59,17 @@ gulp.task('ts:refs:gen', function () {
 });
 
 gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
-    var srcTsFiles = config.allTypeScript;
+    var srcTsFiles = config.srcAllTypeScript;
 
     var tscResult = gulp.src(srcTsFiles)
         .pipe(sourcemaps.init())
         .pipe(tsc(tsProject));
 
-    tscResult.dts.pipe(gulp.dest(config.srcTtsOutputPath));
+    tscResult.dts.pipe(gulp.dest(config.srcTsOutputPath));
 
     return tscResult.js
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.srcTtsOutputPath));
+        .pipe(gulp.dest(config.srcTsOutputPath));
 });
 
 gulp.task('spec', ['ts:compile'], function () {
@@ -80,7 +80,7 @@ gulp.task('spec', ['ts:compile'], function () {
 });
 
 gulp.task('ts:watch', ['ts:compile'], function () {
-    gulp.watch(config.allTypeScript, ['ts:compile']);
+    gulp.watch(config.srcAllTypeScript, ['ts:compile']);
 });
 
 gulp.task('watch', ['ts:watch']);
