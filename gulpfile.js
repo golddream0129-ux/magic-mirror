@@ -1,14 +1,16 @@
 'use strict';
 
-var gulp       = require('gulp'),
-    Config     = require('./gulp.config'),
-    debug      = require('gulp-debug'),
-    del        = require('del'),
-    inject     = require('gulp-inject'),
-    jasmine    = require('gulp-jasmine'),
-    sourcemaps = require('gulp-sourcemaps'),
-    tsc        = require('gulp-typescript'),
-    tslint     = require('gulp-tslint');
+var gulp             = require('gulp'),
+    Config           = require('./gulp.config'),
+    debug            = require('gulp-debug'),
+    del              = require('del'),
+    inject           = require('gulp-inject'),
+    jasmine          = require('gulp-jasmine'),
+    jasmineReporters = require('jasmine-reporters'),
+    notify           = require('gulp-notify'),
+    sourcemaps       = require('gulp-sourcemaps'),
+    tsc              = require('gulp-typescript'),
+    tslint           = require('gulp-tslint');
 
 var config        = new Config(),
     tsSpecProject = tsc.createProject('tsconfig.json'),
@@ -90,7 +92,11 @@ gulp.task('spec:ts:compile', function () {
 gulp.task('spec', ['ts:compile', 'spec:ts:compile'], function () {
     return gulp.src(config.specAllJavaScript)
         .pipe(debug())
-        .pipe(jasmine());
+        .pipe(jasmine())
+        .on('error', notify.onError({
+            title  : 'Jasmine Test Failed',
+            message: 'One or more tests failed, see the cli for details.'
+        }));
 });
 
 gulp.task('ts:watch', ['ts:compile'], function () {
