@@ -53,7 +53,7 @@ gulp.task('ts:refs:gen', function () {
             starttag : '// {',
             endtag   : '// }',
             transform: function (filepath) {
-                return '/// <reference path="../..' + filepath + '" />';
+                return '/// <reference path="..' + filepath + '" />';
             }
         }))
         .pipe(gulp.dest(config.typings));
