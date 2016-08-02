@@ -37,6 +37,20 @@ gulp.task('ts:lint', function () {
         .pipe(tslint.report({formatter: 'prose'}));
 });
 
+gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
+    var srcTsFiles = config.srcAllTypeScript;
+
+    var tscResult = gulp.src(srcTsFiles)
+        .pipe(sourcemaps.init())
+        .pipe(tsc(tsSrcProject));
+
+    tscResult.dts.pipe(gulp.dest(config.srcTsOutputPath));
+
+    return tscResult.js
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.srcTsOutputPath));
+});
+
 /**
  * Generates the app.d.ts references file dynamically from all application *.ts files.
  */
@@ -54,20 +68,6 @@ gulp.task('ts:refs:gen', function () {
             }
         }))
         .pipe(gulp.dest(config.typings));
-});
-
-gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
-    var srcTsFiles = config.srcAllTypeScript;
-
-    var tscResult = gulp.src(srcTsFiles)
-        .pipe(sourcemaps.init())
-        .pipe(tsc(tsSrcProject));
-
-    tscResult.dts.pipe(gulp.dest(config.srcTsOutputPath));
-
-    return tscResult.js
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.srcTsOutputPath));
 });
 
 gulp.task('spec:ts:compile', function () {
