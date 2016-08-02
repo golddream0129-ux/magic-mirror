@@ -5,6 +5,7 @@
  */
 class Config {
     public build: string;
+    public buildJsDir: string;
     public buildJsFiles: string;
     public spec: string;
     public specAllTypeScript: string[];
@@ -19,14 +20,15 @@ class Config {
 
     constructor() {
         this.build = "./build";
-        this.buildJsFiles = this.build + "/js";
+        this.buildJsDir = this.build + "/js";
+        this.buildJsFiles = this.buildJsDir = "/**/*.js";
         this.spec = "./spec";
         this.specAllTypeScript = [this.spec + "/**/*.ts"];
-        this.specTsOutputPath = this.buildJsFiles + "/spec";
+        this.specTsOutputPath = this.buildJsDir + "/spec";
         this.specAllJavaScript = [this.specTsOutputPath + "/**/*.js"];
         this.source = "./src";
         this.srcAllTypeScript = [this.source + "/**/*.ts"];
-        this.srcTsOutputPath = this.buildJsFiles + "/src";
+        this.srcTsOutputPath = this.buildJsDir + "/src";
         this.srcAllJavaScript = [this.srcTsOutputPath + "/**/*.js"];
         this.typings = "./typings";
         this.appTypeScriptReferences = this.typings + "/app.d.ts";
