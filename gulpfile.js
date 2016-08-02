@@ -1,15 +1,15 @@
 'use strict';
 
-var gulp             = require('gulp'),
-    Config           = require('./gulp.config'),
-    debug            = require('gulp-debug'),
-    del              = require('del'),
-    inject           = require('gulp-inject'),
-    jasmine          = require('gulp-jasmine'),
-    notify           = require('gulp-notify'),
-    sourcemaps       = require('gulp-sourcemaps'),
-    tsc              = require('gulp-typescript'),
-    tslint           = require('gulp-tslint');
+var gulp       = require('gulp'),
+    Config     = require('./gulp.config'),
+    debug      = require('gulp-debug'),
+    del        = require('del'),
+    inject     = require('gulp-inject'),
+    jasmine    = require('gulp-jasmine'),
+    notify     = require('gulp-notify'),
+    sourcemaps = require('gulp-sourcemaps'),
+    tsc        = require('gulp-typescript'),
+    tslint     = require('gulp-tslint');
 
 var config        = new Config(),
     tsSpecProject = tsc.createProject('tsconfig.json'),
