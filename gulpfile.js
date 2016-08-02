@@ -10,12 +10,13 @@ var gulp       = require('gulp'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
 
-var config    = new Config(),
-    tsProject = tsc.createProject('tsconfig.json');
+var config       = new Config(),
+    tsSpecProject = tsc.createProject('tsconfig.json'),
+    tsSrcProject = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
     return gulp.src(['./gulp.config.ts'])
-        .pipe(tsc(tsProject))
+        .pipe(tsc(tsSrcProject))
         .pipe(gulp.dest('.'));
 });
 
@@ -63,7 +64,7 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
 
     var tscResult = gulp.src(srcTsFiles)
         .pipe(sourcemaps.init())
-        .pipe(tsc(tsProject));
+        .pipe(tsc(tsSrcProject));
 
     tscResult.dts.pipe(gulp.dest(config.srcTsOutputPath));
 
@@ -72,7 +73,21 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
         .pipe(gulp.dest(config.srcTsOutputPath));
 });
 
-gulp.task('spec', ['ts:compile'], function () {
+gulp.task('spec:ts:compile', function(){
+    var specTsFiles = config.specAllTypeScript;
+
+    var tscResult = gulp.src(specTsFiles)
+        .pipe(sourcemaps.init())
+        .pipe(tsc(tsSpecProject));
+
+    tscResult.dts.pipe(gulp.dest(config.specTsOutputPath));
+
+    return tscResult.js
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.specTsOutputPath));
+});
+
+gulp.task('spec', ['ts:compile', 'spec:ts:compile'], function () {
     console.log(config.allSpecs);
     return gulp.src(config.allSpecs)
         .pipe(debug())
