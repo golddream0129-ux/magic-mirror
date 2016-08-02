@@ -5,6 +5,7 @@
  */
 class Config {
     public buildDir: string;
+    public buildFiles: string;
     public buildJsDir: string;
     public buildJsFiles: string;
     public spec: string;
@@ -22,6 +23,7 @@ class Config {
 
     constructor() {
         this.buildDir = "./build";
+        this.buildFiles = this.buildDir + "/**/*";
         this.buildJsDir = this.buildDir + "/js";
         this.buildJsFiles = this.buildJsDir = "/**/*.js";
         this.spec = "./spec";
