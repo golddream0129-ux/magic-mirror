@@ -21,9 +21,9 @@ gulp.task('setup', function () {
 
 gulp.task('ts:clean', function () {
     var typeScriptGenFiles = [
-        config.tsOutputPath + '/**/*.js',    // path to all JS files auto gen'd by editor
-        config.tsOutputPath + '/**/*.js.map', // path to all sourcemap files auto gen'd by editor
-        '!' + config.tsOutputPath + '/lib'
+        config.srcTtsOutputPath + '/**/*.js',    // path to all JS files auto gen'd by editor
+        config.srcTtsOutputPath + '/**/*.js.map', // path to all sourcemap files auto gen'd by editor
+        '!' + config.srcTtsOutputPath + '/lib'
     ];
 
     // delete the files
@@ -65,11 +65,11 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
         .pipe(sourcemaps.init())
         .pipe(tsc(tsProject));
 
-    tscResult.dts.pipe(gulp.dest(config.tsOutputPath));
+    tscResult.dts.pipe(gulp.dest(config.srcTtsOutputPath));
 
     return tscResult.js
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.tsOutputPath));
+        .pipe(gulp.dest(config.srcTtsOutputPath));
 });
 
 gulp.task('spec', ['ts:compile'], function () {
