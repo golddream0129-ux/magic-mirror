@@ -50,8 +50,8 @@ gulp.task('ts:refs:gen', function () {
     //noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
     return target
         .pipe(inject(sources, {
-            starttag : '//{',
-            endtag   : '//}',
+            starttag : '// {',
+            endtag   : '// }',
             transform: function (filepath) {
                 return '/// <reference path="../..' + filepath + '" />';
             }
