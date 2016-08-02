@@ -1,4 +1,5 @@
 /.idea/
+/spec/js/
 /src/js/
 /node_modules/
 /typings/
