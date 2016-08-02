@@ -4,7 +4,7 @@
  * When editing the config, make sure you edit the gulp.config.ts file, rather than the generated .js file
  */
 class Config {
-    public build: string;
+    public buildDir: string;
     public buildJsDir: string;
     public buildJsFiles: string;
     public spec: string;
@@ -21,8 +21,8 @@ class Config {
     public appTypeScriptReferences: string;
 
     constructor() {
-        this.build = "./build";
-        this.buildJsDir = this.build + "/js";
+        this.buildDir = "./build";
+        this.buildJsDir = this.buildDir + "/js";
         this.buildJsFiles = this.buildJsDir = "/**/*.js";
         this.spec = "./spec";
         this.specAllTypeScript = [this.spec + "/**/*.ts"];
