@@ -5,7 +5,6 @@
  */
 class Config {
     public source: string;
-    public sourceApp: string;
     public tsOutputPath: string;
     public allJavaScript: string[];
     public allTypeScript: string[];
@@ -15,10 +14,9 @@ class Config {
 
     constructor() {
         this.source = "./src";
-        this.sourceApp = this.source + "/app";
         this.tsOutputPath = this.source + "/js";
         this.allJavaScript = [this.source + "/js/**/*.js"];
-        this.allTypeScript = [this.sourceApp + "/**/*.ts"];
+        this.allTypeScript = [this.source + "/ts/**/*.ts"];
         this.typings = "./typings";
         this.appTypeScriptReferences = this.typings + "/app.d.ts";
         this.libraryTypeScriptDefinitions = [this.typings + "/main/**/*.ts"];
