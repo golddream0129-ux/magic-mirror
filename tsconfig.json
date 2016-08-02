@@ -4,6 +4,9 @@
         "target": "es5",
         "sourceMap": true
     },
+    "files": [
+        "typings/index.d.ts",
+    ],
     "exclude": [
         "node_modules"
     ]
