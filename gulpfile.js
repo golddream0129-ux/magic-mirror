@@ -22,11 +22,7 @@ gulp.task('setup', function () {
 });
 
 gulp.task('ts:clean', function () {
-    var typeScriptGenFiles = [
-        config.srcTsOutputPath + '/**/*.js',    // path to all JS files auto gen'd by editor
-        config.srcTsOutputPath + '/**/*.js.map', // path to all sourcemap files auto gen'd by editor
-        '!' + config.srcTsOutputPath + '/lib'
-    ];
+    var typeScriptGenFiles = config.srcAllJavaScript.concat(config.srcAllJavaScriptMaps);
 
     // delete the files
     return del(typeScriptGenFiles);
