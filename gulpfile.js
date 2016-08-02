@@ -88,8 +88,9 @@ gulp.task('spec:ts:compile', function(){
 });
 
 gulp.task('spec', ['ts:compile', 'spec:ts:compile'], function () {
-    console.log(config.allSpecs);
-    return gulp.src(config.allSpecs)
+    console.log(config);
+    console.log(config.specAllJavaScript);
+    return gulp.src(config.specAllJavaScript)
         .pipe(debug())
         .pipe(jasmine());
 });
