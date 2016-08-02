@@ -45,9 +45,8 @@ gulp.task('ts:refs:gen', function () {
     var target  = gulp.src(config.appTypeScriptReferences);
     var sources = gulp.src(config.allTypeScript, {read: false});
 
-    //noinspection SpellCheckingInspection
+    //noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
     return target
-        .pipe(debug)
         .pipe(inject(sources, {
             starttag : '//{',
             endtag   : '//}',
