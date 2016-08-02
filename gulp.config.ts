@@ -14,20 +14,18 @@ class Config {
     public srcAllJavaScript: string[];
     public typings: string;
     public appTypeScriptReferences: string;
-    public libraryTypeScriptDefinitions: string[];
 
     constructor() {
         this.spec = "./spec";
-        this.specAllTypeScript = [this.spec + "/ts/**/*.ts"];
-        this.specTsOutputPath = this.spec + "/js";
-        this.specAllJavaScript = [this.spec + "/js/**/*.js"];
+        this.specAllTypeScript = [this.spec + "/**/*.ts"];
+        this.specTsOutputPath = this.spec;
+        this.specAllJavaScript = [this.spec + "/**/*.js"];
         this.source = "./src";
-        this.srcAllTypeScript = [this.source + "/ts/**/*.ts"];
-        this.srcTsOutputPath = this.source + "/js";
-        this.srcAllJavaScript = [this.source + "/js/**/*.js"];
+        this.srcAllTypeScript = [this.source + "/**/*.ts"];
+        this.srcTsOutputPath = this.source;
+        this.srcAllJavaScript = [this.source + "/**/*.js"];
         this.typings = "./typings";
         this.appTypeScriptReferences = this.typings + "/app.d.ts";
-        this.libraryTypeScriptDefinitions = [this.typings + "/main/**/*.ts"];
     }
 }
 
