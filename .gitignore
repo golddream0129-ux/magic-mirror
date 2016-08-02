@@ -1,6 +1,7 @@
 /.idea/
+/build/
+/node_modules/
 /spec/js/
 /src/js/
-/node_modules/
 /typings/
 gulp.config.js
