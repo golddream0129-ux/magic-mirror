@@ -5,7 +5,7 @@
         "sourceMap": true
     },
     "files": [
-        "typings/index.d.ts"
+        "src/main.ts"
     ],
     "exclude": [
         "node_modules"
