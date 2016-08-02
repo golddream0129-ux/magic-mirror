@@ -97,8 +97,8 @@ gulp.task('ts:watch', ['ts:compile'], function () {
     gulp.watch(config.srcAllTypeScript, ['ts:compile']);
 });
 
-gulp.task('spec:watch', ['spec'], function(){
-    gulp.watch(config.buildJsFiles, ['spec']);
+gulp.task('spec:watch', ['spec'], function () {
+    gulp.watch(config.specAllTypeScript.concat(config.srcAllTypeScript), ['spec']);
 });
 
 gulp.task('watch', ['ts:watch']);
