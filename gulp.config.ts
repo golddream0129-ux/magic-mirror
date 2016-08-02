@@ -25,7 +25,7 @@ class Config {
         this.buildDir = "./build";
         this.buildFiles = this.buildDir + "/**/*";
         this.buildJsDir = this.buildDir + "/js";
-        this.buildJsFiles = this.buildJsDir = "/**/*.js";
+        this.buildJsFiles = this.buildJsDir + "/**/*.js";
         this.spec = "./spec";
         this.specAllTypeScript = [this.spec + "/**/*.ts"];
         this.specTsOutputPath = this.buildJsDir + "/spec";
