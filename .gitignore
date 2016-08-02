@@ -1,4 +1,5 @@
 /.idea/
 /src/js/
 /node_modules/
+/typings/
 gulp.config.js
