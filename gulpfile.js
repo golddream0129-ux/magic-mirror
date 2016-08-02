@@ -5,6 +5,7 @@ var gulp       = require('gulp'),
     debug      = require('gulp-debug'),
     del        = require('del'),
     inject     = require('gulp-inject'),
+    jasmine    = require('gulp-jasmine'),
     sourcemaps = require('gulp-sourcemaps'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
@@ -69,6 +70,13 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
     return tscResult.js
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(config.tsOutputPath));
+});
+
+gulp.task('spec', ['ts:compile'], function () {
+    console.log(config.allSpecs);
+    return gulp.src(config.allSpecs)
+        .pipe(debug())
+        .pipe(jasmine());
 });
 
 gulp.task('ts:watch', ['ts:compile'], function () {
