@@ -10,9 +10,9 @@ var gulp       = require('gulp'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
 
-var config       = new Config(),
+var config        = new Config(),
     tsSpecProject = tsc.createProject('tsconfig.json'),
-    tsSrcProject = tsc.createProject('tsconfig.json');
+    tsSrcProject  = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
     return gulp.src(['./gulp.config.ts'])
@@ -73,7 +73,7 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
         .pipe(gulp.dest(config.srcTsOutputPath));
 });
 
-gulp.task('spec:ts:compile', function(){
+gulp.task('spec:ts:compile', function () {
     var specTsFiles = config.specAllTypeScript;
 
     var tscResult = gulp.src(specTsFiles)
