@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/toby-griffiths/magic-mirror#readme",
   "devDependencies": {
+    "browserify": "^13.1.0",
     "del": "^2.2.1",
     "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
     "gulp-debug": "^2.1.2",
     "gulp-inject": "^4.1.0",
     "gulp-jasmine": "^2.4.0",
@@ -30,6 +32,9 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^6.0.2",
     "gulp-typescript": "^2.13.6",
-    "tslint": "^3.14.0"
-  }
+    "tsify": "^1.0.1",
+    "tslint": "^3.14.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {}
 }

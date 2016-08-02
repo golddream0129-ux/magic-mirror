@@ -2,13 +2,17 @@
 
 var gulp       = require('gulp'),
     Config     = require('./gulp.config'),
+    browserify = require('browserify'),
+    concat     = require('gulp-concat'),
     debug      = require('gulp-debug'),
     del        = require('del'),
     inject     = require('gulp-inject'),
     jasmine    = require('gulp-jasmine'),
     notify     = require('gulp-notify'),
+    source     = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
     tsc        = require('gulp-typescript'),
+    tsify      = require('tsify'),
     tslint     = require('gulp-tslint');
 
 var config        = new Config(),
@@ -21,23 +25,34 @@ gulp.task('setup', function () {
         .pipe(gulp.dest('.'));
 });
 
-gulp.task('ts:clean', function () {
-    var typeScriptGenFiles = config.srcAllJavaScript.concat(config.srcAllJavaScriptMaps);
+
+//----------------------------------------------------------------------------------------------------------------------
+// src:* tasks
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * src:clean
+ */
+gulp.task('src:clean', function () {
+    var srcGeneratedFiels = config.srcAllJavaScript.concat(config.srcAllJavaScriptMaps);
 
     // delete the files
-    return del(typeScriptGenFiles);
+    return del(srcGeneratedFiels);
 });
 
 /**
- * Lint all custom TypeScript files.
+ * src:lint
  */
-gulp.task('ts:lint', function () {
+gulp.task('src:lint', function () {
     return gulp.src(config.srcAllTypeScript)
         .pipe(tslint())
         .pipe(tslint.report({formatter: 'prose'}));
 });
 
-gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
+/**
+ * src:compile
+ */
+gulp.task('src:compile', ['src:clean', 'src:lint'], function () {
     var srcTsFiles = config.srcAllTypeScript;
 
     var tscResult = gulp.src(srcTsFiles)
@@ -52,9 +67,9 @@ gulp.task('ts:compile', ['ts:clean', 'ts:lint'], function () {
 });
 
 /**
- * Generates the app.d.ts references file dynamically from all application *.ts files.
+ * src:refs:gen
  */
-gulp.task('ts:refs:gen', function () {
+gulp.task('src:refs:gen', function () {
     var target  = gulp.src(config.appTypeScriptReferences);
     var sources = gulp.src(config.srcAllTypeScript, {read: false});
 
@@ -70,7 +85,25 @@ gulp.task('ts:refs:gen', function () {
         .pipe(gulp.dest(config.typings));
 });
 
-gulp.task('spec:ts:compile', function () {
+
+//----------------------------------------------------------------------------------------------------------------------
+// spec:* tasks
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * spec:clean
+ */
+gulp.task('spec:clean', function () {
+    var specGeneratedFiles = config.specAllJavaScript.concat(config.specAllJavaScriptMaps);
+
+    // delete the files
+    return del(specGeneratedFiles);
+});
+
+/**
+ * spec:compile
+ */
+gulp.task('spec:compile', function () {
     var specTsFiles = config.specAllTypeScript;
 
     var tscResult = gulp.src(specTsFiles)
@@ -84,7 +117,12 @@ gulp.task('spec:ts:compile', function () {
         .pipe(gulp.dest(config.specTsOutputPath));
 });
 
-gulp.task('spec', ['ts:compile', 'spec:ts:compile'], function () {
+/**
+ * spec
+ *
+ * Runs tests
+ */
+gulp.task('spec', ['src:compile', 'spec:src:compile'], function () {
     return gulp.src(config.specAllJavaScript)
         .pipe(debug())
         .pipe(jasmine())
@@ -94,14 +132,49 @@ gulp.task('spec', ['ts:compile', 'spec:ts:compile'], function () {
         }));
 });
 
-gulp.task('ts:watch', ['ts:compile'], function () {
-    gulp.watch(config.srcAllTypeScript, ['ts:compile']);
-});
-
+/**
+ * spec:watch
+ *
+ * Continuously runs spec tests
+ */
 gulp.task('spec:watch', ['spec'], function () {
     gulp.watch(config.specAllTypeScript.concat(config.srcAllTypeScript), ['spec']);
 });
 
-gulp.task('watch', ['ts:watch']);
 
-gulp.task('default', ['ts:compile']);
+//----------------------------------------------------------------------------------------------------------------------
+// Build tasks
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * dist:clean
+ */
+gulp.task('dist:clean', function (cb) {
+    del(config.distDir);
+
+    cb();
+});
+
+gulp.task('dist:html', function () {
+    return gulp.src(config.htmlFiles)
+        .pipe(gulp.dest(config.distDir));
+});
+
+/**
+ * dist:browserify
+ */
+gulp.task("dist:browserify", function () {
+    return browserify({
+        basedir     : '.',
+        debug       : true,
+        entries     : ['src/main.ts'],
+        cache       : {},
+        packageCache: {}
+    })
+        .plugin(tsify)
+        .bundle()
+        .pipe(source('js/main.js'))
+        .pipe(gulp.dest(config.distDir));
+});
+
+gulp.task('dist', ['dist:clean', 'dist:html', 'dist:browserify']);

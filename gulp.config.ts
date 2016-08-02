@@ -20,6 +20,9 @@ class Config {
     public srcAllJavaScriptMaps: string[];
     public typings: string;
     public appTypeScriptReferences: string;
+    public webDir: string;
+    public htmlFiles: string[];
+    public distDir: string;
 
     constructor() {
         this.buildDir = "./build";
@@ -38,6 +41,9 @@ class Config {
         this.srcAllJavaScriptMaps = [this.srcTsOutputPath + "/**/*.js.map"];
         this.typings = "./typings";
         this.appTypeScriptReferences = this.typings + "/app.d.ts";
+        this.webDir = "./web";
+        this.htmlFiles = [this.webDir + "/**/*.html"];
+        this.distDir = "./dist";
     }
 }
 
