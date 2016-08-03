@@ -4,6 +4,8 @@
  * When editing the config, make sure you edit the gulp.config.ts file, rather than the generated .js file
  */
 class Config {
+    public root: string;
+    public file: string;
     public vendorDir: string;
     public buildDir: string;
     public buildFiles: string;
@@ -28,6 +30,8 @@ class Config {
     public distTmpDir: string;
 
     constructor() {
+        this.root = __dirname;
+        this.file = __filename;
         this.vendorDir = "./node_modules";
         this.buildDir = "./build";
         this.buildFiles = this.buildDir + "/**/*";

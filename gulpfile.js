@@ -15,9 +15,9 @@ var gulp       = require('gulp'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
 
-var config         = new Config(),
-    tsSpecProject  = tsc.createProject('tsconfig.json'),
-    tsSrcProject   = tsc.createProject('tsconfig.json');
+var config        = new Config(),
+    tsSpecProject = tsc.createProject('tsconfig.json'),
+    tsSrcProject  = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
     return gulp.src(['./gulp.config.ts'])
@@ -118,11 +118,19 @@ gulp.task('spec:compile', function () {
 });
 
 /**
+ * Copies the config file into the build directory
+ */
+gulp.task('spec:config', function () {
+    return gulp.src(config.file)
+        .pipe(gulp.dest(config.buildJsDir));
+});
+
+/**
  * spec
  *
  * Runs tests
  */
-gulp.task('spec', ['src:compile', 'spec:compile'], function () {
+gulp.task('spec', ['spec:config', 'src:compile', 'spec:compile'], function () {
     return gulp.src(config.specAllJavaScript)
         .pipe(debug())
         .pipe(jasmine())
