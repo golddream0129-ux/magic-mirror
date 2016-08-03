@@ -4,6 +4,7 @@
  * When editing the config, make sure you edit the gulp.config.ts file, rather than the generated .js file
  */
 class Config {
+    public vendorDir: string;
     public buildDir: string;
     public buildFiles: string;
     public buildJsDir: string;
@@ -27,6 +28,7 @@ class Config {
     public distTmpDir: string;
 
     constructor() {
+        this.vendorDir = "./node_modules";
         this.buildDir = "./build";
         this.buildFiles = this.buildDir + "/**/*";
         this.buildJsDir = this.buildDir + "/js";
@@ -43,7 +45,7 @@ class Config {
         this.srcAllJavaScriptMaps = [this.srcTsOutputPath + "/**/*.js.map"];
         this.typings = "./typings";
         this.appTypeScriptReferences = this.typings + "/app.d.ts";
-        this.vendorFiles = ["./node_modules/vue/dist/vue.js"];
+        this.vendorFiles = [this.vendorDir + "/vue/dist/vue.js"];
         this.webDir = "./web";
         this.htmlFiles = [this.webDir + "/**/*.html"];
         this.distDir = "./dist";
