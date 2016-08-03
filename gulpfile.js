@@ -14,9 +14,9 @@ var gulp       = require('gulp'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
 
-var config        = new Config(),
-    tsSpecProject = tsc.createProject('tsconfig.json'),
-    tsSrcProject  = tsc.createProject('tsconfig.json');
+var config         = new Config(),
+    tsSpecProject  = tsc.createProject('tsconfig.json'),
+    tsSrcProject   = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
     return gulp.src(['./gulp.config.ts'])
