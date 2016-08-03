@@ -1,3 +1,5 @@
+import {VueConfigFactorySpec} from "../../spec/factory/VueConfigFactorySpec";
+
 /**
  * @see {VueConfigFactorySpec} for spec
  */

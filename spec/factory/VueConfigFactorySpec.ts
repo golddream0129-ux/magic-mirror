@@ -7,7 +7,7 @@ import {VueConfigFactory} from "../../src/factory/VueConfigFactory";
 /**
  * @see {VueConfigFactory}
  */
-class VueConfigFactorySpec {
+export class VueConfigFactorySpec {
     static run() {
         describe("VueConfigFactory", function () {
 
