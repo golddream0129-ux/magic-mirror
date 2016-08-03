@@ -196,7 +196,11 @@ gulp.task("dist:browserify", function () {
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist', ['dist:clean', 'dist:html', 'dist:vendor', 'dist:src', 'dist:browserify']);
+gulp.task('dist:tidy', function () {
+    del(config.distTmpDir);
+});
+
+gulp.task('dist', ['dist:clean', 'dist:html', 'dist:vendor', 'dist:src', 'dist:browserify', 'dist:tidy']);
 
 
 gulp.task('dist:watch', ['dist'], function () {
