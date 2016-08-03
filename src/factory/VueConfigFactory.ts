@@ -40,6 +40,6 @@ export class VueConfigFactory {
     }
 }
 
-interface VueConfigFactoryOptions {
+export interface VueConfigFactoryOptions {
     debug?: boolean;
 }
