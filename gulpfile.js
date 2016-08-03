@@ -122,7 +122,7 @@ gulp.task('spec:compile', function () {
  *
  * Runs tests
  */
-gulp.task('spec', ['src:compile', 'spec:src:compile'], function () {
+gulp.task('spec', ['src:compile', 'spec:compile'], function () {
     return gulp.src(config.specAllJavaScript)
         .pipe(debug())
         .pipe(jasmine())
