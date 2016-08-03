@@ -196,3 +196,8 @@ gulp.task("dist:browserify", function () {
 });
 
 gulp.task('dist', ['dist:clean', 'dist:html', 'dist:vendor', 'dist:src', 'dist:browserify']);
+
+
+gulp.task('dist:watch', ['dist'], function () {
+    return gulp.watch(config.srcAllTypeScript, ['dist']);
+});
