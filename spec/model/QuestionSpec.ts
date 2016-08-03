@@ -1,6 +1,3 @@
-/* jslint node: true */
-/* global describe, it, expect */
-
 /// <reference path="../../typings/index.d.ts" />
 
 "use strict";
