@@ -11,6 +11,7 @@ var gulp       = require('gulp'),
     notify     = require('gulp-notify'),
     source     = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
+    transform  = require('vinyl-transform'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
 
