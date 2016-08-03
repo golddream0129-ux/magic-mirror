@@ -50,9 +50,17 @@ gulp.task('src:lint', function () {
 });
 
 /**
+ * Copy the required vendor files to the build directory
+ */
+gulp.task('src:vendor', ['src:clean'], function () {
+    return gulp.src(config.vendorFiles, {base: '.'})
+        .pipe(gulp.dest(config.buildJsDir));
+});
+
+/**
  * src:compile
  */
-gulp.task('src:compile', ['src:clean', 'src:lint'], function () {
+gulp.task('src:compile', ['src:clean'], function () {
     var srcTsFiles = config.srcAllTypeScript;
 
     var tscResult = gulp.src(srcTsFiles)
@@ -85,69 +93,7 @@ gulp.task('src:refs:gen', function () {
         .pipe(gulp.dest(config.typings));
 });
 
-
-//----------------------------------------------------------------------------------------------------------------------
-// spec:* tasks
-//----------------------------------------------------------------------------------------------------------------------
-
-/**
- * spec:clean
- */
-gulp.task('spec:clean', function () {
-    var specGeneratedFiles = config.specAllJavaScript.concat(config.specAllJavaScriptMaps);
-
-    // delete the files
-    return del(specGeneratedFiles);
-});
-
-/**
- * spec:compile
- */
-gulp.task('spec:compile', function () {
-    var specTsFiles = config.specAllTypeScript;
-
-    var tscResult = gulp.src(specTsFiles)
-        .pipe(sourcemaps.init())
-        .pipe(tsc(tsSpecProject));
-
-    tscResult.dts.pipe(gulp.dest(config.specTsOutputPath));
-
-    return tscResult.js
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.specTsOutputPath));
-});
-
-/**
- * Copies the config file into the build directory
- */
-gulp.task('spec:config', function () {
-    return gulp.src(config.file)
-        .pipe(gulp.dest(config.buildJsDir));
-});
-
-/**
- * spec
- *
- * Runs tests
- */
-gulp.task('spec', ['spec:config', 'src:compile', 'spec:compile'], function () {
-    return gulp.src(config.specAllJavaScript)
-        .pipe(debug())
-        .pipe(jasmine())
-        .on('error', notify.onError({
-            title  : 'Jasmine Test Failed',
-            message: 'One or more tests failed, see the cli for details.'
-        }));
-});
-
-/**
- * spec:watch
- *
- * Continuously runs spec tests
- */
-gulp.task('spec:watch', ['spec'], function () {
-    gulp.watch(config.specAllTypeScript.concat(config.srcAllTypeScript), ['spec']);
-});
+gulp.task('src', ['src:lint', 'src:refs:gen', 'src:vendor', 'src:compile']);
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -157,45 +103,25 @@ gulp.task('spec:watch', ['spec'], function () {
 /**
  * dist:clean
  */
-gulp.task('dist:clean', function (cb) {
-    del(config.distDir);
-
-    cb();
+gulp.task('dist:clean', function () {
+    del(config.distDir + "/**/*");
 });
 
-gulp.task('dist:html', function () {
+gulp.task('dist:html', ['dist:clean'], function () {
     return gulp.src(config.htmlFiles)
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist:src', function () {
-    var srcTsFiles = config.srcAllTypeScript;
-
-    var tscResult = gulp.src(srcTsFiles, {base: '.'})
-        .pipe(sourcemaps.init())
-        .pipe(tsc(tsSrcProject));
-
-    tscResult.dts.pipe(gulp.dest(config.srcTsOutputPath));
-
-    return tscResult.js
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.distTmpDir));
-});
-
-gulp.task('dist:vendor', function () {
-    return gulp.src(config.vendorFiles, {base: '.'})
-        .pipe(debug())
-        .pipe(gulp.dest(config.distTmpDir));
-});
+gulp.task('dist:src', ['dist:clean', 'src']);
 
 /**
  * dist:browserify
  */
-gulp.task("dist:browserify", function () {
+gulp.task("dist:browserify", ['dist:html', 'dist:src'], function () {
     return browserify({
         basedir     : '.',
         debug       : true,
-        entries     : [config.distTmpDir + '/src/main.js'],
+        entries     : [config.buildJsDir + '/src/main.js'],
         cache       : {},
         packageCache: {}
     })
@@ -204,11 +130,7 @@ gulp.task("dist:browserify", function () {
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist:tidy', function () {
-    del(config.distTmpDir);
-});
-
-gulp.task('dist', ['dist:clean', 'dist:html', 'dist:vendor', 'dist:src', 'dist:browserify', 'dist:tidy']);
+gulp.task('dist', ['dist:html', 'dist:src', 'dist:browserify']);
 
 
 gulp.task('dist:watch', ['dist'], function () {
