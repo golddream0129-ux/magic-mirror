@@ -1,26 +1,52 @@
 /// <reference path="../../typings/index.d.ts" />
 
 import {VueFactory} from "../../src/factory/VueFactory";
+import {VueConfigFactory} from "../../src/factory/VueConfigFactory";
 
 let config = new (require("../../gulp.config"));
 let Vue = require(config.root + "/" + config.vendorDir + "/vue/dist/vue");
 
-describe("VueFactory", function () {
+/**
+ * @see {VueFactory}
+ */
+export class VueFactorySpec {
+    static run() {
+        describe("VueFactory", function () {
 
-    it("creates a new view", function () {
-        let config: vuejs.VueConfig = {
-            debug: true,
-            delimiters: ["{{", "}}"],
-            unsafeDelimiters: ["{{{", "}}}"],
-            silent: false,
-            async: true,
-            devtools: true,
-        };
+            let vueFactory: VueFactory;
 
-        let factory = new VueFactory();
+            let vueConfigFactory: VueConfigFactory;
 
-        let vue = factory.build(config);
+            beforeEach(function () {
+                vueConfigFactory = new VueConfigFactory();
+                vueFactory = new VueFactory(vueConfigFactory);
 
-        expect(vue instanceof Vue).toBe(true);
-    });
-});
+                spyOn(vueConfigFactory, "build").and.returnValue(VueConfigFactory.defaultConfig);
+            });
+
+            /**
+             * @see {VueFactory} build() method
+             */
+            it("creates a new view with default config", function () {
+
+                let vue = vueFactory.build();
+
+                expect(vue instanceof Vue).toBe(true);
+                expect(vueConfigFactory.build).toHaveBeenCalledWith(undefined);
+            });
+
+            /**
+             * @see {VueFactory} build() method
+             */
+            it("creates a new view with debug config", function () {
+
+                let vue = vueFactory.build({debug: true});
+
+                expect(vue instanceof Vue).toBe(true);
+                expect(vueConfigFactory.build).toHaveBeenCalledWith({debug: true});
+            });
+        });
+    }
+}
+
+VueFactorySpec.run();
