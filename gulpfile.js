@@ -12,7 +12,6 @@ var gulp       = require('gulp'),
     source     = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
     tsc        = require('gulp-typescript'),
-    tsify      = require('tsify'),
     tslint     = require('gulp-tslint');
 
 var config        = new Config(),
@@ -160,6 +159,26 @@ gulp.task('dist:html', function () {
         .pipe(gulp.dest(config.distDir));
 });
 
+gulp.task('dist:src', function () {
+    var srcTsFiles = config.srcAllTypeScript;
+
+    var tscResult = gulp.src(srcTsFiles, {base: '.'})
+        .pipe(sourcemaps.init())
+        .pipe(tsc(tsSrcProject));
+
+    tscResult.dts.pipe(gulp.dest(config.srcTsOutputPath));
+
+    return tscResult.js
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.distTmpDir));
+});
+
+gulp.task('dist:vendor', function () {
+    return gulp.src(config.vendorFiles, {base: '.'})
+        .pipe(debug())
+        .pipe(gulp.dest(config.distTmpDir));
+});
+
 /**
  * dist:browserify
  */
@@ -167,14 +186,13 @@ gulp.task("dist:browserify", function () {
     return browserify({
         basedir     : '.',
         debug       : true,
-        entries     : ['src/main.ts'],
+        entries     : [config.distTmpDir + '/src/main.js'],
         cache       : {},
         packageCache: {}
     })
-        .plugin(tsify)
         .bundle()
         .pipe(source('js/main.js'))
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist', ['dist:clean', 'dist:html', 'dist:browserify']);
+gulp.task('dist', ['dist:clean', 'dist:html', 'dist:vendor', 'dist:src', 'dist:browserify']);
