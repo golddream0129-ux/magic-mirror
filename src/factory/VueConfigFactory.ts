@@ -3,7 +3,7 @@
  */
 export class VueConfigFactory {
 
-    private static defaultOptions: vuejs.VueConfig = {
+    private static _defaultConfig: vuejs.VueConfig = {
         debug: false,
         silent: true,
         async: true,
@@ -11,6 +11,10 @@ export class VueConfigFactory {
         unsafeDelimiters: ["{{{", "}}}"],
         devtools: false
     };
+
+    static get defaultConfig() {
+        return VueConfigFactory._defaultConfig;
+    }
 
     // noinspection JSMethodCanBeStatic
     /**
@@ -20,7 +24,7 @@ export class VueConfigFactory {
      */
     build(options?: VueConfigFactoryOptions): vuejs.VueConfig {
 
-        let config: vuejs.VueConfig = VueConfigFactory.defaultOptions;
+        let config: vuejs.VueConfig = VueConfigFactory.defaultConfig;
 
         options = options || {};
 
