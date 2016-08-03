@@ -1,14 +1,31 @@
-import {Answers} from "./Answers";
+import {Answer} from "./Answer";
+import {Category} from "./Category";
 
 export class Question {
-    constructor(private _wording: string, private _answers: Answers) {
+
+    private _category: Category;
+
+    constructor(private _wording: string, private _answers: Answer[]) {
+        let answer: Answer;
+
+        for (answer of _answers) {
+            answer.question = this;
+        }
+    }
+
+    set category(category: Category) {
+        this._category = category;
+    }
+
+    get category(): Category {
+        return this._category;
     }
 
     get wording(): string {
         return this._wording;
     }
 
-    get answers(): Answers {
+    get answers(): Answer[] {
         return this._answers;
     }
 }
