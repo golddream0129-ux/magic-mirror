@@ -1,3 +1,6 @@
+/**
+ * @see {VueConfigFactorySpec} for spec
+ */
 export class VueConfigFactory {
 
     private static defaultOptions = {
@@ -9,12 +12,13 @@ export class VueConfigFactory {
         devtools: false
     };
 
+    // noinspection JSMethodCanBeStatic
     /**
      * Builds a VueConfig object based on the options provided
      *
      * @returns vuejs.VueConfig
      */
-    static build(options?: VueConfigFactoryOptions): vuejs.VueConfig {
+    build(options?: VueConfigFactoryOptions): vuejs.VueConfig {
 
         let config: vuejs.VueConfig = VueConfigFactory.defaultOptions;
 

@@ -4,28 +4,49 @@
 
 import {VueConfigFactory} from "../../src/factory/VueConfigFactory";
 
-describe("VueConfigFactory", function () {
+/**
+ * @see {VueConfigFactory}
+ */
+class VueConfigFactorySpec {
+    static run() {
+        describe("VueConfigFactory", function () {
 
-    let defaultConfig: vuejs.VueConfig = {
-        debug: false,
-        silent: true,
-        async: true,
-        delimiters: ["{{", "}}"],
-        unsafeDelimiters: ["{{{", "}}}"],
-        devtools: false
-    };
+            let vueConfigFactory: VueConfigFactory;
 
-    it("builds with a default set of values when no options provided", function () {
-        expect(VueConfigFactory.build()).toEqual(defaultConfig);
-    });
+            beforeAll(function () {
+                vueConfigFactory = new VueConfigFactory();
+            });
 
-    it("builds supports the 'debug' option", function () {
-        let expectedConfig = defaultConfig;
+            let defaultConfig: vuejs.VueConfig = {
+                debug: false,
+                silent: true,
+                async: true,
+                delimiters: ["{{", "}}"],
+                unsafeDelimiters: ["{{{", "}}}"],
+                devtools: false
+            };
 
-        expectedConfig.debug = true;
-        expectedConfig.silent = false;
-        expectedConfig.devtools = true;
+            /**
+             * @see {VueConfigFactory} build() method
+             */
+            it("builds with a default set of values when no options provided", function () {
+                expect(vueConfigFactory.build()).toEqual(defaultConfig);
+            });
 
-        expect(VueConfigFactory.build({debug: true})).toEqual(expectedConfig);
-    });
-});
+            /**
+             * @see {VueConfigFactory} build() method
+             */
+            it("builds supports the 'debug' option", function () {
+                let expectedConfig = defaultConfig;
+
+                expectedConfig.debug = true;
+                expectedConfig.silent = false;
+                expectedConfig.devtools = true;
+
+                expect(vueConfigFactory.build({debug: true})).toEqual(expectedConfig);
+            });
+        });
+    }
+}
+
+VueConfigFactorySpec.run();
