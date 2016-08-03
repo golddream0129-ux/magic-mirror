@@ -3,7 +3,7 @@
  */
 export class VueConfigFactory {
 
-    private static defaultOptions = {
+    private static defaultOptions: vuejs.VueConfig = {
         debug: false,
         silent: true,
         async: true,
@@ -24,7 +24,9 @@ export class VueConfigFactory {
 
         options = options || {};
 
-        if (options.debug) {
+        let debug = options.debug || false;
+
+        if (debug) {
             config.debug = true;
             config.silent = false;
             config.devtools = true;
@@ -35,5 +37,5 @@ export class VueConfigFactory {
 }
 
 interface VueConfigFactoryOptions {
-    debug: boolean;
+    debug?: boolean;
 }
