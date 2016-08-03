@@ -17,7 +17,9 @@ describe("VueFactory", function () {
             devtools: true,
         };
 
-        let vue = VueFactory.build(config);
+        let factory = new VueFactory();
+
+        let vue = factory.build(config);
 
         expect(vue instanceof Vue).toBe(true);
     });

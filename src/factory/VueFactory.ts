@@ -11,7 +11,7 @@ export class VueFactory {
      *
      * @param config
      */
-    static build(config: vuejs.VueConfig): vuejs.Vue {
+    build(config: vuejs.VueConfig): vuejs.Vue {
         return new Vue(config);
     }
 }
