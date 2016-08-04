@@ -23,14 +23,19 @@ body {
   overflow: hidden;
 }
 
-.category-selector {
+.category-selector, .question-asker {
+  .row;
+
+  h2, .question {
+    .make-xs-column(12);
+  }
 
   ul {
     list-style: none;
     padding: 0;
   }
 
-  .category {
+  .category, .answer {
     .make-xs-column(6);
     padding: 130px 0;
     text-align: center;
