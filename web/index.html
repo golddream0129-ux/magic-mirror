@@ -5,9 +5,9 @@
 </head>
 <body>
 <div id="app">
-    <div>Current category: <span v-if="app.currentCategory">{{ app.currentCategory.name|capitalize }}</span><span v-else>None</span></div>
-    <category-selector :categories="app.categories" v-if="app.displayCategorySelector"></category-selector>
-    <!--<question-asker :if="currentQuestion" :question="currentQuestion"></question-asker>-->
+    <div>Current category: <span v-if="currentCategory">{{ currentCategory.name|capitalize }}</span><span v-else>None</span></div>
+    <category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>
+    <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
 </div>
 </body>
 </html>

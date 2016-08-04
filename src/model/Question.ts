@@ -5,7 +5,7 @@ export class Question {
 
     private _category: Category;
 
-    constructor(private _wording: string, private _answers: Answer[]) {
+    constructor(private _sequence, private _wording: string, private _answers: Answer[]) {
         let answer: Answer;
 
         for (answer of _answers) {
@@ -15,6 +15,10 @@ export class Question {
 
     set category(category: Category) {
         this._category = category;
+    }
+
+    get sequence(): number {
+        return this._sequence;
     }
 
     get category(): Category {

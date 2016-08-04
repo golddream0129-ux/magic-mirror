@@ -2,11 +2,9 @@ import {Question} from "./Question";
 
 export class Category {
 
-    constructor(private _name: string, private _questions: Question[]) {
-        let question: Question;
-
-        for (question of _questions) {
-            question.category = this;
+    constructor(private _name: string, private _questions: CategoryQuestions) {
+        for (let questionNo in _questions) {
+            _questions[questionNo].category = this;
         }
     }
 
@@ -14,7 +12,13 @@ export class Category {
         return this._name;
     }
 
-    get questions(): Question[] {
+    get questions(): CategoryQuestions {
         return this._questions;
     }
+}
+
+interface CategoryQuestions {
+    1: Question;
+    2?: Question;
+    3?: Question;
 }
