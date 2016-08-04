@@ -10,8 +10,6 @@
     <category-icon :category="currentCategory"></category-icon>
     <category-icon :category="currentCategory"></category-icon>
     <category-icon :category="currentCategory"></category-icon>
-    <div><span @click="reset">Current category:</span> <span v-if="currentCategory">{{ currentCategory.name|capitalize }}</span><span
-            v-else>None</span></div>
 
     <category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>
     <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
