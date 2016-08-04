@@ -53,7 +53,7 @@ gulp.task('src:lint', function () {
  * Copy the required vendor files to the build directory
  */
 gulp.task('src:vendor', ['src:clean'], function () {
-    return gulp.src(config.vendorFiles, {base: '.'})
+    return gulp.src(config.vendorJsFiles, {base: '.'})
         .pipe(gulp.dest(config.buildJsDir));
 });
 
