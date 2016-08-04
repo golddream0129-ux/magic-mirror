@@ -5,6 +5,7 @@ export class Category {
     constructor(private _name: string, private _questions: CategoryQuestions) {
         for (let questionNo in _questions) {
             _questions[questionNo].category = this;
+            _questions[questionNo].sequence = questionNo;
         }
     }
 

@@ -4,6 +4,8 @@ export class Answer {
 
     private _question: Question;
 
+    private _sequence: string;
+
     constructor(private _key: string, private _wording: string) {
     }
 
@@ -13,6 +15,14 @@ export class Answer {
 
     get question(): Question {
         return this._question;
+    }
+
+    get sequence(): string {
+        return this._sequence;
+    }
+
+    set sequence(value: string) {
+        this._sequence = value;
     }
 
     get key(): string {

@@ -5,11 +5,12 @@ export class Question {
 
     private _category: Category;
 
-    constructor(private _sequence, private _wording: string, private _answers: Answer[]) {
-        let answer: Answer;
+    private _sequence: number;
 
-        for (answer of _answers) {
-            answer.question = this;
+    constructor(private _wording: string, private _answers: QuestionAnswers) {
+        for (let answerKey in _answers) {
+            _answers[answerKey].question = this;
+            _answers[answerKey].sequence = answerKey;
         }
     }
 
@@ -21,6 +22,10 @@ export class Question {
         return this._sequence;
     }
 
+    set sequence(value) {
+        this._sequence = value;
+    }
+
     get category(): Category {
         return this._category;
     }
@@ -29,7 +34,14 @@ export class Question {
         return this._wording;
     }
 
-    get answers(): Answer[] {
+    get answers(): QuestionAnswers {
         return this._answers;
     }
+}
+
+interface QuestionAnswers {
+    A: Answer;
+    B: Answer;
+    C?: Answer;
+    D?: Answer;
 }
