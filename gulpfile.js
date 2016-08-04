@@ -4,11 +4,14 @@ var gulp       = require('gulp'),
     Config     = require('./gulp.config'),
     browserify = require('browserify'),
     concat     = require('gulp-concat'),
+    cssmin     = require('gulp-cssmin'),
     debug      = require('gulp-debug'),
     del        = require('del'),
     inject     = require('gulp-inject'),
     jasmine    = require('gulp-jasmine'),
+    less       = require('gulp-less'),
     notify     = require('gulp-notify'),
+    rename     = require('gulp-rename'),
     source     = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
     transform  = require('vinyl-transform'),
@@ -16,7 +19,6 @@ var gulp       = require('gulp'),
     tslint     = require('gulp-tslint');
 
 var config        = new Config(),
-    tsSpecProject = tsc.createProject('tsconfig.json'),
     tsSrcProject  = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
@@ -112,12 +114,26 @@ gulp.task('dist:html', ['dist:clean'], function () {
         .pipe(gulp.dest(config.distDir));
 });
 
+gulp.task('dist:styles', ['dist:clean'], function () {
+    console.log(config.lessMainFile);
+    return gulp.src(config.lessMainFile)
+        .pipe(debug())
+        .pipe(less().on('error', function (err) {
+            console.log(err);
+        }))
+        .pipe(cssmin().on('error', function (err) {
+            console.log(err);
+        }))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest(config.distDir + "/css"));
+});
+
 gulp.task('dist:src', ['dist:clean', 'src']);
 
 /**
  * dist:browserify
  */
-gulp.task("dist:browserify", ['dist:html', 'dist:src'], function () {
+gulp.task("dist:browserify", ['dist:src'], function () {
     return browserify({
         basedir     : '.',
         debug       : true,
@@ -130,7 +146,7 @@ gulp.task("dist:browserify", ['dist:html', 'dist:src'], function () {
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist', ['dist:html', 'dist:src', 'dist:browserify']);
+gulp.task('dist', ['dist:html', 'dist:styles', 'dist:src', 'dist:browserify']);
 
 
 gulp.task('dist:watch', ['dist'], function () {
