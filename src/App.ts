@@ -16,6 +16,7 @@ export class App {
         require("./component/CategorySelectorComponent");
         require("./component/QuestionAskerComponent");
         require("./component/FortuneComponent");
+        require("./component/CategoryIconComponent");
     }
 
     private vue: vuejs.VueStatic;
