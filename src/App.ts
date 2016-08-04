@@ -8,7 +8,6 @@ let Vue = require("../node_modules/vue/dist/vue");
  * Main App class
  */
 export class App {
-
     public static registerComponents() {
         require("./component/CategorySelector");
     }
@@ -16,6 +15,8 @@ export class App {
     private vue: vuejs.VueStatic;
 
     private _categories: Category[] = [];
+
+    private currentCategory: Category;
 
     constructor(private el: string) {
         App.registerComponents();
@@ -28,10 +29,18 @@ export class App {
         this.vue = new Vue({
             el: this.el,
             data: {
-                app: this,
-                page: "categorySelector",
+                app: this
             },
         });
+    }
+
+    // ----------------------------------
+    // Display conditional logic methods
+    // ----------------------------------
+
+    // noinspection JSUnusedGlobalSymbols
+    get displayCategorySelector() {
+        return (undefined === this.currentCategory);
     }
 
     // -----------------

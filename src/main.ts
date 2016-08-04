@@ -12,4 +12,6 @@ window.onload = function () {
     app.addCategory(new Category("mystery", []));
 
     app.boot();
+
+    window["app"] = app;
 };
