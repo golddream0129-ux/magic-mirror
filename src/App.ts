@@ -1,7 +1,6 @@
 "use strict";
 
 import {Category} from "./model/Category";
-// import {CategorySelector, CategorySelectedEventName} from "./component/CategorySelector";
 
 let Vue = require("../node_modules/vue/dist/vue");
 
@@ -10,49 +9,28 @@ let Vue = require("../node_modules/vue/dist/vue");
  */
 export class App {
 
+    public static registerComponents() {
+        require("./component/CategorySelector");
+    }
+
     private vue: vuejs.VueStatic;
 
     private _categories: Category[] = [];
 
     constructor(private el: string) {
+        App.registerComponents();
     }
 
     /**
      * Boots the app
      */
     boot(): void {
-
-        let x = Vue.extend({
-            template: "<div>XXX</div>"
-        });
-        Vue.component("x", x);
-
-
         this.vue = new Vue({
             el: this.el,
             data: {
                 app: this,
                 page: "categorySelector",
             },
-            components: {
-                x: {},
-                categorySelector: {
-                    activate: function (done) {
-                        console.log("activate");
-                        let self = this;
-                        // loadDataAsync(function (data) {
-                        //     self.someData = data;
-                        //     done();
-                        // });
-                    }
-                }
-            },
-            methods: {
-                categorySelected: function (category) {
-                    this.selectedCategory = category;
-                    console.log(this.selectedCategory);
-                }
-            }
         });
     }
 
