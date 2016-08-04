@@ -134,5 +134,5 @@ gulp.task('dist', ['dist:html', 'dist:src', 'dist:browserify']);
 
 
 gulp.task('dist:watch', ['dist'], function () {
-    return gulp.watch(config.srcAllTypeScript, ['dist']);
+    return gulp.watch(config.srcAllTypeScript.concat(config.webDir + "/**.*"), ['dist']);
 });
