@@ -28,6 +28,7 @@ class Config {
     public appTypeScriptReferences: string;
     public vendorJsFiles: string[];
     public htmlFiles: string[];
+    public imgFiles: string[];
     public distDir: string;
     public distTmpDir: string;
 
@@ -56,6 +57,7 @@ class Config {
         this.appTypeScriptReferences = this.typings + "/app.d.ts";
         this.vendorJsFiles = [this.vendorDir + "/vue/dist/vue.js"];
         this.htmlFiles = [this.webDir + "/**/*.html"];
+        this.imgFiles = [this.webDir + "/imgs/**/*"];
         this.distDir = "./dist";
         this.distTmpDir = this.distDir + "/tmp";
     }

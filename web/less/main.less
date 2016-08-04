@@ -42,3 +42,24 @@ body {
     font-size: 48pt;
   }
 }
+
+.category-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  &:nth-of-type(2), &:nth-of-type(4) {
+    left: auto;
+    right: 0;
+  }
+
+  &:nth-of-type(3), &:nth-of-type(4) {
+    top: auto;
+    bottom: 0;
+  }
+
+  img {
+    max-width: 100px;
+    max-height: 100px;
+  }
+}
