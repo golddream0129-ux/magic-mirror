@@ -5,9 +5,14 @@
 </head>
 <body>
 <div id="app">
-    <div>Current category: <span v-if="currentCategory">{{ currentCategory.name|capitalize }}</span><span v-else>None</span></div>
+    <div><span @click="reset">Current category:</span> <span v-if="currentCategory">{{ currentCategory.name|capitalize }}</span><span v-else>None</span></div>
     <category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>
     <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
+
+    <div class="selected-answers" v-if="displayFortune()">
+        <h2>Answers</h2>
+        <div v-for="answer in answers">Question {{ $key }} - {{ answer.wording }}</div>
+    </div>
 </div>
 </body>
 </html>

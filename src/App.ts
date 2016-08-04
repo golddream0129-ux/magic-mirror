@@ -1,6 +1,7 @@
 "use strict";
 
 import {Category} from "./model/Category";
+import {Answer} from "./model/Answer";
 
 let Vue = require("../node_modules/vue/dist/vue");
 
@@ -39,30 +40,42 @@ export class App {
                 page: PAGE_CATEGORY_SELECT,
                 currentCategory: null,
                 currentQuestionNo: null,
-                answer1: null,
-                answer2: null,
-                answer3: null,
-                answer4: null,
+                answers: {},
             },
             methods: {
-                logData: function () {
-                    console.log(this._data);
-                    return false;
+                reset: function () {
+                    this.page = PAGE_CATEGORY_SELECT;
+                    this.currentCategory = null;
+                    this.currentQuestionNo = null;
+                    this.answers = {};
                 },
                 getCurrentQuestion: function () {
-                    console.log(this.currentCategory.questions[this.currentQuestionNo]);
                     return this.currentCategory.questions[this.currentQuestionNo];
                 },
+                setAnswer: function (answer: Answer) {
+                    Vue.set(this.answers, this.currentQuestionNo, answer);
+                },
+                nextQuestion: function () {
+                    let nextQuestionNo = this.$root.$get("currentQuestionNo") + 1;
+
+                    if (undefined === this.currentCategory.questions[nextQuestionNo]) {
+                        this.displayFortune();
+                        return;
+                    }
+                    this.$set("currentQuestionNo", nextQuestionNo);
+                },
                 displayCategorySelector: function () {
-                    console.log("checking displayCategorySelector");
                     return (this.page === PAGE_CATEGORY_SELECT);
                 },
                 displayQuestionAsker: function () {
-                    console.log("checking displayQuestionAsker");
-
-                    return (this.page === PAGE_QUESTION_ASKER);
-
-                }
+                    return (this.page === PAGE_QUESTION_ASKER && !this.displayFortune());
+                },
+                displayFortune: function () {
+                    return (
+                        this.currentCategory
+                        && Object.keys(this.answers).length === Object.keys(this.currentCategory.questions).length
+                    );
+                },
             }
         });
     }
