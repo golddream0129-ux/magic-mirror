@@ -15,7 +15,7 @@ export class App {
     public static registerComponents() {
         require("./component/CategorySelectorComponent");
         require("./component/QuestionAskerComponent");
-        require("./component/Fortune");
+        require("./component/FortuneComponent");
     }
 
     private vue: vuejs.VueStatic;
