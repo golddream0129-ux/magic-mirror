@@ -114,6 +114,11 @@ gulp.task('dist:html', ['dist:clean'], function () {
         .pipe(gulp.dest(config.distDir));
 });
 
+gulp.task('dist:images', ['dist:clean'], function () {
+    return gulp.src(config.imgFiles, {base: "web"})
+        .pipe(gulp.dest(config.distDir));
+});
+
 gulp.task('dist:styles', ['dist:clean'], function () {
     console.log(config.lessMainFile);
     return gulp.src(config.lessMainFile)
@@ -146,7 +151,7 @@ gulp.task("dist:browserify", ['dist:src'], function () {
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist', ['dist:html', 'dist:styles', 'dist:src', 'dist:browserify']);
+gulp.task('dist', ['dist:html', 'dist:images', 'dist:styles', 'dist:src', 'dist:browserify']);
 
 
 gulp.task('dist:watch', ['dist'], function () {
