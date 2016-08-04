@@ -6,7 +6,7 @@ const TEMPLATE = "<div class='category-selector'><h2>Select you category</h2>" +
     "<ul><li v-for='category in categories' @click='categorySelected(category)'>{{category.name|capitalize}}</li>" +
     "</ul></div>";
 
-export var CategorySelector = Vue.extend({
+export var CategorySelectorComponent = Vue.extend({
     template: TEMPLATE,
     props: ["categories"],
     methods: {
@@ -18,4 +18,4 @@ export var CategorySelector = Vue.extend({
     },
 });
 
-Vue.component("category-selector", CategorySelector);
+Vue.component("category-selector", CategorySelectorComponent);

@@ -6,7 +6,7 @@ const TEMPLATE = "<div class='question-asker'><h2>Question {{ questionNo }}</h2>
     "<ul><li v-for='answer in question.answers' @click='answerSelected(answer)'>{{ answer.wording }}</li>" +
     "</ul></div>";
 
-export var CategorySelector = Vue.extend({
+export var CategorySelectorComponent = Vue.extend({
     template: TEMPLATE,
     props: ["question"],
     methods: {
@@ -18,4 +18,4 @@ export var CategorySelector = Vue.extend({
     },
 });
 
-Vue.component("question-asker", CategorySelector);
+Vue.component("question-asker", CategorySelectorComponent);

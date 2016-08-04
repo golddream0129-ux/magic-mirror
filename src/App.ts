@@ -13,8 +13,9 @@ export const PAGE_QUESTION_ASKER = "questionAsker";
  */
 export class App {
     public static registerComponents() {
-        require("./component/CategorySelector");
-        require("./component/QuestionAsker");
+        require("./component/CategorySelectorComponent");
+        require("./component/QuestionAskerComponent");
+        require("./component/Fortune");
     }
 
     private vue: vuejs.VueStatic;
@@ -63,6 +64,9 @@ export class App {
                         return;
                     }
                     this.$set("currentQuestionNo", nextQuestionNo);
+                },
+                getFortune: function () {
+                    return this.answers;
                 },
                 displayCategorySelector: function () {
                     return (this.page === PAGE_CATEGORY_SELECT);

@@ -9,10 +9,7 @@
     <category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>
     <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
 
-    <div class="selected-answers" v-if="displayFortune()">
-        <h2>Answers</h2>
-        <div v-for="answer in answers">Question {{ $key }} - {{ answer.wording }}</div>
-    </div>
+    <fortune :answers="getFortune()" v-if="displayFortune()"></fortune>
 </div>
 </body>
 </html>
