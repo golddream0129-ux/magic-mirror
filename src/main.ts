@@ -4,6 +4,7 @@ import {App} from "./App";
 import {Category} from "./model/Category";
 import {Question} from "./model/Question";
 import {Answer} from "./model/Answer";
+import {Fortune} from "./model/Fortune";
 
 window.onload = function () {
     let app = new App("body");
@@ -60,6 +61,8 @@ window.onload = function () {
             }
         ),
     }));
+
+    app.addFortune(new Fortune("A", "A", "A", "This is your fortune"));
 
     app.boot();
 
