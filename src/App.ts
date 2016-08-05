@@ -24,7 +24,7 @@ export class App {
 
     private _categories: Category[] = [];
 
-    private _fortunes: Fortune[] = [];
+    private _fortunes = [];
 
     private _currentCategory: Category;
 
@@ -75,7 +75,7 @@ export class App {
                     this.$set("currentQuestionNo", nextQuestionNo);
                 },
                 getFortune: function () {
-                    return this.answers;
+                    return this.app.getFortune(this.answers);
                 },
                 displayCategorySelector: function () {
                     return (this.page === PAGE_CATEGORY_SELECT);
@@ -114,7 +114,17 @@ export class App {
     }
 
     public addFortune(fortune: Fortune) {
+        if (undefined === this._fortunes[fortune.answer1]) {
+            this._fortunes[fortune.answer1] = [];
+        }
+        if (undefined === this._fortunes[fortune.answer1][fortune.answer2]) {
+            this._fortunes[fortune.answer1][fortune.answer2] = [];
+        }
         this._fortunes[fortune.answer1][fortune.answer2][fortune.answer3] = fortune;
+    }
+
+    public getFortune(answers: {answer1: string, answer2: string, answer3: string}): Fortune {
+        return this._fortunes[answers[1].sequence][answers[2].sequence][answers[3].sequence];
     }
 
     get currentCategory(): Category {
