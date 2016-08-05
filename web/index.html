@@ -13,7 +13,7 @@
 
     <category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>
     <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
-    <fortune :answers="getFortune()" v-if="displayFortune()"></fortune>
+    <fortune :fortune="getFortune()" v-if="displayFortune()"></fortune>
 </div>
 </body>
 </html>

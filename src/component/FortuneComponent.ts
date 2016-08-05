@@ -7,7 +7,7 @@ const TEMPLATE = "<div class='fortune'>" +
 
 export var FortuneComponent = Vue.extend({
     template: TEMPLATE,
-    props: ["answers"],
+    props: ["fortune"],
     methods: {},
 });
 
