@@ -10,12 +10,12 @@ window.onload = function () {
 
     app.addCategory(new Category("love", {
         1: new Question(
-            "Love Question 1",
+            "How fruity are you?",
             {
-                A: new Answer("A", "Q:1 A:A"),
-                B: new Answer("B", "Q:1 A:B"),
-                C: new Answer("C", "Q:1 C:A"),
-                D: new Answer("D", "Q:1 D:A")
+                A: new Answer("A", "Pineapple"),
+                B: new Answer("B", "Pomegranate"),
+                C: new Answer("C", "Kiwi"),
+                D: new Answer("D", "Caramel Yogurt")
             }
         ),
         2: new Question(
