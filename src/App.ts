@@ -2,6 +2,7 @@
 
 import {Category} from "./model/Category";
 import {Answer} from "./model/Answer";
+import {Fortune} from "./model/Fortune";
 
 let Vue = require("../node_modules/vue/dist/vue");
 
@@ -23,10 +24,17 @@ export class App {
 
     private _categories: Category[] = [];
 
+    private _fortunes: Fortune[] = [];
+
     private _currentCategory: Category;
 
     private _currentQuestionNo: number;
 
+    /**
+     * @constructor
+     *
+     * @param el
+     */
     constructor(private el: string) {
         App.registerComponents();
     }
@@ -103,6 +111,10 @@ export class App {
      */
     public addCategory(category: Category) {
         this._categories.push(category);
+    }
+
+    public addFortune(fortune: Fortune) {
+        this._fortunes[fortune.answer1][fortune.answer2][fortune.answer3] = fortune;
     }
 
     get currentCategory(): Category {
