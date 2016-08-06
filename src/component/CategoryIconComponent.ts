@@ -12,7 +12,6 @@ export var CategoryIconComponent = Vue.extend({
     props: ["category"],
     methods: {
         shouldShowCategory: function (category) {
-            console.log(category);
             return (this.category && category === this.category.name);
         }
     }
