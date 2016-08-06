@@ -1,6 +1,7 @@
 {
   "name": "magic-mirror",
   "globalDependencies": {
+    "socket.io-client": "registry:dt/socket.io-client#1.4.4+20160317120654",
     "vue": "registry:dt/vue#1.0.21+20160720100422"
   },
   "devDependencies": {
