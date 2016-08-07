@@ -14,8 +14,11 @@ window.onload = function () {
         app.addCategory(CategoriesData[categoryName]);
     }
 
-    for (let fortuneIndex in FortunesData) {
-        app.addFortune(FortunesData[fortuneIndex]);
+    for (let categoryName in FortunesData) {
+        let categoryFortunes = FortunesData[categoryName];
+        for (let fortuneIndex in categoryFortunes) {
+            app.addFortune(categoryName, categoryFortunes[fortuneIndex]);
+        }
     }
 
     app.boot();

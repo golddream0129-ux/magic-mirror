@@ -53,6 +53,8 @@ export class App {
 
     private initializeVue() {
 
+        let socket = this.socket;
+
         this._vue = new Vue({
             el: this.el,
             data: {
@@ -63,11 +65,11 @@ export class App {
                 answers: {},
             },
             methods: {
-                reset: () => {
-                    this.socket.emit("reset");
+                reset: function() {
+                    socket.emit("reset");
                 },
-                setCategory: (category: Category) => {
-                    this.socket.emit("setCategory", category.name);
+                setCategory: function (category: Category) {
+                    socket.emit("setCategory", category.name);
                 },
                 getCurrentQuestion: function () {
                     let categoryQuestions = this.$get("currentCategory").questions;
@@ -75,8 +77,8 @@ export class App {
 
                     return categoryQuestions[questionNo];
                 },
-                setAnswer: (answer: Answer) => {
-                    this.socket.emit("setAnswer", this._vue.$data.currentQuestionNo, answer.sequence);
+                setAnswer: function (answer: Answer) {
+                    socket.emit("setAnswer", this.currentQuestionNo, answer.sequence);
                 },
                 getFortune: function () {
                     return this.app.getFortune(this.answers);
