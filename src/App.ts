@@ -27,11 +27,7 @@ export class App {
 
     private _categories: CategoryList = {};
 
-    private _fortunes = [];
-
-    // private _currentCategory: Category;
-    //
-    // private _currentQuestionNo: number;
+    private _fortunes = {};
 
     /**
      * @constructor
@@ -142,14 +138,12 @@ export class App {
         this._categories[category.name] = category;
     }
 
-    public addFortune(fortune: Fortune) {
-        if (undefined === this._fortunes[fortune.answer1]) {
-            this._fortunes[fortune.answer1] = [];
-        }
-        if (undefined === this._fortunes[fortune.answer1][fortune.answer2]) {
-            this._fortunes[fortune.answer1][fortune.answer2] = [];
-        }
-        this._fortunes[fortune.answer1][fortune.answer2][fortune.answer3] = fortune;
+    public addFortune(categoryName: string, fortune: Fortune) {
+        this._fortunes[categoryName] = this._fortunes[categoryName] || {};
+        this._fortunes[categoryName][fortune.answer1] = this._fortunes[categoryName][fortune.answer1] || {};
+        this._fortunes[categoryName][fortune.answer1][fortune.answer2] = this._fortunes[categoryName][fortune.answer1][fortune.answer2] || {};
+
+        this._fortunes[categoryName][fortune.answer1][fortune.answer2][fortune.answer3] = fortune;
     }
 
     public getFortune(answers: {answer1: string, answer2: string, answer3: string}): Fortune {
