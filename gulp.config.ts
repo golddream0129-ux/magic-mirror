@@ -24,6 +24,7 @@ class Config {
     public srcAllJavaScriptMaps: string[];
     public lessDir: string;
     public lessMainFile: string;
+    public fontFiles: string;
     public typings: string;
     public appTypeScriptReferences: string;
     public vendorJsFiles: string[];
@@ -53,6 +54,7 @@ class Config {
         this.srcAllJavaScriptMaps = [this.srcTsOutputPath + "/**/*.js.map"];
         this.lessDir = this.webDir + "/less";
         this.lessMainFile = this.lessDir + "/main.less";
+        this.fontFiles = this.webDir + "/fonts/*";
         this.typings = "./typings";
         this.appTypeScriptReferences = this.typings + "/app.d.ts";
         this.vendorJsFiles = [this.vendorDir + "/vue/dist/vue.js"];

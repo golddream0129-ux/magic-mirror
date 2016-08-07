@@ -18,8 +18,8 @@ var gulp       = require('gulp'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
 
-var config        = new Config(),
-    tsSrcProject  = tsc.createProject('tsconfig.json');
+var config       = new Config(),
+    tsSrcProject = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
     return gulp.src(['./gulp.config.ts'])
@@ -133,6 +133,12 @@ gulp.task('dist:styles', ['dist:clean'], function () {
         .pipe(gulp.dest(config.distDir + "/css"));
 });
 
+gulp.task('dist:fonts', ['dist:clean'], function () {
+    console.log(config.fontFiles);
+    return gulp.src(config.fontFiles)
+        .pipe(gulp.dest(config.distDir + '/fonts'));
+});
+
 gulp.task('dist:src', ['dist:clean', 'src']);
 
 /**
@@ -151,7 +157,7 @@ gulp.task("dist:browserify", ['dist:src'], function () {
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist', ['dist:html', 'dist:images', 'dist:styles', 'dist:src', 'dist:browserify']);
+gulp.task('dist', ['dist:html', 'dist:images', 'dist:styles', 'dist:fonts', 'dist:src', 'dist:browserify']);
 
 
 gulp.task('dist:watch', ['dist'], function () {
