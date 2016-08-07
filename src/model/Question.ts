@@ -39,7 +39,7 @@ export class Question {
     }
 }
 
-interface QuestionAnswers {
+export interface QuestionAnswers {
     A: Answer;
     B: Answer;
     C?: Answer;

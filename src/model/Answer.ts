@@ -6,7 +6,7 @@ export class Answer {
 
     private _sequence: string;
 
-    constructor(private _key: string, private _wording: string) {
+    constructor(private _wording: string) {
     }
 
     set question(q: Question) {
@@ -23,10 +23,6 @@ export class Answer {
 
     set sequence(value: string) {
         this._sequence = value;
-    }
-
-    get key(): string {
-        return this._key;
     }
 
     get wording(): string {
