@@ -12,6 +12,10 @@ body {
   background-color: #000;
   font-family: 'Uncial Antiqua', cursive;
   font-size: 30pt;
+
+  @media (max-width: 500px) {
+    font-size: 16pt;
+  }
 }
 
 .full-height {
@@ -25,24 +29,59 @@ body {
 }
 
 .category-selector, .question-asker {
-  .row;
+  .full-height;
+
+  header {
+    position: absolute;
+    display: table;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 10%;
+  }
 
   h2 {
-    .make-xs-column(12);
+    display: table-cell;
+    vertical-align: middle;
     text-align: center;
     font-size: 1.2em;
   }
 
   ul {
-    list-style: none;
+    position: absolute;
+    top: 10%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
     padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: table;
+    float: left;
+    height: 50%;
+    width: 50%;
+    padding: 0;
+    text-align: center;
+    font-size: 1.6em;
+
+    @media (max-width: 500px) {
+      height: 25%;
+      width: 100%;
+    }
   }
 
   .category, .answer {
-    .make-xs-column(6);
-    padding: 130px 0;
-    text-align: center;
-    font-size: 1.6em;
+    display: table-cell;
+    vertical-align: middle;
+    //float: left;
+    //width: 50%;
+    //padding: 0;
+    //text-align: center;
+    //font-size: 1.6em;
   }
 }
 

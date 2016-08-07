@@ -3,7 +3,9 @@ import {Category} from "../model/Category";
 import {PAGE_QUESTION_ASKER} from "../App";
 
 const TEMPLATE = "<div class='category-selector'>" +
+    "<header>" +
     "<h2>Select your category</h2>" +
+    "</header>" +
     "<ul><li v-for='category in categories' @click='categorySelected(category)'>" +
     "<div class='category'>{{category.name|capitalize}}</div>" +
     "</li>" +
