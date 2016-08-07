@@ -155,23 +155,6 @@ export class App {
     public getFortune(answers: {answer1: string, answer2: string, answer3: string}): Fortune {
         return this._fortunes[answers[1].sequence][answers[2].sequence][answers[3].sequence];
     }
-
-    // get currentCategory(): Category {
-    //     return this._currentCategory;
-    // }
-    //
-    // set currentCategory(category: Category) {
-    //     this._currentCategory = category;
-    // }
-    //
-    //
-    // get currentQuestionNo(): number {
-    //     return this._currentQuestionNo;
-    // }
-    //
-    // set currentQuestionNo(value: number) {
-    //     this._currentQuestionNo = value;
-    // }
 }
 
 
