@@ -115,11 +115,11 @@ gulp.task('dist:server', ['dist:clean'], function () {
     var tscResult = gulp.src(serverTsFiles)
         .pipe(tsc(tsSrcProject));
 
-    return tscResult.dts.pipe(gulp.dest(config.serverTsOutputPath));
+    // return tscResult.dts.pipe(gulp.dest(config.serverTsOutputPath));
 
     return tscResult.js
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.srcTsOutputPath));
+        // .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.serverTsOutputPath));
 });
 
 gulp.task('dist:html', ['dist:clean'], function () {
