@@ -9,6 +9,21 @@ io.on('connection', function (socket) {
 
     console.log('a user connected');
 
+    socket.on('reset', function () {
+        console.log("reset");
+        io.emit('reset');
+    });
+
+    socket.on("setCategory", function (categoryName) {
+        console.log("setCategory", categoryName);
+        io.emit("setCategory", categoryName);
+    });
+
+    socket.on("setAnswer", function (questionNo, answerKey) {
+        console.log("setAnswer", questionNo, answerKey);
+        io.emit("setAnswer", questionNo, answerKey);
+    });
+
     socket.on('disconnect', function () {
         console.log('user disconnected');
     });

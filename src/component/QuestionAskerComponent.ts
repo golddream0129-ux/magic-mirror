@@ -15,7 +15,7 @@ export var CategorySelectorComponent = Vue.extend({
     methods: {
         answerSelected: function (answer: Answer) {
             this.$root.setAnswer(answer);
-            this.$root.nextQuestion();
+            this.$root.incrementQuestionNo();
         }
     },
 });

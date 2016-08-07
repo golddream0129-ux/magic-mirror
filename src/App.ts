@@ -3,6 +3,7 @@
 import {Category} from "./model/Category";
 import {Answer} from "./model/Answer";
 import {Fortune} from "./model/Fortune";
+import Socket = SocketIOClient.Socket;
 
 let Vue = require("../node_modules/vue/dist/vue");
 
@@ -20,15 +21,17 @@ export class App {
         require("./component/CategoryIconComponent");
     }
 
-    private vue: vuejs.VueStatic;
+    private socket: Socket;
 
-    private _categories: Category[] = [];
+    private _vue: vuejs.Vue;
+
+    private _categories: CategoryList = {};
 
     private _fortunes = [];
 
-    private _currentCategory: Category;
-
-    private _currentQuestionNo: number;
+    // private _currentCategory: Category;
+    //
+    // private _currentQuestionNo: number;
 
     /**
      * @constructor
@@ -43,7 +46,18 @@ export class App {
      * Boots the app
      */
     boot(): void {
-        this.vue = new Vue({
+        this.socket = io();
+
+        this.initializeVue();
+
+        this.socket.on("reset", this.reset);
+        this.socket.on("setCategory", this.setCategory);
+        this.socket.on("setAnswer", this.setAnswer);
+    }
+
+    private initializeVue() {
+
+        this._vue = new Vue({
             el: this.el,
             data: {
                 app: this,
@@ -53,19 +67,19 @@ export class App {
                 answers: {},
             },
             methods: {
-                reset: function () {
-                    this.page = PAGE_CATEGORY_SELECT;
-                    this.currentCategory = null;
-                    this.currentQuestionNo = null;
-                    this.answers = {};
+                reset: () => {
+                    this.socket.emit("reset");
                 },
-                getCurrentQuestion: function () {
-                    return this.currentCategory.questions[this.currentQuestionNo];
+                setCategory: (category: Category) => {
+                    this.socket.emit("setCategory", category.name);
                 },
-                setAnswer: function (answer: Answer) {
-                    Vue.set(this.answers, this.currentQuestionNo, answer);
+                getCurrentQuestion: () => {
+                    return this._vue.$data.currentCategory.questions[this._vue.$data.currentQuestionNo];
                 },
-                nextQuestion: function () {
+                setAnswer: (answer: Answer) => {
+                    this.socket.emit("setAnswer", this._vue.$data.currentQuestionNo, answer.key);
+                },
+                incrementQuestionNo: function () {
                     let nextQuestionNo = this.$root.$get("currentQuestionNo") + 1;
 
                     if (undefined === this.currentCategory.questions[nextQuestionNo]) {
@@ -73,6 +87,7 @@ export class App {
                         return;
                     }
                     this.$set("currentQuestionNo", nextQuestionNo);
+                    this.socket.emit("updateQuestionNumber", nextQuestionNo);
                 },
                 getFortune: function () {
                     return this.app.getFortune(this.answers);
@@ -91,7 +106,27 @@ export class App {
                 },
             }
         });
+
+        window["vue"] = this._vue;
     }
+
+    reset = () => {
+        this._vue.$set("page", PAGE_CATEGORY_SELECT);
+        this._vue.$set("currentCategory", null);
+        this._vue.$set("currentQuestionNo", null);
+        this._vue.$set("answers", {});
+    };
+
+    setCategory = (categoryName: string) => {
+        this._vue.$set("currentCategory", this.categories[categoryName]);
+        this._vue.$set("currentQuestionNo", 1);
+        this._vue.$set("page", PAGE_QUESTION_ASKER);
+    };
+
+    setAnswer = (questionNo, answerKey) => {
+        console.log("setAnswer", questionNo, answerKey);
+        Vue.set(this._vue.$data.answers, questionNo, answerKey);
+    };
 
     // -----------------
     // Getters & Setters
@@ -100,7 +135,7 @@ export class App {
     /**
      * @returns {Category[]}
      */
-    get categories(): Category[] {
+    get categories(): CategoryList {
         return this._categories;
     }
 
@@ -110,7 +145,7 @@ export class App {
      * @param category
      */
     public addCategory(category: Category) {
-        this._categories.push(category);
+        this._categories[category.name] = category;
     }
 
     public addFortune(fortune: Fortune) {
@@ -127,20 +162,25 @@ export class App {
         return this._fortunes[answers[1].sequence][answers[2].sequence][answers[3].sequence];
     }
 
-    get currentCategory(): Category {
-        return this._currentCategory;
-    }
+    // get currentCategory(): Category {
+    //     return this._currentCategory;
+    // }
+    //
+    // set currentCategory(category: Category) {
+    //     this._currentCategory = category;
+    // }
+    //
+    //
+    // get currentQuestionNo(): number {
+    //     return this._currentQuestionNo;
+    // }
+    //
+    // set currentQuestionNo(value: number) {
+    //     this._currentQuestionNo = value;
+    // }
+}
 
-    set currentCategory(category: Category) {
-        this._currentCategory = category;
-    }
 
-
-    get currentQuestionNo(): number {
-        return this._currentQuestionNo;
-    }
-
-    set currentQuestionNo(value: number) {
-        this._currentQuestionNo = value;
-    }
+export interface CategoryList {
+    [index: string]: Category;
 }

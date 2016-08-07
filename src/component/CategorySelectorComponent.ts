@@ -14,9 +14,7 @@ export var CategorySelectorComponent = Vue.extend({
     props: ["categories"],
     methods: {
         categorySelected: function (category: Category) {
-            this.$root.$set("currentCategory", category);
-            this.$root.$set("currentQuestionNo", 1);
-            this.$root.page = PAGE_QUESTION_ASKER;
+            this.$root.setCategory(category);
         }
     },
 });
