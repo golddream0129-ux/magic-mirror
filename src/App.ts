@@ -73,21 +73,14 @@ export class App {
                 setCategory: (category: Category) => {
                     this.socket.emit("setCategory", category.name);
                 },
-                getCurrentQuestion: () => {
-                    return this._vue.$data.currentCategory.questions[this._vue.$data.currentQuestionNo];
+                getCurrentQuestion: function () {
+                    let categoryQuestions = this.$get("currentCategory").questions;
+                    let questionNo = this.$get("currentQuestionNo");
+
+                    return categoryQuestions[questionNo];
                 },
                 setAnswer: (answer: Answer) => {
                     this.socket.emit("setAnswer", this._vue.$data.currentQuestionNo, answer.key);
-                },
-                incrementQuestionNo: function () {
-                    let nextQuestionNo = this.$root.$get("currentQuestionNo") + 1;
-
-                    if (undefined === this.currentCategory.questions[nextQuestionNo]) {
-                        this.displayFortune();
-                        return;
-                    }
-                    this.$set("currentQuestionNo", nextQuestionNo);
-                    this.socket.emit("updateQuestionNumber", nextQuestionNo);
                 },
                 getFortune: function () {
                     return this.app.getFortune(this.answers);
@@ -126,6 +119,7 @@ export class App {
     setAnswer = (questionNo, answerKey) => {
         console.log("setAnswer", questionNo, answerKey);
         Vue.set(this._vue.$data.answers, questionNo, answerKey);
+        this._vue.$set("currentQuestionNo", this._vue.$get("currentQuestionNo") + 1);
     };
 
     // -----------------
