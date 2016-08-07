@@ -3,7 +3,6 @@
 "use strict";
 
 import {App} from "./App";
-import {Fortune} from "./model/Fortune";
 import {CategoriesData} from "./data/CategoriesData";
 import {FortunesData} from "./data/FortunesData";
 

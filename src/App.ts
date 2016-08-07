@@ -54,6 +54,7 @@ export class App {
     private initializeVue() {
 
         let socket = this.socket;
+        let app = this;
 
         this._vue = new Vue({
             el: this.el,
@@ -81,7 +82,7 @@ export class App {
                     socket.emit("setAnswer", this.currentQuestionNo, answer.sequence);
                 },
                 getFortune: function () {
-                    return this.app.getFortune(this.answers);
+                    return app.getFortune(this.currentCategory.name, this.answers);
                 },
                 displayCategorySelector: function () {
                     return (this.page === PAGE_CATEGORY_SELECT);
@@ -148,8 +149,8 @@ export class App {
         this._fortunes[categoryName][fortune.answer1][fortune.answer2][fortune.answer3] = fortune;
     }
 
-    public getFortune(answers: {answer1: string, answer2: string, answer3: string}): Fortune {
-        return this._fortunes[answers[1].sequence][answers[2].sequence][answers[3].sequence];
+    public getFortune(categoryName: string, answers: {answer1: string, answer2: string, answer3: string}): Fortune {
+        return this._fortunes[categoryName][answers[1]][answers[2]][answers[3]];
     }
 }
 
