@@ -80,7 +80,7 @@ export class App {
                     return categoryQuestions[questionNo];
                 },
                 setAnswer: (answer: Answer) => {
-                    this.socket.emit("setAnswer", this._vue.$data.currentQuestionNo, answer.key);
+                    this.socket.emit("setAnswer", this._vue.$data.currentQuestionNo, answer.sequence);
                 },
                 getFortune: function () {
                     return this.app.getFortune(this.answers);
