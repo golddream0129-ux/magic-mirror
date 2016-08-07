@@ -106,7 +106,7 @@ gulp.task('src', ['src:lint', 'src:refs:gen', 'src:vendor', 'src:compile']);
  * dist:clean
  */
 gulp.task('dist:clean', function () {
-    del(config.distDir + "/**/*");
+    del.sync(config.distDir + "/**/*");
 });
 
 gulp.task('dist:html', ['dist:clean'], function () {
