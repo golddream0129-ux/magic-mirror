@@ -12,6 +12,9 @@ class Config {
     public buildFiles: string;
     public buildJsDir: string;
     public buildJsFiles: string;
+    public distDir: string;
+    public distTmpDir: string;
+
     public spec: string;
     public specAllTypeScript: string[];
     public specTsOutputPath: string;
@@ -30,8 +33,10 @@ class Config {
     public vendorJsFiles: string[];
     public htmlFiles: string[];
     public imgFiles: string[];
-    public distDir: string;
-    public distTmpDir: string;
+    // Server Config
+    public serverDir: string;
+    public serverAllTypeScript: string[];
+    public serverTsOutputPath: string;
 
     constructor() {
         this.root = __dirname;
@@ -42,6 +47,9 @@ class Config {
         this.buildFiles = this.buildDir + "/**/*";
         this.buildJsDir = this.buildDir + "/js";
         this.buildJsFiles = this.buildJsDir + "/**/*.js";
+        this.distDir = "./dist";
+        this.distTmpDir = this.distDir + "/tmp";
+
         this.spec = "./spec";
         this.specAllTypeScript = [this.spec + "/**/*.ts"];
         this.specTsOutputPath = this.buildJsDir + "/spec";
@@ -60,8 +68,10 @@ class Config {
         this.vendorJsFiles = [this.vendorDir + "/vue/dist/vue.js"];
         this.htmlFiles = [this.webDir + "/**/*.html"];
         this.imgFiles = [this.webDir + "/imgs/**/*"];
-        this.distDir = "./dist";
-        this.distTmpDir = this.distDir + "/tmp";
+        // Server Config
+        this.serverDir = "./server";
+        this.serverAllTypeScript = [this.serverDir + "/**/*.ts"];
+        this.serverTsOutputPath = this.serverDir;
     }
 }
 

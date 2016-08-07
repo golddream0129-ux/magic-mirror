@@ -109,6 +109,19 @@ gulp.task('dist:clean', function () {
     del.sync(config.distDir + "/**/*");
 });
 
+gulp.task('dist:server', ['dist:clean'], function () {
+    var serverTsFiles = config.serverAllTypeScript;
+
+    var tscResult = gulp.src(serverTsFiles)
+        .pipe(tsc(tsSrcProject));
+
+    return tscResult.dts.pipe(gulp.dest(config.serverTsOutputPath));
+
+    return tscResult.js
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.srcTsOutputPath));
+});
+
 gulp.task('dist:html', ['dist:clean'], function () {
     return gulp.src(config.htmlFiles)
         .pipe(gulp.dest(config.distDir));
@@ -157,9 +170,11 @@ gulp.task("dist:browserify", ['dist:src'], function () {
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist', ['dist:html', 'dist:images', 'dist:styles', 'dist:fonts', 'dist:src', 'dist:browserify']);
+gulp.task('dist', ['dist:server', 'dist:html', 'dist:images', 'dist:styles', 'dist:fonts', 'dist:src', 'dist:browserify']);
 
 
 gulp.task('dist:watch', ['dist'], function () {
-    return gulp.watch(config.srcAllTypeScript.concat(config.webDir + "/**/*"), ['dist']);
+    return gulp.watch(config.srcAllTypeScript
+        .concat(config.webDir + "/**/*")
+        .concat(config.serverAllTypeScript), ['dist']);
 });
