@@ -138,7 +138,7 @@ export class App {
      *
      * @param category
      */
-    public addCategory(category: Category) {
+    public addCategory(category: Category): void {
         this._categories[category.name] = category;
     }
 
