@@ -1,17 +1,48 @@
-var express = require('express');
-var app     = express();
-var http    = require('http').Server(app);
-var io      = require('socket.io')(http);
+///<reference path="../typings/index.d.ts"/>
 
-app.use(express.static(__dirname + '/../dist'));
+"use strict";
 
-io.on('connection', function (socket) {
+import * as express from "express";
+import * as http from "http";
+import * as socketIO from "socket.io";
+import Socket = SocketIO.Socket;
 
-    console.log('a user connected');
+let app = express();
+let server = http.createServer(app);
+let io = socketIO(server);
 
-    socket.on('reset', function () {
+let hostConnection: Connection;
+let activeUserConnection: Connection;
+let pendingUserConnections: Connection[] = [];
+
+app.use(express.static(__dirname + "/../dist"));
+
+io.on("connection", function (socket: Socket) {
+
+    let connection: Connection = {
+        socket: socket,
+        type: null
+    };
+
+    if ("localhost:3000" === socket.handshake.headers.host) {
+        connection.type = "host";
+        hostConnection = connection;
+    } else {
+        connection.type = "user";
+        if (undefined === activeUserConnection) {
+            activeUserConnection = connection;
+        } else {
+            pendingUserConnections.push(connection);
+        }
+    }
+
+    socket.emit("status", connection.type);
+
+    console.log("a " + connection.type + " connected from " + socket.client.conn.remoteAddress);
+
+    socket.on("reset", function () {
         console.log("reset");
-        io.emit('reset');
+        io.emit("reset");
     });
 
     socket.on("setCategory", function (categoryName) {
@@ -24,11 +55,18 @@ io.on('connection', function (socket) {
         io.emit("setAnswer", questionNo, answerKey);
     });
 
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
+    socket.on("disconnect", function () {
+        console.log("user disconnected");
     });
 });
 
-http.listen(3000, function () {
-    console.log('listening on *:3000');
+server.listen(3000, function () {
+    console.log("listening on *:3000");
 });
+
+type ConnectionType = "host" | "user";
+
+interface Connection {
+    socket: Socket;
+    type: ConnectionType;
+}
