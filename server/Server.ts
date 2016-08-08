@@ -218,7 +218,7 @@ export class Server {
      * @param connection
      */
     dropConnection(connection: Connection) {
-        console.log("Dropping connection");
+        console.log("Dropping connection " + Server.getConnectionIdentifier(connection));
 
         if (connection instanceof HostConnection) {
             this.dropHostConnection(connection);
@@ -247,7 +247,7 @@ export class Server {
      */
     dropUserConnection(connection: UserConnection): void {
 
-        console.log("Dropping user connection");
+        console.log("Dropping user connection " + Server.getConnectionIdentifier(connection));
 
         // Either remove the active user
         if (connection === this.activeUserConnection) {
