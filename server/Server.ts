@@ -156,8 +156,16 @@ export class Server {
      */
     setCategory = (categoryName: any) => {
         this.emit(Events.setCategory, [categoryName]);
+    };
 
-        this.emit(eventName, args);
+    /**
+     * Sends the selected connection to all the relevant connections
+     *
+     * @param {number} questionNo
+     * @param {string} answerKey
+     */
+    setAnswer = (questionNo: number, answerKey) => {
+        this.emit(Events.setAnswer, [questionNo, answerKey]);
     };
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -37,6 +37,7 @@ export const Events = {
     connect: "connection",
     setState: "setState",
     setCategory: "setCategory",
+    setAnswer: "setAnswer",
     disconnect: "disconnect",
 };
 
