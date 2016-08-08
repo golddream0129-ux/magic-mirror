@@ -148,14 +148,14 @@ export class Server {
     // -----------------------------------------------------------------------------------------------------------------
     // Connection event handlers
     // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Sends the selected connection to all the relevant connections
      *
      * @param {string} categoryName
      */
     setCategory = (categoryName: any) => {
-        let eventName = Events.setCategory;
-        let args = [categoryName];
+        this.emit(Events.setCategory, [categoryName]);
 
         this.emit(eventName, args);
     };
