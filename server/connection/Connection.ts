@@ -4,6 +4,8 @@ import {Server} from "../Server";
 
 export abstract class Connection {
 
+    public id: string;
+
     /**
      * Should return the type of the connection
      */
@@ -13,6 +15,11 @@ export abstract class Connection {
 
     constructor(private _server: Server, private _socket: SocketIO.Socket) {
         console.log("a " + this.getType() + " connected from " + _socket.client.conn.remoteAddress);
+
+        this.id = _socket.client.conn.id;
+
+        // @todo - Remove debugging line
+        _socket.emit("id", this.id);
 
         this.init();
     }

@@ -53,6 +53,11 @@ export class App {
             this._vue.$set("state", state);
         });
 
+        // @todo - Remove debugging lines
+        this.socket.on("id", function (id) {
+            console.log("ID: " + id);
+        });
+
         this.socket.on("reset", this.reset);
         this.socket.on("setCategory", this.setCategory);
         this.socket.on("setAnswer", this.setAnswer);
