@@ -144,6 +144,8 @@ export class Server {
         // @todo - Remove debugging line
         this.dumpPendingConnections();
         this.activeUserConnection.activate();
+
+        this.emitToHostAndActiveUserConnections("reset");
     }
 
     /**
