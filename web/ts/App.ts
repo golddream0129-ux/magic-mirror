@@ -76,6 +76,7 @@ export class App {
                 app: this,
                 page: PAGE_CATEGORY_SELECT,
                 state: null,
+                userName: null,
                 queuePosition: 1,
                 currentCategory: null,
                 currentQuestionNo: null,
@@ -84,6 +85,10 @@ export class App {
             methods: {
                 reset: function () {
                     socket.emit("reset");
+                },
+                setUserName: function (userName: string) {
+                    this.$set("userName", userName);
+                    socket.emit("setUserName", userName);
                 },
                 setCategory: function (category: Category) {
                     socket.emit("setCategory", category.name);
