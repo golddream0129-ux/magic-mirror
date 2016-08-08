@@ -14,7 +14,7 @@ export var UserFormComponent = Vue.extend({
     template: TEMPLATE,
     methods: {
         submitForm: function (e) {
-            let nameField: HTMLInputElement = e.target.getElementsByClassName("name");
+            let nameField: HTMLInputElement = e.target.getElementsByClassName("name")[0];
 
             this.$root.setUserName(nameField.value);
         }

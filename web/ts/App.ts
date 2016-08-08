@@ -87,6 +87,7 @@ export class App {
                     socket.emit("reset");
                 },
                 setUserName: function (userName: string) {
+                    console.log("Setting user name to " + userName);
                     this.$set("userName", userName);
                     socket.emit("setUserName", userName);
                 },
