@@ -361,7 +361,7 @@ export class Server {
     private dumpStartedConnections() {
         console.log("Started connections...");
         for (let i in this.startedUserConnections) {
-            console.log("#" + this.startedUserConnections[i].id);
+            console.log(Server.getConnectionIdentifier(this.startedUserConnections[i]));
         }
     }
 
@@ -371,7 +371,7 @@ export class Server {
     private dumpPendingConnections() {
         console.log("Pending connections...");
         for (let i in this.pendingUserConnections) {
-            console.log("#" + this.pendingUserConnections[i].id);
+            console.log(Server.getConnectionIdentifier(this.pendingUserConnections[i]));
         }
     }
 
