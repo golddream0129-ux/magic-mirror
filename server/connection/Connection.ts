@@ -1,4 +1,3 @@
-
 "use strict";
 
 import {Server} from "../Server";
@@ -10,9 +9,12 @@ export abstract class Connection {
      */
     abstract getType(): ConnectionType;
 
+    abstract init(): void;
+
     constructor(private _server: Server, private _socket: SocketIO.Socket) {
         console.log("a " + this.getType() + " connected from " + _socket.client.conn.remoteAddress);
-        this.socket.emit(Events.updateStatus, "host");
+
+        this.init();
     }
 
     get server(): Server {
@@ -27,5 +29,12 @@ export abstract class Connection {
 export type ConnectionType = "host" | "user";
 
 export const Events = {
-    updateStatus: "updateStatus",
+    setState: "setState",
+};
+
+export const States = {
+    host: "host",
+    activeUser: "active user",
+    pendingUser: "pending user",
+    disconnected: "disconnected",
 };

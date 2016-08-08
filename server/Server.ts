@@ -8,6 +8,7 @@ import * as http from "http";
 import * as socketIO from "socket.io";
 import {HostConnection} from "./connection/HostConnection";
 import {UserConnection} from "./connection/UserConnection";
+import {Connection, States, Events} from "./connection/Connection";
 
 export class Server {
 
@@ -15,7 +16,7 @@ export class Server {
     private _server: http.Server;
     private _io: SocketIO.Server;
 
-    private _hostConnection: HostConnection;
+    private _hostConnections: HostConnection[];
     private _activeUserConnection: UserConnection;
     private _pendingUserConnections: UserConnection[] = [];
 
@@ -55,11 +56,12 @@ export class Server {
     connectionHandler = (socket: SocketIO.Socket) => {
 
         if ("localhost:3000" === socket.handshake.headers.host) {
-            this.hostConnection = new HostConnection(this, socket);
+            this.addHostConnections(new HostConnection(this, socket));
         } else {
             this.addPendingUserConnection(new UserConnection(this, socket));
         }
 
+        // We do this for all connections in case there are user's pending before the host connects
         if (undefined === this.activeUserConnection) {
             this.activateNextUser();
         }
@@ -86,17 +88,73 @@ export class Server {
     };
 
     activateNextUser(): void {
+        // If there are no queued users, unset the activeUserConnection property
+        if (!this.pendingUserConnections.length) {
+            this.activeUserConnection = undefined;
+            return;
+        }
+
         this.activeUserConnection = this.pendingUserConnections.shift();
         this.activeUserConnection.activate();
     }
 
-
-    get hostConnection(): HostConnection {
-        return this._hostConnection;
+    dropConnection(connection: Connection) {
+        if (connection instanceof HostConnection) {
+            this.dropHostConnection(connection);
+        } else if (connection instanceof UserConnection) {
+            this.dropUserConnection(connection);
+        }
     }
 
-    set hostConnection(value: HostConnection) {
-        this._hostConnection = value;
+    dropHostConnection(connection: HostConnection): void {
+        for (let i = this.hostConnections.length - 1; i >= 0; i--) {
+            if (connection === this.hostConnections[1]) {
+                this.hostConnections.splice(i, 1);
+            }
+        }
+    }
+
+    /**
+     * Drops a host connection by removing it from the hostConnections array
+     *
+     * @param {HostConnection} connection
+     */
+    dropHostConnection(connection: HostConnection): void {
+        for (let i = this.hostConnections.length - 1; i >= 0; i--) {
+            if (connection === this.hostConnections[1]) {
+                this.hostConnections.splice(i, 1);
+            }
+        }
+    }
+
+    /**
+     * Drops a host connection by removing it from the hostConnections array
+     *
+     * @param {UserConnection} connection
+     */
+    dropUserConnection(connection: UserConnection): void {
+
+        // Either remove the active user
+        if (connection = this.activeUserConnection) {
+            connection.socket.emit(Events.setState, States.disconnected);
+            this.activateNextUser();
+            return;
+        }
+
+        // Or remove them from the pending users queue
+        for (let i = this.pendingUserConnections.length - 1; i >= 0; i--) {
+            if (connection === this.pendingUserConnections[1]) {
+                this.pendingUserConnections.splice(i, 1);
+            }
+        }
+    }
+
+    get hostConnections(): HostConnection[] {
+        return this._hostConnections;
+    }
+
+    addHostConnections(connection: HostConnection) {
+        this._hostConnections.push(connection);
     }
 
     get activeUserConnection(): UserConnection {
@@ -117,9 +175,7 @@ export class Server {
      * @param {UserConnection} connection
      */
     private addPendingUserConnection(connection: UserConnection): void {
-        let pendingUserConnections = this.pendingUserConnections;
-        pendingUserConnections.push(connection);
-        this.pendingUserConnections = pendingUserConnections;
+        this._pendingUserConnections.push(connection);
     }
 
     set pendingUserConnections(value: UserConnection[]) {
