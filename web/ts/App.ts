@@ -153,13 +153,13 @@ export class App {
     // -----------------------------------------------------------------------------------------------------------------
 
     setIdHandler = (id: string) => {
-        // @todo Remove debugging code
-        console.log("ID: " + id);
+        console.log("Event: id", id);
 
         this.connectionId = id;
     };
 
     resetHandler = () => {
+        console.log("Event: reset");
         this._vue.$set("page", PAGE_CATEGORY_SELECT);
         this._vue.$set("currentCategory", null);
         this._vue.$set("currentQuestionNo", null);
@@ -172,16 +172,19 @@ export class App {
      * @param position
      */
     setQueuePositionHandler = (position: number) => {
+        console.log("Event: setQueuePosition", position);
         this._vue.$set("queuePosition", position);
     };
 
     setCategoryHandler = (categoryName: string) => {
+        console.log("Event: setCategory", categoryName);
         this._vue.$set("currentCategory", this.categories[categoryName]);
         this._vue.$set("currentQuestionNo", 1);
         this._vue.$set("page", PAGE_QUESTION_ASKER);
     };
 
     setAnswerHandler = (questionNo, answerKey) => {
+        console.log("Event: setAnswer", questionNo, answerKey);
         console.log("setAnswer", questionNo, answerKey);
         Vue.set(this._vue.$data.answers, questionNo, answerKey);
         this._vue.$set("currentQuestionNo", this._vue.$get("currentQuestionNo") + 1);
