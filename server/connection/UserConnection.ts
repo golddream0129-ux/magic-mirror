@@ -1,6 +1,5 @@
 "use strict";
-import {Connection, ConnectionType} from "./Connection";
-import {Server} from "../Server";
+import {Connection, ConnectionType, Events} from "./Connection";
 import Socket = SocketIO.Socket;
 
 /**
@@ -8,17 +7,18 @@ import Socket = SocketIO.Socket;
  */
 export class UserConnection extends Connection {
 
+    private _active: boolean = false;
+
     getType(): ConnectionType {
         return "user";
     }
 
-    /**
-     * Override of Connection constructor to add '_active' property
-     * @param {Server} _server
-     * @param {Socket} _socket
-     * @param {boolean} _active
-     */
-    constructor(private _server: Server, private _socket: SocketIO.Socket, private _active: boolean) {
-        super(_server, _socket);
+    activate(): void {
+        this.active = true;
+        this.socket.emit(Events.updateStatus, "active user");
+    }
+
+    set active(value: boolean) {
+        this._active = value;
     }
 }
