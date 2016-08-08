@@ -1,6 +1,7 @@
 "use strict";
 import {Connection, ConnectionType, Events, States} from "./Connection";
 import Socket = SocketIO.Socket;
+import {Server} from "../Server";
 
 /**
  * Connection from a user's device
@@ -47,6 +48,7 @@ export class UserConnection extends Connection {
     }
 
     public setUserName = (userName: string) => {
+        console.log("Setting user name to " + userName + " on connection " + Server.getConnectionIdentifier(this));
         this.userName = userName;
         this.server.addUserConnectionToQueue(this);
     };

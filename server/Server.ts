@@ -119,7 +119,7 @@ export class Server {
         // Remove user from started connections
         for (let i = this.startedUserConnections.length - 1; i >= 0; i--) {
             if (connection === this.startedUserConnections[i]) {
-                console.log("Removing connection #" + this.startedUserConnections[i] + " from queue ");
+                console.log("Removing connection #" + this.startedUserConnections[i].id + " from queue ");
                 this.startedUserConnections.splice(i, 1);
             }
         }
@@ -289,7 +289,7 @@ export class Server {
     }
 
     public addStartedUserConnection(connection: UserConnection) {
-        console.log("Adding user to the started queue (#" + connection.id + ")");
+        console.log("Adding user connection " + Server.getConnectionIdentifier(connection) + " to the started queue");
         this.startedUserConnections.push(connection);
         this.dumpStartedConnections();
     }
@@ -304,6 +304,7 @@ export class Server {
      * @param {UserConnection} connection
      */
     private addPendingUserConnection(connection: UserConnection): void {
+        console.log("Adding user connection " + Server.getConnectionIdentifier(connection) + " to pending queue");
         this.pendingUserConnections.push(connection);
     }
 
@@ -333,5 +334,22 @@ export class Server {
         for (let i in this.pendingUserConnections) {
             console.log("#" + this.pendingUserConnections[i].id);
         }
+    }
+
+    /**
+     * Returns a string containing the connection ID & user name
+     *
+     * @param {Connection} connection
+     *
+     * @return {string}
+     */
+    public static getConnectionIdentifier(connection: Connection): string {
+        let returnString = "#" + connection.id;
+
+        if (connection instanceof UserConnection) {
+            returnString += "(" + connection.userName + ")";
+        }
+
+        return returnString;
     }
 }
