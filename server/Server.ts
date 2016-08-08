@@ -107,7 +107,7 @@ export class Server {
         for (let i in this.pendingUserConnections) {
             let connection = this.pendingUserConnections[i];
             console.log("updating queue positions for #" + connection.id);
-            connection.socket.emit(Events.setQueuePosition, i);
+            connection.socket.emit(Events.setQueuePosition, Number(i) + 1);
         }
     }
 
