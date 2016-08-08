@@ -118,8 +118,9 @@ export class Server {
 
         // Remove user from started connections
         for (let i = this.startedUserConnections.length - 1; i >= 0; i--) {
-            if (connection === this.startedUserConnections[i]) {
-                console.log("Removing connection #" + this.startedUserConnections[i].id + " from queue ");
+            let startedUserConnection: UserConnection = this.startedUserConnections[i];
+            if (connection === startedUserConnection) {
+                console.log("Removing connection " + Server.getConnectionIdentifier(startedUserConnection) + " from queue ");
                 this.startedUserConnections.splice(i, 1);
             }
         }
