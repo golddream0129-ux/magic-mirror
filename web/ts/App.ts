@@ -143,7 +143,7 @@ export class App {
     // Event handlers
     // -----------------------------------------------------------------------------------------------------------------
 
-    setStateHandler = (state: string) => {
+    setStateHandler = (state: ConnectionState) => {
         console.log("New state: " + state);
         this._vue.$set("state", state);
         switch (state) {
