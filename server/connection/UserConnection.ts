@@ -24,7 +24,7 @@ export class UserConnection extends Connection {
         this.socket.on(Events.setAnswer, this.server.setAnswer);
         this.socket.on(Events.disconnect, this.disconnect);
 
-        this.socket.emit(Events.setState, States.pendingUser);
+        this.socket.emit(Events.setState, States.start);
     }
 
     /**
