@@ -55,14 +55,22 @@ export class Server {
 
     connectionHandler = (socket: SocketIO.Socket) => {
 
+        let connection: Connection;
+
         if ("localhost:3000" === socket.handshake.headers.host) {
-            this.addHostConnections(new HostConnection(this, socket));
+            let hostConnection = new HostConnection(this, socket);
+            this.addHostConnections(hostConnection);
+            connection = hostConnection;
         } else {
-            this.addPendingUserConnection(new UserConnection(this, socket));
+            let userConnection = new UserConnection(this, socket)
+            this.addPendingUserConnection(userConnection);
+            connection = userConnection;
 
             // @todo - Remove debugging line
             this.dumpPendingConnections();
         }
+
+        connection.init();
 
         // We do this for all connections in case there are user's pending before the host connects
         if (undefined === this.activeUserConnection) {

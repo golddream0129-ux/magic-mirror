@@ -20,8 +20,6 @@ export abstract class Connection {
 
         // @todo - Remove debugging line
         _socket.emit("id", this.id);
-
-        this.init();
     }
 
     get server(): Server {
