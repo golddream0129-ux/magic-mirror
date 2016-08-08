@@ -99,6 +99,9 @@ export class App {
                 getFortune: function () {
                     return app.getFortune(this.currentCategory.name, this.answers);
                 },
+                displayStart: function () {
+                    return (States.start === this.state);
+                },
                 displayMain: function () {
                     return (States.host === this.state || States.activeUser === this.state);
                 },
