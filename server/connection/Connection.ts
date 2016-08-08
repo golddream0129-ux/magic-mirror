@@ -40,6 +40,7 @@ export type ConnectionType = "host" | "user";
 export const Events = {
     connect: "connection",
     setState: "setState",
+    setQueuePosition: "setQueuePosition",
     setCategory: "setCategory",
     setAnswer: "setAnswer",
     disconnect: "disconnect",

@@ -59,6 +59,7 @@ export class App {
         });
 
         this.socket.on("reset", this.reset);
+        this.socket.on("setQueuePosition", this.setQueuePosition);
         this.socket.on("setCategory", this.setCategory);
         this.socket.on("setAnswer", this.setAnswer);
     }
@@ -127,6 +128,15 @@ export class App {
         this._vue.$set("currentCategory", null);
         this._vue.$set("currentQuestionNo", null);
         this._vue.$set("answers", {});
+    };
+
+    /**
+     * Handler for setQueuePosition event
+     *
+     * @param position
+     */
+    setQueuePosition = (position: number) => {
+        this._vue.$set("queuePosition", position);
     };
 
     setCategory = (categoryName: string) => {

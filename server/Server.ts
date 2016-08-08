@@ -69,6 +69,8 @@ export class Server {
 
             // @todo - Remove debugging line
             this.dumpPendingConnections();
+
+            this.updateQueuePositions();
         }
 
         connection.init();
@@ -115,6 +117,18 @@ export class Server {
         // @todo - Remove debugging line
         this.dumpPendingConnections();
         this.activeUserConnection.activate();
+    }
+
+    /**
+     * Updates queue position for all pending users
+     */
+    updateQueuePositions(): void {
+        console.log("updating queue positions for all connections");
+        for (let i in this.pendingUserConnections) {
+            let connection = this.pendingUserConnections[i];
+            console.log("updating queue positions for #" + connection.id);
+            connection.socket.emit(Events.setQueuePosition, i);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
