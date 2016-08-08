@@ -59,10 +59,14 @@ export class Server {
             this.addHostConnections(new HostConnection(this, socket));
         } else {
             this.addPendingUserConnection(new UserConnection(this, socket));
+
+            // @todo - Remove debugging line
+            this.dumpPendingConnections();
         }
 
         // We do this for all connections in case there are user's pending before the host connects
         if (undefined === this.activeUserConnection) {
+            console.log("No active user");
             this.activateNextUser();
         }
 
@@ -88,17 +92,25 @@ export class Server {
     };
 
     activateNextUser(): void {
+        console.log("activating next user");
+
         // If there are no queued users, unset the activeUserConnection property
         if (!this.pendingUserConnections.length) {
+            console.log("No pending connections");
             this.activeUserConnection = undefined;
             return;
         }
 
         this.activeUserConnection = this.pendingUserConnections.shift();
+        console.log("Activating new connection (ID: " + this.activeUserConnection.id + ")");
+        // @todo - Remove debugging line
+        this.dumpPendingConnections();
         this.activeUserConnection.activate();
     }
 
     dropConnection(connection: Connection) {
+        console.log("Dropping connection");
+
         if (connection instanceof HostConnection) {
             this.dropHostConnection(connection);
         } else if (connection instanceof UserConnection) {
@@ -126,6 +138,8 @@ export class Server {
      */
     dropUserConnection(connection: UserConnection): void {
 
+        console.log("Dropping user connection");
+
         // Either remove the active user
         if (connection = this.activeUserConnection) {
             connection.socket.emit(Events.setState, States.disconnected);
@@ -135,7 +149,8 @@ export class Server {
 
         // Or remove them from the pending users queue
         for (let i = this.pendingUserConnections.length - 1; i >= 0; i--) {
-            if (connection === this.pendingUserConnections[1]) {
+            if (connection === this.pendingUserConnections[i]) {
+                console.log("Removing connection #" + this.pendingUserConnections[i] + " from queue ");
                 this.pendingUserConnections.splice(i, 1);
             }
         }
@@ -172,5 +187,12 @@ export class Server {
 
     set pendingUserConnections(value: UserConnection[]) {
         this._pendingUserConnections = value;
+    }
+
+    private dumpPendingConnections() {
+        console.log("Pending connections...");
+        for (let i in this.pendingUserConnections) {
+            console.log("#" + this.pendingUserConnections[i].id);
+        }
     }
 }
