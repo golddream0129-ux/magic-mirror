@@ -62,7 +62,7 @@ gulp.task("build:web:images", function () {
  * Task: build:web:css
  */
 gulp.task("build:web:css", function () {
-    return gulp.src(config.webDir + "/less/main.css")
+    return gulp.src(config.webDir + "/less/main.less")
         .pipe(less().on('error', function (err) {
             console.log(err);
         }))
