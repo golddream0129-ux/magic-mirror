@@ -36,6 +36,10 @@ export class UserConnection extends Connection {
         return "user";
     }
 
+    public start(): void {
+        this.socket.emit(Events.setState, States.start);
+    }
+
     public activate(): void {
         this.active = true;
         this.socket.emit(Events.setState, States.activeUser);
