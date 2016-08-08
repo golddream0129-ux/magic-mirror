@@ -9,6 +9,16 @@ import {Fortune} from "./model/Fortune";
 import {Events, ConnectionState} from "../../server/connection/Connection";
 import Socket = SocketIOClient.Socket;
 
+export const enum AppPage {
+    HostSleep,
+    UserDetails,
+    QueuePosition,
+    CategorySelect,
+    Question1,
+    Question2,
+    Question3,
+    Fortune
+}
 export const PAGE_CATEGORY_SELECT = "categorySelect";
 export const PAGE_QUESTION_ASKER = "questionAsker";
 
