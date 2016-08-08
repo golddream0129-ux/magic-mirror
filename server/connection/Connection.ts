@@ -48,7 +48,8 @@ export const Events = {
 
 export const States = {
     host: "host",
-    activeUser: "active user",
+    start: "user input",
     pendingUser: "pending user",
+    activeUser: "active user",
     disconnected: "disconnected",
 };
