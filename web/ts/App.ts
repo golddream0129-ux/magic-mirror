@@ -1,3 +1,5 @@
+///<reference path="../../typings/index.d.ts"/>
+
 "use strict";
 
 import * as Vue from "vue";
