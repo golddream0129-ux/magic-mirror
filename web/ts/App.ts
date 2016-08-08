@@ -99,7 +99,7 @@ export class App {
                 getFortune: function () {
                     return app.getFortune(this.currentCategory.name, this.answers);
                 },
-                displayActive: function () {
+                displayMain: function () {
                     return (States.host === this.state || States.activeUser === this.state);
                 },
                 displayPending: function () {
