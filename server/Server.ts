@@ -63,7 +63,7 @@ export class Server {
             this.addHostConnections(hostConnection);
             connection = hostConnection;
         } else {
-            let userConnection = new UserConnection(this, socket)
+            let userConnection = new UserConnection(this, socket);
             this.addPendingUserConnection(userConnection);
             connection = userConnection;
 
