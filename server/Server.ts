@@ -130,14 +130,14 @@ export class Server {
     }
 
     activateNextUser(): void {
-        console.log("Activating next user - " + Server.getConnectionIdentifier(this.pendingUserConnections[0]));
-
         // If there are no queued users, unset the activeUserConnection property
         if (!this.pendingUserConnections.length) {
-            console.log("No pending connections");
+            console.log("Not activating next user, as no pending connections");
             this.activeUserConnection = undefined;
             return;
         }
+
+        console.log("Activating next user - " + Server.getConnectionIdentifier(this.pendingUserConnections[0]));
 
         this.activeUserConnection = this.pendingUserConnections.shift();
         console.log("Activating new connection (ID: " + this.activeUserConnection.id + ")");
