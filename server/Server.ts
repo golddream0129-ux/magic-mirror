@@ -17,10 +17,39 @@ export class Server {
     private _server: http.Server;
     private _io: SocketIO.Server;
 
+    /**
+     * Connections from host machines
+     *
+     * @type {HostConnection[]}
+     * @private
+     */
     private _hostConnections: HostConnection[] = [];
+
+    /**
+     * The currently active user connection
+     * @type {UserConnection}
+     */
     private _activeUserConnection: UserConnection;
+
+    /**
+     * User connections awaiting the user to complete their name
+     *
+     * @type {UserConnection[]}
+     * @private
+     */
+    private _startedUserConnections: UserConnection[] = [];
+
+    /**
+     * Pending user connections that are in the queue
+     *
+     * @type {UserConnection[]}
+     * @private
+     */
     private _pendingUserConnections: UserConnection[] = [];
 
+    /**
+     * @constructor
+     */
     constructor() {
         this._app = express();
         this._server = http.createServer(this._app);
@@ -64,7 +93,7 @@ export class Server {
             connection = hostConnection;
         } else {
             let userConnection = new UserConnection(this, socket);
-            this.addPendingUserConnection(userConnection);
+            this.addStartedUserConnection(userConnection);
             connection = userConnection;
 
             // @todo - Remove debugging line
@@ -79,6 +108,25 @@ export class Server {
             this.activateNextUser();
         }
     };
+
+    /**
+     * Moves a user from the started queue to the pending queue
+     *
+     * @param connection
+     */
+    addUserConnectionToQueue(connection: UserConnection): void {
+
+        // Remove user from started connections
+        for (let i = this.startedUserConnections.length - 1; i >= 0; i--) {
+            if (connection === this.startedUserConnections[i]) {
+                console.log("Removing connection #" + this.startedUserConnections[i] + " from queue ");
+                this.startedUserConnections.splice(i, 1);
+            }
+        }
+
+        // And add them to the pending queue
+        this.addPendingUserConnection(connection);
+    }
 
     activateNextUser(): void {
         console.log("activating next user");
@@ -222,7 +270,7 @@ export class Server {
     }
 
     addHostConnections(connection: HostConnection) {
-        this._hostConnections.push(connection);
+        this.hostConnections.push(connection);
     }
 
     get activeUserConnection(): UserConnection {
@@ -231,6 +279,19 @@ export class Server {
 
     set activeUserConnection(value: UserConnection) {
         this._activeUserConnection = value;
+    }
+
+    /**
+     * @return {UserConnection[]}
+     */
+    get startedUserConnections(): UserConnection[] {
+        return this._startedUserConnections;
+    }
+
+    public addStartedUserConnection(connection: UserConnection) {
+        console.log("Adding user to the started queue (#" + connection.id + ")");
+        this.startedUserConnections.push(connection);
+        this.dumpStartedConnections();
     }
 
     get pendingUserConnections(): UserConnection[] {
@@ -243,13 +304,30 @@ export class Server {
      * @param {UserConnection} connection
      */
     private addPendingUserConnection(connection: UserConnection): void {
-        this._pendingUserConnections.push(connection);
+        this.pendingUserConnections.push(connection);
     }
 
     set pendingUserConnections(value: UserConnection[]) {
         this._pendingUserConnections = value;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Debugging methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpStartedConnections() {
+        console.log("Started connections...");
+        for (let i in this.startedUserConnections) {
+            console.log("#" + this.startedUserConnections[i].id);
+        }
+    }
+
+    /**
+     * Logs the current pending connection stack
+     */
     private dumpPendingConnections() {
         console.log("Pending connections...");
         for (let i in this.pendingUserConnections) {
