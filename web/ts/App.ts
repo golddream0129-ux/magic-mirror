@@ -171,7 +171,12 @@ export class App {
 
     resetHandler = () => {
         console.log("Event: reset");
-        this._vue.$set("page", PAGE_CATEGORY_SELECT);
+        if (ConnectionState.Host === this._vue.$get("state")) {
+            this._vue.$set("page", AppPage.HostSleep);
+        } else {
+            this._vue.$set("page", AppPage.UserDetails);
+        }
+
         this._vue.$set("currentCategory", null);
         this._vue.$set("currentQuestionNo", null);
         this._vue.$set("answers", {});
