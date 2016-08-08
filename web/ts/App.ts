@@ -74,6 +74,7 @@ export class App {
                 app: this,
                 page: PAGE_CATEGORY_SELECT,
                 state: null,
+                queuePosition: 1,
                 currentCategory: null,
                 currentQuestionNo: null,
                 answers: {},

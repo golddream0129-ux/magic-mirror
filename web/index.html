@@ -18,8 +18,11 @@
         <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
         <fortune :fortune="getFortune()" v-if="displayFortune()"></fortune>
     </div>
-    <div v-if="displayPending()">
-        Pending
+    <div class="wait-screen" v-if="displayPending()">
+        <div class="content">
+            <p>Please wait...</p>
+            <p>You are currently number <span class="queue-position">{{ queuePosition }}</span> in the queue</p>
+        </div>
     </div>
 </div>
 </body>
