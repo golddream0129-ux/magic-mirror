@@ -169,15 +169,17 @@ export class Server {
      * @param {string} eventName
      * @param {any[]} args
      */
-    emitToHostConnections(eventName: string, args: any[]) {
+    emitToHostConnections(eventName: string, args: any[] = []) {
+
+        let argsClone: any[] = args.slice(0);
 
         // Add the event name to the beginning of the args array
-        args.unshift(eventName);
+        argsClone.unshift(eventName);
 
         // Send to host connections
         for (let i in this.hostConnections) {
             let socket: SocketIO.Socket = this.hostConnections[i].socket;
-            socket.emit.apply(socket, args);
+            socket.emit.apply(socket, argsClone);
         }
     };
 
@@ -187,14 +189,17 @@ export class Server {
      * @param {string} eventName
      * @param {any[]} args
      */
-    emitToActiveUserConnections(eventName: string, args: any[]) {
+    emitToActiveUserConnections(eventName: string, args: any[] = []) {
+
+        let argsClone: any[] = args.slice(0);
 
         // Add the event name to the beginning of the args array
-        args.unshift(eventName);
+        argsClone.unshift(eventName);
 
         // Send to active user
         let socket: SocketIO.Socket = this.activeUserConnection.socket;
-        socket.emit.apply(socket, args);
+
+        socket.emit.apply(socket, argsClone);
     };
 
     /**
