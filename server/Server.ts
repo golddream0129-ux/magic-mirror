@@ -210,6 +210,8 @@ export class Server {
      */
     emitToHostAndActiveUserConnections(eventName: string, args: any[] = []) {
 
+        console.log("emitting " + eventName + " to hosts & active users with args... ", args);
+
         this.emitToHostConnections(eventName, args);
         this.emitToActiveUserConnections(eventName, args);
     };
