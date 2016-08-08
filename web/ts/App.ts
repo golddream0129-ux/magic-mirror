@@ -16,7 +16,18 @@ export const PAGE_QUESTION_ASKER = "questionAsker";
  * Main App class
  */
 export class App {
-    public static registerComponents() {
+
+    /**
+     * ID of the socket connection
+     *
+     * @type {string}
+     */
+    private connectionId: string;
+
+    /**
+     * Loads all components
+     */
+    public static registerComponents(): void {
         require("./component/UserFormComponent");
         require("./component/CategorySelectorComponent");
         require("./component/QuestionAskerComponent");
@@ -52,9 +63,7 @@ export class App {
         this.socket.on(Events.setState, this.setState);
 
         // @todo - Remove debugging lines
-        this.socket.on("id", function (id) {
-            console.log("ID: " + id);
-        });
+        this.socket.on("id", this.setIdHandler);
 
         this.socket.on("reset", this.resetHandler);
         this.socket.on("setQueuePosition", this.setQueuePositionHandler);
@@ -137,6 +146,17 @@ export class App {
             case States.start:
                 this._vue.$set("userName", null);
         }
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Event handlers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    setIdHandler = (id: string) => {
+        // @todo Remove debugging code
+        console.log("ID: " + id);
+
+        this.connectionId = id;
     };
 
     resetHandler = () => {
