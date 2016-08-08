@@ -89,7 +89,7 @@ export class App {
                 setUserName: function (userName: string) {
                     console.log("Setting user name to " + userName);
                     this.$set("userName", userName);
-                    socket.emit("setUserName", userName);
+                    socket.emit(Events.setUserName, userName);
                 },
                 setCategory: function (category: Category) {
                     socket.emit("setCategory", category.name);
