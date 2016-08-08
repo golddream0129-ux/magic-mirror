@@ -49,10 +49,7 @@ export class App {
 
         this.initializeVue();
 
-        this.socket.on(Events.setState, (state) => {
-            console.log("New state: " + state);
-            this._vue.$set("state", state);
-        });
+        this.socket.on(Events.setState, this.setState);
 
         // @todo - Remove debugging lines
         this.socket.on("id", function (id) {
@@ -132,6 +129,15 @@ export class App {
 
         window["vue"] = this._vue;
     }
+
+    setState = (state) => {
+        console.log("New state: " + state);
+        this._vue.$set("state", state);
+        switch (state) {
+            case States.start:
+                this._vue.$set("userName", null);
+        }
+    };
 
     reset = () => {
         this._vue.$set("page", PAGE_CATEGORY_SELECT);
