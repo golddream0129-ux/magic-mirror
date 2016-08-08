@@ -70,7 +70,7 @@ export class Server {
             // @todo - Remove debugging line
             this.dumpPendingConnections();
 
-            connection.start();
+            userConnection.start();
         }
 
         connection.init();
