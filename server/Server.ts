@@ -179,7 +179,7 @@ export class Server {
 
         // Send to host connections
         for (let i in this.hostConnections) {
-            socket = this.hostConnections[i].socket;
+            let socket: SocketIO.Socket = this.hostConnections[i].socket;
             socket.emit.apply(socket, args);
         }
 
