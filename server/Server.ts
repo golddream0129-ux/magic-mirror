@@ -219,7 +219,8 @@ export class Server {
      *
      * @param {string} categoryName
      */
-    setCategory = (categoryName: any) => {
+    setCategory = (categoryName: string) => {
+        console.log("setting category to " + categoryName);
         this.emitToHostAndActiveUserConnections(Events.setCategory, [categoryName]);
     };
 
@@ -230,6 +231,7 @@ export class Server {
      * @param {string} answerKey
      */
     setAnswer = (questionNo: number, answerKey) => {
+        console.log("setting answer to " + answerKey);
         this.emitToHostAndActiveUserConnections(Events.setAnswer, [questionNo, answerKey]);
     };
 
