@@ -141,7 +141,7 @@ export class Server {
         console.log("Dropping user connection");
 
         // Either remove the active user
-        if (connection = this.activeUserConnection) {
+        if (connection === this.activeUserConnection) {
             connection.socket.emit(Events.setState, States.disconnected);
             this.activateNextUser();
             return;
