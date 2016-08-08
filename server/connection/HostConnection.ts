@@ -1,7 +1,7 @@
 
 "use strict";
 
-import {Connection, ConnectionType, Events, States} from "./Connection";
+import {Connection, ConnectionType, Events, ConnectionState} from "./Connection";
 
 /**
  * Connection from the mirror itself
@@ -21,6 +21,6 @@ export class HostConnection extends Connection {
      * Sets the state of the client to 'host'
      */
     init(): void {
-        this.socket.emit(Events.setState, States.host);
+        this.socket.emit(Events.setState, ConnectionState.Host);
     }
 }

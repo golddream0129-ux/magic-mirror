@@ -1,5 +1,5 @@
 "use strict";
-import {Connection, ConnectionType, Events, States} from "./Connection";
+import {Connection, ConnectionType, Events, ConnectionState} from "./Connection";
 import Socket = SocketIO.Socket;
 import {Server} from "../Server";
 
@@ -31,7 +31,7 @@ export class UserConnection extends Connection {
         this.socket.on(Events.setAnswer, this.server.setAnswer);
         this.socket.on(Events.disconnect, this.disconnect);
 
-        this.socket.emit(Events.setState, States.start);
+        this.socket.emit(Events.setState, ConnectionState.StartUser);
     }
 
     /**
@@ -44,7 +44,7 @@ export class UserConnection extends Connection {
     }
 
     public start(): void {
-        this.socket.emit(Events.setState, States.start);
+        this.socket.emit(Events.setState, ConnectionState.StartUser);
     }
 
     public setUserName = (userName: string) => {
@@ -55,7 +55,7 @@ export class UserConnection extends Connection {
 
     public activate(): void {
         this.active = true;
-        this.socket.emit(Events.setState, States.activeUser);
+        this.socket.emit(Events.setState, ConnectionState.ActiveUser);
     }
 
     public disconnect = () => {

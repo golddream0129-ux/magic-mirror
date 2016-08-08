@@ -6,7 +6,7 @@ import * as Vue from "vue";
 import {Category} from "./model/Category";
 import {Answer} from "./model/Answer";
 import {Fortune} from "./model/Fortune";
-import {Events, States} from "../../server/connection/Connection";
+import {Events, ConnectionState} from "../../server/connection/Connection";
 import Socket = SocketIOClient.Socket;
 
 export const PAGE_CATEGORY_SELECT = "categorySelect";
@@ -113,13 +113,13 @@ export class App {
                     return app.getFortune(this.currentCategory.name, this.answers);
                 },
                 displayStart: function () {
-                    return (States.start === this.state);
+                    return (ConnectionState.StartUser === this.state);
                 },
                 displayMain: function () {
-                    return (States.host === this.state || States.activeUser === this.state);
+                    return (ConnectionState.Host === this.state || ConnectionState.ActiveUser === this.state);
                 },
                 displayPending: function () {
-                    return (States.pendingUser === this.state);
+                    return (ConnectionState.PendingUser === this.state);
                 },
                 displayCategorySelector: function () {
                     return (this.page === PAGE_CATEGORY_SELECT);
@@ -147,7 +147,7 @@ export class App {
         console.log("New state: " + state);
         this._vue.$set("state", state);
         switch (state) {
-            case States.start:
+            case ConnectionState.StartUser:
                 this._vue.$set("userName", null);
         }
     };

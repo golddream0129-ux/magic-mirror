@@ -8,7 +8,7 @@ import * as http from "http";
 import * as socketIO from "socket.io";
 import {HostConnection} from "./connection/HostConnection";
 import {UserConnection} from "./connection/UserConnection";
-import {Connection, States, Events} from "./connection/Connection";
+import {Connection, ConnectionState, Events} from "./connection/Connection";
 import Socket = SocketIOClient.Socket;
 
 export class Server {
@@ -284,7 +284,7 @@ export class Server {
 
         // Either remove the active user
         if (connection === this.activeUserConnection) {
-            connection.socket.emit(Events.setState, States.disconnected);
+            connection.socket.emit(Events.setState, ConnectionState.Disconnected);
             this.activateNextUser();
             return;
         }
@@ -340,7 +340,7 @@ export class Server {
         console.log("Adding user connection " + Server.getConnectionIdentifier(connection) + " to pending queue");
         this.pendingUserConnections.push(connection);
         this.updateQueuePositions();
-        connection.socket.emit(Events.setState, States.pendingUser);
+        connection.socket.emit(Events.setState, ConnectionState.PendingUser);
 
         if (undefined === this.activeUserConnection) {
             this.activateNextUser();

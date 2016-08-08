@@ -53,10 +53,10 @@ export const Events = {
     disconnect: "disconnect",
 };
 
-export const States = {
-    host: "host",
-    start: "user input",
-    pendingUser: "pending user",
-    activeUser: "active user",
-    disconnected: "disconnected",
-};
+export enum ConnectionState {
+    Host,
+    StartUser,
+    PendingUser,
+    ActiveUser,
+    Disconnected
+}
