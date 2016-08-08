@@ -9,6 +9,7 @@ import * as socketIO from "socket.io";
 import {HostConnection} from "./connection/HostConnection";
 import {UserConnection} from "./connection/UserConnection";
 import {Connection, States, Events} from "./connection/Connection";
+import Socket = SocketIOClient.Socket;
 
 export class Server {
 
@@ -116,6 +117,48 @@ export class Server {
         this.activeUserConnection.activate();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Event emitters
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Emits the given event to the relevant connections
+     *
+     * @param {string} eventName
+     * @param {Array} args
+     */
+    emit(eventName: string, args: any[]) {
+
+        let socket: SocketIO.Socket;
+
+        // Add the event name to the beginning of the args array
+        args.unshift(eventName);
+
+        // Send to host connections
+        for (let i in this.hostConnections) {
+            socket = this.hostConnections[i].socket;
+            socket.emit.apply(socket, args);
+        }
+
+        // Send to active user
+        socket = this.activeUserConnection.socket;
+        socket.emit.apply(socket, args);
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Connection event handlers
+    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Sends the selected connection to all the relevant connections
+     *
+     * @param {string} categoryName
+     */
+    setCategory = (categoryName: any) => {
+        let eventName = Events.setCategory;
+        let args = [categoryName];
+
+        this.emit(eventName, args);
+    };
 
     // -----------------------------------------------------------------------------------------------------------------
     // Connection modification methods
