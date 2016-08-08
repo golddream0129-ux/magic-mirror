@@ -56,10 +56,10 @@ export class App {
             console.log("ID: " + id);
         });
 
-        this.socket.on("reset", this.reset);
-        this.socket.on("setQueuePosition", this.setQueuePosition);
-        this.socket.on("setCategory", this.setCategory);
-        this.socket.on("setAnswer", this.setAnswer);
+        this.socket.on("reset", this.resetHandler);
+        this.socket.on("setQueuePosition", this.setQueuePositionHandler);
+        this.socket.on("setCategory", this.setCategoryHandler);
+        this.socket.on("setAnswer", this.setAnswerHandler);
     }
 
     private initializeVue() {
@@ -139,7 +139,7 @@ export class App {
         }
     };
 
-    reset = () => {
+    resetHandler = () => {
         this._vue.$set("page", PAGE_CATEGORY_SELECT);
         this._vue.$set("currentCategory", null);
         this._vue.$set("currentQuestionNo", null);
@@ -151,17 +151,17 @@ export class App {
      *
      * @param position
      */
-    setQueuePosition = (position: number) => {
+    setQueuePositionHandler = (position: number) => {
         this._vue.$set("queuePosition", position);
     };
 
-    setCategory = (categoryName: string) => {
+    setCategoryHandler = (categoryName: string) => {
         this._vue.$set("currentCategory", this.categories[categoryName]);
         this._vue.$set("currentQuestionNo", 1);
         this._vue.$set("page", PAGE_QUESTION_ASKER);
     };
 
-    setAnswer = (questionNo, answerKey) => {
+    setAnswerHandler = (questionNo, answerKey) => {
         console.log("setAnswer", questionNo, answerKey);
         Vue.set(this._vue.$data.answers, questionNo, answerKey);
         this._vue.$set("currentQuestionNo", this._vue.$get("currentQuestionNo") + 1);

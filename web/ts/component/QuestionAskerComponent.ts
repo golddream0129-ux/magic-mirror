@@ -18,7 +18,7 @@ export var CategorySelectorComponent = Vue.extend({
     props: ["question"],
     methods: {
         answerSelected: function (answer: Answer) {
-            this.$root.setAnswer(answer);
+            this.$root.setAnswerHandler(answer);
         }
     },
 });
