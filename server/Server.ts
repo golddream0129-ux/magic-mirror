@@ -165,14 +165,12 @@ export class Server {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Emits the given event to the host & active user connections
+     * Emits the given event to the host connections
      *
      * @param {string} eventName
      * @param {Array} args
      */
-    emitToHostAndActiveUserConnections(eventName: string, args: any[]) {
-
-        let socket: SocketIO.Socket;
+    emitToHostConnections(eventName: string, args: any[]) {
 
         // Add the event name to the beginning of the args array
         args.unshift(eventName);
@@ -182,10 +180,34 @@ export class Server {
             let socket: SocketIO.Socket = this.hostConnections[i].socket;
             socket.emit.apply(socket, args);
         }
+    };
+
+    /**
+     * Emits the given event to the host & active user connections
+     *
+     * @param {string} eventName
+     * @param {Array} args
+     */
+    emitToActiveUserConnections(eventName: string, args: any[]) {
+
+        // Add the event name to the beginning of the args array
+        args.unshift(eventName);
 
         // Send to active user
-        socket = this.activeUserConnection.socket;
+        let socket: SocketIO.Socket = this.activeUserConnection.socket;
         socket.emit.apply(socket, args);
+    };
+
+    /**
+     * Emits the given event to the host & active user connections
+     *
+     * @param {string} eventName
+     * @param {Array} args
+     */
+    emitToHostAndActiveUserConnections(eventName: string, args: any[] = []) {
+
+        this.emitToHostConnections(eventName, args);
+        this.emitToActiveUserConnections(eventName, args);
     };
 
     // -----------------------------------------------------------------------------------------------------------------
