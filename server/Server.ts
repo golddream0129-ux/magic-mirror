@@ -50,7 +50,7 @@ export class Server {
      * Adds handlers for socket
      */
     addSocketConnectionHandler(): void {
-        this._io.on("connection", this.connectionHandler);
+        this._io.on(Events.connect, this.connectionHandler);
     }
 
     connectionHandler = (socket: SocketIO.Socket) => {

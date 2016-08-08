@@ -34,6 +34,7 @@ export abstract class Connection {
 export type ConnectionType = "host" | "user";
 
 export const Events = {
+    connect: "connection",
     setState: "setState",
     disconnect: "disconnect",
 };
