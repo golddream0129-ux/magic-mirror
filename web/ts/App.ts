@@ -17,6 +17,7 @@ export const PAGE_QUESTION_ASKER = "questionAsker";
  */
 export class App {
     public static registerComponents() {
+        require("./component/UserFormComponent");
         require("./component/CategorySelectorComponent");
         require("./component/QuestionAskerComponent");
         require("./component/FortuneComponent");

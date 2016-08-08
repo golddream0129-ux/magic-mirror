@@ -10,13 +10,7 @@
 <div id="app">
     <div class="start-screen" v-if="displayStart()">
         <div class="content">
-            <form action="#">
-                <p>
-                <label for="name">Tell me thy name?</label>
-                <input type="text" id="name" name="name"/>
-                </p>
-                <input class="btn btn-primary" type="submit" value="Work your magic!"/>
-            </form>
+            <user-form></user-form>
         </div>
     </div>
     <div class="wait-screen" v-if="displayPending()">
