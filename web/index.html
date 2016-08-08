@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale = 1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="viewport" content="width=device-width,initial-scale = 1.0,maximum-scale=1.0,user-scalable=no"/>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/main.js"></script>
     <link rel="stylesheet" type="text/css" href="css/main.min.css">
 </head>
 <body>
 <div id="app">
-    <category-icon :category="currentCategory"></category-icon>
-    <category-icon :category="currentCategory"></category-icon>
-    <category-icon :category="currentCategory"></category-icon>
-    <category-icon :category="currentCategory"></category-icon>
+    <div v-if="displayActive()">
+        <category-icon :category="currentCategory"></category-icon>
+        <category-icon :category="currentCategory"></category-icon>
+        <category-icon :category="currentCategory"></category-icon>
+        <category-icon :category="currentCategory"></category-icon>
 
-    <category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>
-    <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
-    <fortune :fortune="getFortune()" v-if="displayFortune()"></fortune>
+        <category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>
+        <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
+        <fortune :fortune="getFortune()" v-if="displayFortune()"></fortune>
+    </div>
+    <div v-if="displayPending()">
+        Pending
+    </div>
 </div>
 </body>
 </html>

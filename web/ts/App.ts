@@ -6,6 +6,7 @@ import * as Vue from "vue";
 import {Category} from "./model/Category";
 import {Answer} from "./model/Answer";
 import {Fortune} from "./model/Fortune";
+import {Events, States} from "../../server/connection/Connection";
 import Socket = SocketIOClient.Socket;
 
 export const PAGE_CATEGORY_SELECT = "categorySelect";
@@ -47,6 +48,11 @@ export class App {
 
         this.initializeVue();
 
+        this.socket.on(Events.setState, (state) => {
+            console.log("New state: " + state);
+            this._vue.$set("state", state);
+        });
+
         this.socket.on("reset", this.reset);
         this.socket.on("setCategory", this.setCategory);
         this.socket.on("setAnswer", this.setAnswer);
@@ -62,12 +68,13 @@ export class App {
             data: {
                 app: this,
                 page: PAGE_CATEGORY_SELECT,
+                state: null,
                 currentCategory: null,
                 currentQuestionNo: null,
                 answers: {},
             },
             methods: {
-                reset: function() {
+                reset: function () {
                     socket.emit("reset");
                 },
                 setCategory: function (category: Category) {
@@ -84,6 +91,12 @@ export class App {
                 },
                 getFortune: function () {
                     return app.getFortune(this.currentCategory.name, this.answers);
+                },
+                displayActive: function () {
+                    return (States.host === this.state || States.activeUser === this.state);
+                },
+                displayPending: function () {
+                    return (States.pendingUser === this.state);
                 },
                 displayCategorySelector: function () {
                     return (this.page === PAGE_CATEGORY_SELECT);

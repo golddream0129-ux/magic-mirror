@@ -19,7 +19,9 @@ export class UserConnection extends Connection {
      * Sets the state of the client to 'host'
      */
     init(): void {
-        this.socket.on("disconnect", this.disconnect);
+        this.socket.on("disconnect", () => {
+            this.server.dropConnection(this);
+        });
 
         this.socket.emit(Events.setState, States.pendingUser);
     }
@@ -33,14 +35,10 @@ export class UserConnection extends Connection {
         return "user";
     }
 
-    activate(): void {
+    public activate(): void {
         this.active = true;
         this.socket.emit(Events.setState, States.activeUser);
     }
-
-    disconnect = () => {
-        this.server.dropConnection(this);
-    };
 
     set active(value: boolean) {
         this._active = value;

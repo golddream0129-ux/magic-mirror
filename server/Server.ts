@@ -16,7 +16,7 @@ export class Server {
     private _server: http.Server;
     private _io: SocketIO.Server;
 
-    private _hostConnections: HostConnection[];
+    private _hostConnections: HostConnection[] = [];
     private _activeUserConnection: UserConnection;
     private _pendingUserConnections: UserConnection[] = [];
 
@@ -103,14 +103,6 @@ export class Server {
             this.dropHostConnection(connection);
         } else if (connection instanceof UserConnection) {
             this.dropUserConnection(connection);
-        }
-    }
-
-    dropHostConnection(connection: HostConnection): void {
-        for (let i = this.hostConnections.length - 1; i >= 0; i--) {
-            if (connection === this.hostConnections[1]) {
-                this.hostConnections.splice(i, 1);
-            }
         }
     }
 
