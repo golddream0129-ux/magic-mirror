@@ -65,10 +65,10 @@ export class App {
         // @todo - Remove debugging lines
         this.socket.on("id", this.setIdHandler);
 
-        this.socket.on("reset", this.resetHandler);
-        this.socket.on("setQueuePosition", this.setQueuePositionHandler);
-        this.socket.on("setCategory", this.setCategoryHandler);
-        this.socket.on("setAnswer", this.setAnswerHandler);
+        this.socket.on(Events.reset , this.resetHandler);
+        this.socket.on(Events.setQueuePosition, this.setQueuePositionHandler);
+        this.socket.on(Events.setCategory, this.setCategoryHandler);
+        this.socket.on(Events.setAnswer, this.setAnswerHandler);
     }
 
     private initializeVue() {

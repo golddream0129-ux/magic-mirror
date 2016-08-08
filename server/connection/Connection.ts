@@ -44,6 +44,7 @@ export type ConnectionType = "host" | "user";
 
 export const Events = {
     connect: "connection",
+    reset: "reset",
     setState: "setState",
     setUserName: "setUserName",
     setQueuePosition: "setQueuePosition",
