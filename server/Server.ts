@@ -71,7 +71,6 @@ export class Server {
      */
     addStaticFileHandler(): void {
         let staticServer: core.Handler = express.static(__dirname + "/../web");
-        console.log(staticServer);
         // noinspection TypeScriptValidateTypes
         this._app.use(staticServer);
     }
