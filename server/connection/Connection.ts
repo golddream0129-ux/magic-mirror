@@ -13,6 +13,11 @@ export abstract class Connection {
 
     abstract init(): void;
 
+    /**
+     * @constructor
+     * @param {Server} _server
+     * @param {SocketIO.Socket} _socket
+     */
     constructor(private _server: Server, private _socket: SocketIO.Socket) {
         console.log("a " + this.getType() + " connected from " + _socket.client.conn.remoteAddress);
 
