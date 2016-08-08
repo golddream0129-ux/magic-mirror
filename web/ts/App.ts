@@ -158,6 +158,7 @@ export class App {
         this._vue.$set("state", state);
         switch (state) {
             case ConnectionState.StartUser:
+                // Clear the user's name
                 this._vue.$set("userName", null);
         }
     };
