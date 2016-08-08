@@ -8,6 +8,12 @@
 </head>
 <body>
 <div id="app">
+    <div class="start-screen" v-if="displayStart()">
+        <form action="#">
+            <label for="name">What is your name?</label>
+            <input type="text" id="name" name="name"/>
+        </form>
+    </div>
     <div class="wait-screen" v-if="displayPending()">
         <div class="content">
             <p>Please wait...</p>
