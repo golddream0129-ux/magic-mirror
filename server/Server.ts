@@ -167,7 +167,7 @@ export class Server {
      * Emits the given event to the host connections
      *
      * @param {string} eventName
-     * @param {Array} args
+     * @param {any[]} args
      */
     emitToHostConnections(eventName: string, args: any[]) {
 
@@ -185,7 +185,7 @@ export class Server {
      * Emits the given event to the host & active user connections
      *
      * @param {string} eventName
-     * @param {Array} args
+     * @param {any[]} args
      */
     emitToActiveUserConnections(eventName: string, args: any[]) {
 
@@ -201,7 +201,7 @@ export class Server {
      * Emits the given event to the host & active user connections
      *
      * @param {string} eventName
-     * @param {Array} args
+     * @param {any[]} args
      */
     emitToHostAndActiveUserConnections(eventName: string, args: any[] = []) {
 
