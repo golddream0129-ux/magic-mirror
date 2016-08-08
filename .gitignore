@@ -3,7 +3,5 @@
 /dist/
 /node_modules/
 /server/**/*.js
-/spec/js/
-/src/js/
 /typings/
 gulp.config.js

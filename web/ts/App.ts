@@ -1,11 +1,10 @@
 "use strict";
 
+import * as Vue from "vue";
 import {Category} from "./model/Category";
 import {Answer} from "./model/Answer";
 import {Fortune} from "./model/Fortune";
 import Socket = SocketIOClient.Socket;
-
-let Vue = require("../node_modules/vue/dist/vue");
 
 export const PAGE_CATEGORY_SELECT = "categorySelect";
 export const PAGE_QUESTION_ASKER = "questionAsker";

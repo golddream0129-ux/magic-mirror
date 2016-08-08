@@ -1,4 +1,4 @@
-///<reference path="../typings/index.d.ts"/>
+///<reference path="../../typings/index.d.ts"/>
 
 "use strict";
 
@@ -7,6 +7,8 @@ import {CategoriesData} from "./data/CategoriesData";
 import {FortunesData} from "./data/FortunesData";
 
 window.onload = function () {
+    console.log("Loaded");
+
     let app = new App("body");
 
     for (let categoryName in CategoriesData) {

@@ -18,8 +18,9 @@ var gulp       = require('gulp'),
     tsc        = require('gulp-typescript'),
     tslint     = require('gulp-tslint');
 
-var config       = new Config(),
-    tsSrcProject = tsc.createProject('tsconfig.json');
+var config          = new Config(),
+    tsSrcProject    = tsc.createProject('tsconfig.json'),
+    tsServerProject = tsc.createProject('tsconfig.json');
 
 gulp.task('setup', function () {
     return gulp.src(['./gulp.config.ts'])
@@ -29,113 +30,39 @@ gulp.task('setup', function () {
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// src:* tasks
+// build:web tasks
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * src:clean
+ * Clean build web directory ready for build
+ *
+ * Task: build:web:clean
  */
-gulp.task('src:clean', function () {
-    var srcGeneratedFiels = config.srcAllJavaScript.concat(config.srcAllJavaScriptMaps);
-
-    // delete the files
-    return del(srcGeneratedFiels);
+gulp.task("build:web:clean", function () {
+    return del.sync(config.buildDir + "/web/**/*");
 });
 
 /**
- * src:lint
+ * Task: build:web:html
  */
-gulp.task('src:lint', function () {
-    return gulp.src(config.srcAllTypeScript)
-        .pipe(tslint())
-        .pipe(tslint.report({formatter: 'prose'}));
+gulp.task("build:web:html", function () {
+    return gulp.src(config.webDir + "/**/*.html")
+        .pipe(gulp.dest(config.buildDir + "/web"));
 });
 
 /**
- * Copy the required vendor files to the build directory
+ * Task: build:web:images
  */
-gulp.task('src:vendor', ['src:clean'], function () {
-    return gulp.src(config.vendorJsFiles, {base: '.'})
-        .pipe(gulp.dest(config.buildJsDir));
+gulp.task("build:web:images", function () {
+    return gulp.src(config.webDir + "/imgs/**/*")
+        .pipe(gulp.dest(config.buildDir + "/web/imgs"));
 });
 
 /**
- * src:compile
+ * Task: build:web:css
  */
-gulp.task('src:compile', ['src:clean'], function () {
-    var srcTsFiles = config.srcAllTypeScript;
-
-    var tscResult = gulp.src(srcTsFiles)
-        .pipe(sourcemaps.init())
-        .pipe(tsc(tsSrcProject));
-
-    tscResult.dts.pipe(gulp.dest(config.srcTsOutputPath));
-
-    return tscResult.js
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.srcTsOutputPath));
-});
-
-/**
- * src:refs:gen
- */
-gulp.task('src:refs:gen', function () {
-    var target  = gulp.src(config.appTypeScriptReferences);
-    var sources = gulp.src(config.srcAllTypeScript, {read: false});
-
-    //noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
-    return target
-        .pipe(inject(sources, {
-            starttag : '// {',
-            endtag   : '// }',
-            transform: function (filepath) {
-                return '/// <reference path="..' + filepath + '" />';
-            }
-        }))
-        .pipe(gulp.dest(config.typings));
-});
-
-gulp.task('src', ['src:lint', 'src:refs:gen', 'src:vendor', 'src:compile']);
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// Build tasks
-//----------------------------------------------------------------------------------------------------------------------
-
-/**
- * dist:clean
- */
-gulp.task('dist:clean', function () {
-    del.sync(config.distDir + "/**/*");
-});
-
-gulp.task('dist:server', ['dist:clean'], function () {
-    var serverTsFiles = config.serverAllTypeScript;
-
-    var tscResult = gulp.src(serverTsFiles)
-        .pipe(tsc(tsSrcProject));
-
-    // return tscResult.dts.pipe(gulp.dest(config.serverTsOutputPath));
-
-    return tscResult.js
-        // .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.serverTsOutputPath));
-});
-
-gulp.task('dist:html', ['dist:clean'], function () {
-    return gulp.src(config.htmlFiles)
-        .pipe(gulp.dest(config.distDir));
-});
-
-gulp.task('dist:images', ['dist:clean'], function () {
-    return gulp.src(config.imgFiles, {base: "web"})
-        .pipe(gulp.dest(config.distDir));
-});
-
-gulp.task('dist:styles', ['dist:clean'], function () {
-    console.log(config.lessMainFile);
-    return gulp.src(config.lessMainFile)
-        .pipe(debug())
+gulp.task("build:web:css", function () {
+    return gulp.src(config.webDir + "/less/main.css")
         .pipe(less().on('error', function (err) {
             console.log(err);
         }))
@@ -143,38 +70,204 @@ gulp.task('dist:styles', ['dist:clean'], function () {
             console.log(err);
         }))
         .pipe(rename({suffix: '.min'}))
-        .pipe(gulp.dest(config.distDir + "/css"));
+        .pipe(gulp.dest(config.buildDir + "/web/css"));
 });
 
-gulp.task('dist:fonts', ['dist:clean'], function () {
-    console.log(config.fontFiles);
-    return gulp.src(config.fontFiles)
-        .pipe(gulp.dest(config.distDir + '/fonts'));
-});
 
-gulp.task('dist:src', ['dist:clean', 'src']);
+gulp.task("build:web:fonts", function () {
+    return gulp.src(config.webDir + "/fonts/**/*")
+        .pipe(gulp.dest(config.buildDir + "/web/fonts"));
+});
 
 /**
- * dist:browserify
+ * Task: build:web:lint-js
  */
-gulp.task("dist:browserify", ['dist:src'], function () {
+gulp.task("build:web:lint-js", function () {
+    return gulp.src(config.webDir + "/ts/**/*.ts")
+        .pipe(tslint())
+        .pipe(tslint.report({formatter: 'prose'}));
+});
+
+/**
+ * Task: build:web:js
+ */
+gulp.task("build:web:js", ["build:web:lint-js"], function () {
+    var tscResult = gulp.src(config.webDir + "/ts/**/*.ts")
+        .pipe(sourcemaps.init())
+        .pipe(tsc(tsSrcProject));
+
+    return tscResult.js
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.buildDir + "/web/js"));
+});
+
+/**
+ * Task: build:web:ts-refs
+ */
+gulp.task("build:web:ts-refs", function () {
+    //noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
+    return gulp.src(config.typingsDir + "/app.d.ts")
+        .pipe(inject(gulp.src(config.webDir + "/ts/**/*.ts", {read: false}), {
+            starttag : '// {',
+            endtag   : '// }',
+            transform: function (filepath) {
+                return '/// <reference path="..' + filepath + '" />';
+            }
+        }))
+        .pipe(gulp.dest(config.typingsDir));
+});
+
+/**
+ * Task: build:web
+ */
+gulp.task("build:web", ["build:web:clean", "build:web:html", "build:web:images", "build:web:css", "build:web:lint-js", "build:web:js", "build:web:ts-refs"])
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// build:server tasks
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Task: build:server:clean
+ */
+gulp.task("build:server:clean", function () {
+    return del.sync(config.buildDir + "/server/**/*");
+});
+
+/**
+ * Task: build:server:js
+ */
+gulp.task("build:server:js", function () {
+    var tscResult = gulp.src(config.serverDir + "/**/*.ts")
+        .pipe(tsc(tsServerProject));
+
+    return tscResult.js
+        .pipe(gulp.dest(config.buildDir + "/server"));
+});
+
+/**
+ * Task: build:server
+ */
+gulp.task("build:server", ["build:server:clean", "build:server:js"]);
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// build tasks
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Task: build:clean
+ */
+gulp.task("build:clean", ["build:web:clean", "build:server:clean"]);
+
+/**
+ * Task: build
+ */
+gulp.task("build", ["build:web", "build:server"]);
+
+/**
+ * Task: build:watch
+ */
+gulp.task("build:watch", ["build:web", "build:server"], function () {
+    gulp.watch([config.webDir + "/**/*", config.serverDir + "/**/*"], ["build:web", "build:server"]);
+});
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Build tasks
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Task: dist:web:clean
+ */
+gulp.task('dist:web:clean', function () {
+    del.sync(config.distDir + "/web/**/*");
+});
+
+/**
+ * Task: dist:web:html
+ */
+gulp.task("dist:web:html", ["build:web:html"], function () {
+    return gulp.src(config.buildDir + "/web/**/*.html")
+        .pipe(gulp.dest(config.distDir + "/web"));
+});
+
+/**
+ * Task: dist:web:images
+ */
+gulp.task("dist:web:images", ["build:web:images"], function () {
+    return gulp.src(config.buildDir + "/web/imgs/**.*")
+        .pipe(gulp.dest(config.distDir + "/web/imgs"));
+});
+
+/**
+ * Task: dist:web:css
+ */
+gulp.task("dist:web:css", ["build:web:css"], function () {
+    return gulp.src(config.buildDir + "/web/css/**.*")
+        .pipe(gulp.dest(config.distDir + "/web/css"));
+});
+
+/**
+ * Task: dist:web:fonts
+ */
+gulp.task("dist:web:fonts", ["build:web:fonts"], function () {
+    return gulp.src(config.buildDir + "/web/fonts/**.*")
+        .pipe(gulp.dest(config.distDir + "/web/fonts"));
+});
+
+/**
+ * Task: dist:web:js
+ */
+gulp.task("dist:web:js", ["build:web:js"], function () {
     return browserify({
-        basedir     : '.',
+        basedir     : ".",
         debug       : true,
-        entries     : [config.buildJsDir + '/src/main.js'],
+        entries     : [config.buildDir + "/web/js/main.js"],
         cache       : {},
         packageCache: {}
     })
         .bundle()
-        .pipe(source('js/main.js'))
+        .pipe(source("web/js/main.js"))
         .pipe(gulp.dest(config.distDir));
 });
 
-gulp.task('dist', ['dist:server', 'dist:html', 'dist:images', 'dist:styles', 'dist:fonts', 'dist:src', 'dist:browserify']);
+/**
+ * Task: dist:web
+ */
+gulp.task("dist:web", ["dist:web:clean", "dist:web:html", "dist:web:images", "dist:web:css", "dist:web:fonts", "dist:web:js"]);
+
+/**
+ * Task: dist:server:clean
+ */
+gulp.task("dist:server:clean", function () {
+    return del.sync(config.distDir + "/server/**/*");
+});
+
+/**
+ * Task: dist:server:files
+ */
+gulp.task("dist:server:files", ["build:server"], function () {
+    return gulp.src(config.buildDir + "/server/**/*")
+        .pipe(gulp.dest(config.distDir + "/server"));
+});
+
+/**
+ * Task: dist:server
+ */
+gulp.task("dist:server", ["dist:server:clean", "dist:server:files"]);
+
+/**
+ * Task dist:clean
+ */
+gulp.task("dist:clean", ["dist:web:clean", "dist:server:clean"]);
+
+/**
+ * Task: dist
+ */
+gulp.task("dist", ["dist:web", "dist:server"]);
 
 
-gulp.task('dist:watch', ['dist'], function () {
-    return gulp.watch(config.srcAllTypeScript
-        .concat(config.webDir + "/**/*")
-        .concat(config.serverAllTypeScript), ['dist']);
+gulp.task("dist:watch", ["dist"], function () {
+    return gulp.watch([config.webDir + "/**/*", config.serverDir + "/**/*"], ['dist']);
 });

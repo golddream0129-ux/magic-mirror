@@ -1,6 +1,7 @@
-import Vue = require("../vue");
+"use strict";
+
+import * as Vue from "vue";
 import {Category} from "../model/Category";
-import {PAGE_QUESTION_ASKER} from "../App";
 
 const TEMPLATE = "<div class='category-selector'>" +
     "<header>" +

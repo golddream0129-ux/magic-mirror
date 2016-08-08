@@ -1,4 +1,6 @@
-import Vue = require("../vue");
+"use strict";
+
+import * as Vue from "vue";
 
 const TEMPLATE = "<div class='category-icon'>" +
     "<img src='imgs/icon-love.png' v-if='shouldShowCategory(\"love\")'/>" +

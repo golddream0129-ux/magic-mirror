@@ -1,4 +1,6 @@
-import Vue = require("../vue");
+"use strict";
+
+import * as Vue from "vue";
 import {Answer} from "../model/Answer";
 
 const TEMPLATE = "<div class='question-asker'>" +

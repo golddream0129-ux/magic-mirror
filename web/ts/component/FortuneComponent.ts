@@ -1,4 +1,6 @@
-import Vue = require("../vue");
+"use strict";
+
+import * as Vue from "vue";
 
 const TEMPLATE = "<div class='fortune'>" +
     "<h2>Answers</h2>" +

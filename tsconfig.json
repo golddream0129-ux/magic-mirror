@@ -4,9 +4,6 @@
         "target": "es5",
         "sourceMap": true
     },
-    "files": [
-        "src/main.ts"
-    ],
     "exclude": [
         "node_modules"
     ]
