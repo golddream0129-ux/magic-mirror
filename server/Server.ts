@@ -136,12 +136,12 @@ export class Server {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Emits the given event to the relevant connections
+     * Emits the given event to the host & active user connections
      *
      * @param {string} eventName
      * @param {Array} args
      */
-    emit(eventName: string, args: any[]) {
+    emitToHostAndActiveUserConnections(eventName: string, args: any[]) {
 
         let socket: SocketIO.Socket;
 
@@ -169,7 +169,7 @@ export class Server {
      * @param {string} categoryName
      */
     setCategory = (categoryName: any) => {
-        this.emit(Events.setCategory, [categoryName]);
+        this.emitToHostAndActiveUserConnections(Events.setCategory, [categoryName]);
     };
 
     /**
@@ -179,7 +179,7 @@ export class Server {
      * @param {string} answerKey
      */
     setAnswer = (questionNo: number, answerKey) => {
-        this.emit(Events.setAnswer, [questionNo, answerKey]);
+        this.emitToHostAndActiveUserConnections(Events.setAnswer, [questionNo, answerKey]);
     };
 
     // -----------------------------------------------------------------------------------------------------------------
