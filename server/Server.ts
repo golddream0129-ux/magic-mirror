@@ -116,6 +116,16 @@ export class Server {
         this.activeUserConnection.activate();
     }
 
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Connection modification methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Drops connections
+     *
+     * @param connection
+     */
     dropConnection(connection: Connection) {
         console.log("Dropping connection");
 

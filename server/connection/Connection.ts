@@ -35,6 +35,7 @@ export type ConnectionType = "host" | "user";
 
 export const Events = {
     setState: "setState",
+    disconnect: "disconnect",
 };
 
 export const States = {
