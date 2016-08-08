@@ -306,6 +306,12 @@ export class Server {
     private addPendingUserConnection(connection: UserConnection): void {
         console.log("Adding user connection " + Server.getConnectionIdentifier(connection) + " to pending queue");
         this.pendingUserConnections.push(connection);
+        this.updateQueuePositions();
+        connection.socket.emit(Events.setState, States.pendingUser);
+
+        if (undefined === this.activeUserConnection) {
+            this.activateNextUser();
+        }
     }
 
     set pendingUserConnections(value: UserConnection[]) {
