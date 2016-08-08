@@ -67,10 +67,10 @@ export class Server {
             this.addPendingUserConnection(userConnection);
             connection = userConnection;
 
+            userConnection.start();
+
             // @todo - Remove debugging line
             this.dumpPendingConnections();
-
-            userConnection.start();
         }
 
         connection.init();
