@@ -7,7 +7,6 @@ import {CategoriesData} from "./data/CategoriesData";
 import {FortunesData} from "./data/FortunesData";
 
 window.onload = function () {
-    console.log("Loaded");
 
     let app = new App("body");
 
