@@ -60,7 +60,7 @@ export class App {
 
         this.initializeVue();
 
-        this.socket.on(Events.setState, this.setState);
+        this.socket.on(Events.setState, this.setStateHandler);
 
         // @todo - Remove debugging lines
         this.socket.on("id", this.setIdHandler);
@@ -139,7 +139,11 @@ export class App {
         window["vue"] = this._vue;
     }
 
-    setState = (state) => {
+    // -----------------------------------------------------------------------------------------------------------------
+    // Event handlers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    setStateHandler = (state: string) => {
         console.log("New state: " + state);
         this._vue.$set("state", state);
         switch (state) {
@@ -147,10 +151,6 @@ export class App {
                 this._vue.$set("userName", null);
         }
     };
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // Event handlers
-    // -----------------------------------------------------------------------------------------------------------------
 
     setIdHandler = (id: string) => {
         console.log("Event: id", id);
