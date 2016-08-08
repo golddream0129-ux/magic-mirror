@@ -9,10 +9,15 @@
 <body>
 <div id="app">
     <div class="start-screen" v-if="displayStart()">
-        <form action="#">
-            <label for="name">What is your name?</label>
-            <input type="text" id="name" name="name"/>
-        </form>
+        <div class="content">
+            <form action="#">
+                <p>
+                <label for="name">Tell me thy name?</label>
+                <input type="text" id="name" name="name"/>
+                </p>
+                <input class="btn btn-primary" type="submit" value="Work your magic!"/>
+            </form>
+        </div>
     </div>
     <div class="wait-screen" v-if="displayPending()">
         <div class="content">

@@ -1,5 +1,7 @@
 @import "../../node_modules/bootstrap/less/bootstrap";
 
+@brand-primary: #f00;
+
 @font-face {
   font-family: 'Uncial Antiqua';
   font-style: normal;
@@ -42,7 +44,7 @@ body {
   overflow: hidden;
 }
 
-.wait-screen {
+.screen {
   .full-height;
   .full-width;
   display: table;
@@ -53,6 +55,26 @@ body {
     text-align: center;
     vertical-align: middle;
   }
+}
+
+.start-screen {
+  .screen;
+
+  label {
+    margin-bottom: 10px;
+  }
+  input[type=text] {
+    margin-bottom: 30px;
+    outline: none; /* Removed glow */
+    background-color: #000;
+    border-width: 0 0 1px;
+    border-style: solid;
+    text-align: center;
+  }
+}
+
+.wait-screen {
+  .screen;
 
   .queue-position {
     display: block;
@@ -60,76 +82,80 @@ body {
   }
 }
 
-.category-selector, .question-asker {
-  .full-height;
-  .full-width;
+.main-screen {
+  .screen;
 
-  header {
-    position: absolute;
-    display: table;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    height: 10%;
-  }
+  .category-selector, .question-asker {
+    .full-height;
+    .full-width;
 
-  h2 {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-    font-size: 1.2em;
-  }
-
-  ul {
-    position: absolute;
-    top: 10%;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  li {
-    display: table;
-    float: left;
-    height: 50%;
-    width: 50%;
-    padding: 0;
-    text-align: center;
-    font-size: 1.6em;
-
-    @media (max-width: 500px) {
-      height: 25%;
+    header {
+      position: absolute;
+      display: table;
+      top: 0;
       width: 100%;
+      margin: 0;
+      padding: 0;
+      height: 10%;
+    }
+
+    h2 {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 1.2em;
+    }
+
+    ul {
+      position: absolute;
+      top: 10%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      display: table;
+      float: left;
+      height: 50%;
+      width: 50%;
+      padding: 0;
+      text-align: center;
+      font-size: 1.6em;
+
+      @media (max-width: 500px) {
+        height: 25%;
+        width: 100%;
+      }
+    }
+
+    .category, .answer {
+      display: table-cell;
+      vertical-align: middle;
     }
   }
 
-  .category, .answer {
-    display: table-cell;
-    vertical-align: middle;
-  }
-}
+  .category-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
 
-.category-icon {
-  position: absolute;
-  left: 0;
-  top: 0;
+    &:nth-of-type(2), &:nth-of-type(4) {
+      left: auto;
+      right: 0;
+    }
 
-  &:nth-of-type(2), &:nth-of-type(4) {
-    left: auto;
-    right: 0;
-  }
+    &:nth-of-type(3), &:nth-of-type(4) {
+      top: auto;
+      bottom: 0;
+    }
 
-  &:nth-of-type(3), &:nth-of-type(4) {
-    top: auto;
-    bottom: 0;
-  }
-
-  img {
-    max-width: 100px;
-    max-height: 100px;
+    img {
+      max-width: 100px;
+      max-height: 100px;
+    }
   }
 }
