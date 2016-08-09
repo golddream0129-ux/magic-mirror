@@ -1,3 +1,5 @@
+///<reference path="../../typings/index.d.ts"/>
+
 /**
  * Main client side App class
  *
