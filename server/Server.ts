@@ -39,6 +39,12 @@ export class Server {
     private _queuedUserConnections: UserConnection[] = [];
 
     /**
+     * @type UserConnection
+     * @private
+     */
+    private _activeUserConnection: UserConnection;
+
+    /**
      * @constructor
      */
     constructor() {
@@ -78,6 +84,10 @@ export class Server {
         this._io.on(Events.Connect, this.newConnectionHandler);
     }
 
+    /**
+     * Handles all new connections
+     * @param socket
+     */
     newConnectionHandler = (socket: SocketIO.Socket) => {
 
         let connection: Connection;
@@ -94,6 +104,23 @@ export class Server {
 
         connection.init();
     };
+
+    /**
+     * Emits the give event to all user connections
+     *
+     * @param args
+     */
+    emitToAllUsers(...args: any[]) {
+        console.log("emitting " + args[0] + " to all users", args.slice(1));
+        console.log(this._queuedUserConnections.length);
+        if (this._activeUserConnection) {
+            this._activeUserConnection.emit.apply(this._activeUserConnection, args);
+        }
+        for (let i = 0; i < this._queuedUserConnections.length; i++) {
+            let userConnection = this._queuedUserConnections[i];
+            userConnection.emit.apply(userConnection, args);
+        }
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     // Getters & Setters
@@ -164,6 +191,10 @@ export class Server {
         console.log("dropping host connection " + connection.getIdentifierString());
         delete this._hostConnections[connection.id];
         this.dumpHostConnections();
+
+        if (!Object.keys(this._hostConnections).length) {
+            this.emitToAllUsers(Events.MirrorOffline);
+        }
     }
 
     /**

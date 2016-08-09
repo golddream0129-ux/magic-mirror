@@ -27,6 +27,7 @@ export class UserConnection extends Connection {
      * Moves user connection from new connections to queue
      */
     joinQueue = () => {
+        console.log("adding user connection to queue - " + this.getIdentifierString());
         this._server.addQueuedUserConnection(this);
     }
 }
