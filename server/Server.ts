@@ -187,6 +187,7 @@ export class Server {
         // Offer to the next user
         if (!ready) {
             this.offerToNextUser();
+            return;
         }
 
 
