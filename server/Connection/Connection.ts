@@ -56,7 +56,7 @@ export abstract class Connection {
 
 export type ConnectionType = "host" | "user";
 
-export enum Events {
-    ID,
-    ClientType,
-}
+export const Events = {
+    ID: "id",
+    ClientType: "clientType",
+};
