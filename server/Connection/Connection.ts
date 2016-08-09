@@ -51,6 +51,13 @@ export abstract class Connection {
      */
     protected abstract addHandlers(socket: SocketIO.Socket);
 
+    /**
+     * Disconnects the socket connection
+     */
+    public disconnect(): void {
+        this._socket.disconnect(true);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------------------------------------------------
