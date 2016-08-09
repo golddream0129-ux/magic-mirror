@@ -181,7 +181,7 @@ export class Server {
      */
     public addQueuedUserConnection(connection: UserConnection) {
         console.log("removing connection " + connection.getIdentifierString() + " from new user connections");
-        this._newUserConnections[connection.id] = undefined;
+        delete this._newUserConnections[connection.id];
         console.log("adding connection " + connection.getIdentifierString() + " to. user queue");
         this._queuedUserConnections.push(connection);
 
