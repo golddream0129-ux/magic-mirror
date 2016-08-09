@@ -8,7 +8,7 @@ import {FortunesData} from "./data/FortunesData";
 
 window.onload = function () {
 
-    let app = new App("body");
+    let app = new App("#app");
 
     for (let categoryName in CategoriesData) {
         app.addCategory(CategoriesData[categoryName]);
