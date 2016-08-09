@@ -48,22 +48,23 @@ export class App {
 
         this._socket = io();
 
-        this._socket.on(Events.ClientType, (type: ConnectionType) => {
-            console.log("Event: " + Events.ClientType, type);
-            this.setContextFor(type);
+        this._socket.on(Events.ClientType, (type: ConnectionType, id: string) => {
+            console.log("Event: " + Events.ClientType, type, id);
+            this.setContextFor(type, id);
         });
     }
 
     /**
      * Sets the context based on the connection type
      *
-     * @param type
+     * @param {string} type
+     * @param {string} id
      */
-    setContextFor(type: ConnectionType): void {
+    setContextFor(type: ConnectionType, id: string): void {
         console.log("Setting context for " + type);
         switch (type) {
             case "host":
-                this._context = new HostContext(this._el, this._socket);
+                this._context = new HostContext(this._el, this._socket, id);
                 return;
             default:
                 throw "Unknown type - " + type;
