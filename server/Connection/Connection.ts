@@ -123,6 +123,7 @@ export const Events = {
     ConnectionFriendlyName: "connectionName",
     ClientType: "clientType",
     JoinQueue: "joinQueue",
+    Ready: "ready",
     Activate: "activate",
     MirrorOffline: "mirrorOffline",
     Disconnect: "disconnect",

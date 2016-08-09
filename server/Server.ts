@@ -39,6 +39,11 @@ export class Server {
     private _queuedUserConnections: UserConnection[] = [];
 
     /**
+     * Pointer used to indicate which user is currently being asked if they're ready
+     */
+    private _askingUserPointer;
+
+    /**
      * @type UserConnection
      * @private
      */
@@ -112,16 +117,16 @@ export class Server {
     /**
      * Acitivates the next user
      */
-    private activateNextUser() {
+    private requestNextUser() {
 
         // Do nothing if there aren't any queued users
         if (!this._queuedUserConnections.length) {
             return;
         }
 
-        this._activeUserConnection = this._queuedUserConnections.shift();
+        this._askingUserPointer = (this._askingUserPointer || -1) + 1;
 
-        this._activeUserConnection.emit(Events.Activate);
+        this._queuedUserConnections[this._askingUserPointer].emit(Events.Ready);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -160,7 +165,7 @@ export class Server {
 
         // If this is the first host, let waiting clients know
         if (1 === Object.keys(this._hostConnections).length) {
-            this.activateNextUser();
+            this.requestNextUser();
         }
     }
 
@@ -192,7 +197,7 @@ export class Server {
         }
 
         if (!this._activeUserConnection) {
-            this.activateNextUser();
+            this.requestNextUser();
         }
     }
 
@@ -257,7 +262,7 @@ export class Server {
 
         if (this._activeUserConnection === connection) {
             this._activeUserConnection = undefined;
-            this.activateNextUser();
+            this.requestNextUser();
         }
     }
 
