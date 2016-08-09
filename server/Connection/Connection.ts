@@ -30,7 +30,7 @@ export abstract class Connection {
         this._id = _socket.client.conn.id;
 
         this._socket.on(Events.Disconnect, () => {
-            // this._server.disconnectionConnection(this);
+            this._server.disconnectionConnection(this);
         });
 
         this.emit(Events.ClientType, this.getType(), this.id);

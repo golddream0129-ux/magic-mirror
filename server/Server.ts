@@ -136,6 +136,119 @@ export class Server {
             return;
         }
     }
+
+    /**
+     * Drops a connection
+     *
+     * @param {Connection} connection
+     */
+    disconnectionConnection(connection: Connection) {
+        if (connection instanceof HostConnection) {
+            this.dropHostConnection(connection);
+        } else if (connection instanceof UserConnection) {
+            this.dropUserConnection(connection);
+        } else {
+            throw "Unknown connection type";
+        }
+
+        // Terminate the connection to be sure
+        connection.disconnect();
+    }
+
+    /**
+     * Drops a host connection
+     *
+     * @param {HostConnection} connection
+     */
+    private dropHostConnection(connection: HostConnection) {
+        console.log("dropping host connection " + connection.getIdentifierString());
+        delete this._hostConnections[connection.id];
+        this.dumpHostConnections();
+    }
+
+    /**
+     * Drops a user connection
+     *
+     * @param {UserConnection} connection
+     */
+    private dropUserConnection(connection: UserConnection) {
+        console.log("dropping user connection " + connection.getIdentifierString());
+
+        // Remove from new cuser connections
+        if (this._newUserConnections[connection.id]) {
+            delete this._newUserConnections[connection.id];
+        }
+        this.dumpNewUserConnections();
+
+        // Remove from queued user connections
+        for (let i = this._queuedUserConnections.length - 1; i > 0; i--) {
+            if (this._queuedUserConnections[i] === connection) {
+                this._queuedUserConnections.splice(i, 1);
+            }
+        }
+        this.dumpQueuedUserConnections();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Debugging methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpHostConnections() {
+
+        let connectionCount: number = Object.keys(this._hostConnections).length;
+
+        console.log("Host connections (" + connectionCount + ")...");
+
+        if (!connectionCount) {
+            console.log("  [None]");
+            return;
+        }
+
+        for (let i in this._hostConnections) {
+            console.log(this._hostConnections[i].getIdentifierString());
+        }
+    }
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpNewUserConnections() {
+
+        let connectionCount: number = Object.keys(this._newUserConnections).length;
+
+        console.log("New user connections (" + connectionCount + ")...");
+
+        if (!connectionCount) {
+            console.log("  [None]");
+            return;
+        }
+
+        for (let i in this._newUserConnections) {
+            console.log(this._newUserConnections[i].getIdentifierString());
+        }
+    }
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpQueuedUserConnections() {
+
+        let connectionCount: number = Object.keys(this._queuedUserConnections).length;
+
+        console.log("Queued user connections (" + connectionCount + ")...");
+
+        if (!connectionCount) {
+            console.log("  [None]");
+            return;
+        }
+
+        for (let i in this._queuedUserConnections) {
+            console.log(this._queuedUserConnections[i].getIdentifierString());
+        }
+    }
 }
 
 
