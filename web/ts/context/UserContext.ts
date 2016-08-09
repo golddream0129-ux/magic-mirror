@@ -8,6 +8,7 @@ import {ConnectingScreen} from "../component/user/ConnectingScreen";
 import {ReadyScreen} from "../component/user/ReadyScreen";
 import {PoweredByDanceScreen} from "../component/user/PoweredByDanceScreen";
 import {Events} from "../../../server/Connection/Connection";
+import {QueueingScreen} from "../component/user/QueueingScreen";
 
 export class UserContext extends ClientContext {
 
@@ -23,6 +24,7 @@ export class UserContext extends ClientContext {
      */
     protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
         socket.on(Events.MirrorOffline, this.mirrorOfflineHandler);
+        socket.on(Events.QueuePosition, this.queuePositionHandler);
         socket.on(Events.Ready, this.readyHandler);
         socket.on(Events.Activate, this.activateHandler);
     }
@@ -38,12 +40,14 @@ export class UserContext extends ClientContext {
             data: {
                 screen: UserScreen[UserScreen.EnterName],
                 userName: null,
+                queuePosition: 0,
                 ready: null,
                 mirrorOnline: true,
             },
             components: {
                 EnterName: EnterNameScreen,
                 Connecting: ConnectingScreen,
+                Queueing: QueueingScreen,
                 Ready: ReadyScreen,
                 PoweredByDance: PoweredByDanceScreen,
                 Categories: CategoriesScreen,
@@ -106,6 +110,15 @@ export class UserContext extends ClientContext {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
+     * Event: Events.QueuePosition
+     */
+    queuePositionHandler = (position: number) => {
+        console.log("Event: Events.QueuePosition");
+        this._vue.$set("queuePosition", position);
+        this._vue.$set("screen", UserScreen[UserScreen.Queueing]);
+    };
+
+    /**
      * Event: Events.Activate
      */
     activateHandler = () => {
@@ -134,6 +147,7 @@ export class UserContext extends ClientContext {
 export enum UserScreen {
     EnterName,
     Connecting,
+    Queueing,
     Ready,
     PoweredByDance,
     Categories,
