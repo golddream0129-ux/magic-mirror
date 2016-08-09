@@ -21,10 +21,12 @@ export class UserContext extends ClientContext {
      * @param {string} el Element selector
      */
     protected init(el: string): void {
+
         this._vue = new Vue({
             el: el,
             data: {
                 screen: UserScreen[UserScreen.EnterName],
+                userName: null,
             },
             components: {
                 EnterName: EnterNameScreen,
