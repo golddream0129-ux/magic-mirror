@@ -171,7 +171,8 @@ export class Server {
 
     /**
      *
-     * @param ready
+     * @param {UserConnection} connection
+     * @param {boolean} ready
      */
     public userReady(connection: UserConnection, ready: boolean) {
 

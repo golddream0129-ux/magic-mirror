@@ -19,6 +19,7 @@ export class UserConnection extends Connection {
      */
     protected addHandlers(socket: SocketIO.Socket) {
         socket.on(Events.JoinQueue, this.joinQueueHandler);
+        socket.on(Events.Ready, this.readyHandler);
     }
 
     /**
@@ -29,5 +30,10 @@ export class UserConnection extends Connection {
     joinQueueHandler = () => {
         console.log("adding user connection to queue - " + this.getIdentifierString());
         this._server.addQueuedUserConnection(this);
+    };
+
+    readyHandler = (ready: boolean) => {
+        console.log("user " + (ready ? "" : "not " ) + "ready");
+        this._server.userReady(this, ready);
     };
 }
