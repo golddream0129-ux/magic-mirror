@@ -17,13 +17,18 @@ export class HostContext extends ClientContext {
     private _vue: vuejs.Vue;
 
     /**
+     * Adds socket message event handlers
+     */
+    protected addSocketEventHandlers(): void {
+        this.setFriendlyName();
+    }
+
+    /**
      * Initialises the main Vue component
      *
      * @param {string} el Element selector
      */
-    protected init(el: string): void {
-        this.setFriendlyName();
-
+    protected initialiseVue(el: string): void {
         this._vue = new Vue({
             el: el,
             data: {
@@ -37,6 +42,12 @@ export class HostContext extends ClientContext {
                 Fortune: FortuneScreen,
             }
         });
+    }
+
+    /**
+     * Adds event handlers for Vue
+     */
+    protected addVueEventHandlers(): void {
     }
 
     /**

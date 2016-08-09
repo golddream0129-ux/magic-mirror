@@ -17,12 +17,17 @@ export class UserContext extends ClientContext {
     private _vue: vuejs.Vue;
 
     /**
-     * Initialises the main Vue component
-     *
-     * @param {string} el Element selector
+     * Adds socket message event handlers
      */
-    protected init(el: string): void {
+    protected addSocketEventHandlers() {
+    }
 
+    /**
+     * Initialises the Vue
+     *
+     * @param {string} el
+     */
+    protected initialiseVue(el: string) {
         this._vue = new Vue({
             el: el,
             data: {
@@ -39,7 +44,12 @@ export class UserContext extends ClientContext {
                 Fortune: FortuneScreen,
             }
         });
+    }
 
+    /**
+     * Adds event handlers for Vue
+     */
+    protected addVueEventHandlers() {
         // We use the arrow function here, as init is called within constructor, so class arrow methods are not setup
         // yet
         this._vue.$watch("userName", (userName: string) => {
@@ -47,6 +57,11 @@ export class UserContext extends ClientContext {
         });
     }
 
+    /**
+     * Vue watch: userName
+     *
+     * @param {string} userName
+     */
     usernameUpdatedHandler(userName: string): void {
         console.log("userName set to " + userName);
 
