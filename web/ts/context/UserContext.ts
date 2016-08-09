@@ -56,9 +56,9 @@ export class UserContext extends ClientContext {
     protected addVueEventHandlers() {
         // We use the arrow function here, as init is called within constructor, so class arrow methods are not setup
         // yet
-        this._vue.$watch("userName", (userName: string) => {
-            this.usernameUpdatedHandler(userName);
-        });
+        this._vue.$watch("userName", this.usernameUpdatedHandler);
+
+        this._vue.$watch("mirrorOnline", this.mirrorOnlineToggleHandler)
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ export class UserContext extends ClientContext {
      *
      * @param {string} userName
      */
-    usernameUpdatedHandler(userName: string): void {
+    usernameUpdatedHandler = (userName: string): void => {
         console.log("userName set to " + userName);
 
         console.log("switching screen to " + UserScreen[UserScreen.Connecting]);
@@ -80,8 +80,21 @@ export class UserContext extends ClientContext {
         this.emit(Events.ConnectionFriendlyName, userName);
 
         this.emit(Events.JoinQueue);
-    }
+    };
 
+    mirrorOnlineToggleHandler = (online: boolean): void => {
+        if (!online) {
+            this._vue.$set("screen", UserScreen.Connecting);
+        }
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Socket message handlers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Event: Events.MirrorOffline
+     */
     mirrorOfflineHandler = (): void => {
         console.log("mirror offline");
 
