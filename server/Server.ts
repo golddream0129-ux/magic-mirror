@@ -105,6 +105,29 @@ export class Server {
         connection.init();
     };
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // User management methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Acitivates the next user
+     */
+    private activateNextUser() {
+
+        // Do nothing if there aren't any queued users
+        if (!this._queuedUserConnections.length) {
+            return;
+        }
+
+        this._activeUserConnection = this._queuedUserConnections.shift();
+
+        this._activeUserConnection.emit(Events.Activate);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Helper methods
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Emits the give event to all user connections
      *
@@ -134,6 +157,11 @@ export class Server {
     public addHostConnection(connection: HostConnection) {
         console.log("adding host connection " + connection.getIdentifierString());
         this._hostConnections[connection.id] = connection;
+
+        // If this is the first host, let waiting clients know
+        if (1 === Object.keys(this._hostConnections).length) {
+            this.activateNextUser();
+        }
     }
 
     /**
@@ -161,6 +189,10 @@ export class Server {
         if (!Object.keys(this._hostConnections).length) {
             connection.emit(Events.MirrorOffline);
             return;
+        }
+
+        if (!this._activeUserConnection) {
+            this.activateNextUser();
         }
     }
 
@@ -194,6 +226,10 @@ export class Server {
 
         if (!Object.keys(this._hostConnections).length) {
             this.emitToAllUsers(Events.MirrorOffline);
+
+            // And move the active user back onto the top of queue
+            this._queuedUserConnections.unshift(this._activeUserConnection);
+            this._activeUserConnection = undefined;
         }
     }
 
