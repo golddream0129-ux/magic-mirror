@@ -49,6 +49,7 @@ export class App {
         this._socket = io();
 
         this.socket.on(Events.ClientType, (type: ConnectionType) => {
+            console.log("Event: " + Events.ClientType, type);
             this.setContextFor(type);
         });
     }
@@ -59,6 +60,7 @@ export class App {
      * @param type
      */
     setContextFor(type: ConnectionType): void {
+        console.log("Setting context for " + type);
         switch (type) {
             case "host":
                 this._context = new HostContext(this);
