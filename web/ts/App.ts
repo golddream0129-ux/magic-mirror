@@ -124,13 +124,6 @@ export class App {
     }
 
     /**
-     * @return {SocketIOClient.Socket}
-     */
-    get socket(): SocketIOClient.Socket {
-        return this._socket;
-    }
-
-    /**
      * @return {ClientContext}
      */
     get context(): ClientContext {
