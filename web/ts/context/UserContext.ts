@@ -22,6 +22,7 @@ export class UserContext extends ClientContext {
      * @param {SocketIOClient.Socket} socket
      */
     protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
+        socket.on(Events.MirrorOffline, this.mirrorOfflineHandler);
     }
 
     /**
@@ -35,6 +36,7 @@ export class UserContext extends ClientContext {
             data: {
                 screen: UserScreen[UserScreen.EnterName],
                 userName: null,
+                mirrorOnline: true,
             },
             components: {
                 EnterName: EnterNameScreen,
@@ -59,6 +61,10 @@ export class UserContext extends ClientContext {
         });
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Event handlers
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Vue watch: userName
      *
@@ -74,6 +80,12 @@ export class UserContext extends ClientContext {
         this.emit(Events.ConnectionFriendlyName, userName);
 
         this.emit(Events.JoinQueue);
+    }
+
+    mirrorOfflineHandler(): void {
+        console.log("mirror offline");
+
+        this._vue.$set("mirrorOnline", false);
     }
 }
 
