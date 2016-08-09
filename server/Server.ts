@@ -50,6 +50,11 @@ export class Server {
     private _activeUserConnection: UserConnection;
 
     /**
+     * Timeout
+     */
+    private _requestNextUserTimeout;
+
+    /**
      * @constructor
      */
     constructor() {
@@ -114,19 +119,76 @@ export class Server {
     // User management methods
     // -----------------------------------------------------------------------------------------------------------------
 
+    private updateUsersQueuePosition(connection?: UserConnection): void {
+        for (let i in this._queuedUserConnections) {
+            if (!connection || connection === this._queuedUserConnections[i]) {
+                this._queuedUserConnections[i].emit(Events.QueuePosition, i);
+            }
+        }
+    }
+
     /**
-     * Acitivates the next user
+     * Activates the next user
      */
-    private requestNextUser() {
+    private offerToNextUser() {
+
+        // Wait till the last offer has expired
+        if (this._requestNextUserTimeout) {
+            return;
+        }
 
         // Do nothing if there aren't any queued users
         if (!this._queuedUserConnections.length) {
             return;
         }
 
-        this._askingUserPointer = (this._askingUserPointer || -1) + 1;
 
-        this._queuedUserConnections[this._askingUserPointer].emit(Events.Ready);
+        if (undefined === this._askingUserPointer) {
+            this._askingUserPointer = 0;
+        } else {
+            this._askingUserPointer++;
+        }
+
+        let nextUserConnection = this._queuedUserConnections[this._askingUserPointer];
+
+        if (nextUserConnection) {
+            console.log("offering turn to user at position " + this._askingUserPointer + " - " + nextUserConnection.getIdentifierString());
+            nextUserConnection.emit(Events.Ready);
+
+            this._requestNextUserTimeout = setTimeout(() => {
+                this.updateUsersQueuePosition();
+                this._requestNextUserTimeout = undefined;
+                this.offerToNextUser();
+            }, 5000);
+
+            return;
+        }
+
+        // Clear the counter & start again from the beginning
+        this._askingUserPointer = undefined;
+        this.offerToNextUser();
+    }
+
+    /**
+     *
+     * @param ready
+     */
+    public userReady(connection: UserConnection, ready: boolean) {
+
+        // Either way, clear the timeout.  We'll handle things manually from here
+        clearTimeout(this._requestNextUserTimeout);
+
+        // Offer to the next user
+        if (!ready) {
+            this.offerToNextUser();
+        }
+
+        this.activateUserConnection(connection);
+    }
+
+
+    private activateUserConnection(connection: UserConnection) {
+
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -165,7 +227,7 @@ export class Server {
 
         // If this is the first host, let waiting clients know
         if (1 === Object.keys(this._hostConnections).length) {
-            this.requestNextUser();
+            this.offerToNextUser();
         }
     }
 
@@ -196,10 +258,10 @@ export class Server {
             return;
         }
 
-        this.updateUsersQueuePosition();
+        this.updateUsersQueuePosition(connection);
 
         if (!this._activeUserConnection) {
-            this.requestNextUser();
+            this.offerToNextUser();
         }
     }
 
@@ -264,7 +326,7 @@ export class Server {
 
         if (this._activeUserConnection === connection) {
             this._activeUserConnection = undefined;
-            this.requestNextUser();
+            this.offerToNextUser();
         }
     }
 
