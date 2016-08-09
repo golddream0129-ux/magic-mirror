@@ -2,6 +2,9 @@
 
 import {Category} from "./model/Category";
 import {Fortune} from "./model/Fortune";
+import {ConnectionType, Events} from "../../server/Connection/Connection";
+import {HostContext} from "./context/HostContext";
+import {ClientContext} from "./context/ClientContext";
 
 /**
  * Main client side App class
@@ -28,12 +31,55 @@ export class App {
     private _fortunes = {};
 
     /**
+     * @type {ClientContext}
+     */
+    private _context: ClientContext;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Initialisation methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
      * @constructor
      *
      * @param {string} _el
      */
     constructor(private _el: string) {
-        this.socket = io();
+
+        this._socket = io();
+
+        this.socket.on(Events.ClientType, (type: ConnectionType) => {
+            this.setContextFor(type);
+        });
+    }
+
+    /**
+     * Sets the context based on the connection type
+     *
+     * @param type
+     */
+    setContextFor(type: ConnectionType): void {
+        switch (type) {
+            case "host":
+                this._context = new HostContext(this);
+                return;
+            default:
+                throw "Unknown type - " + type;
+        }
+
+    }
+
+    boot(): void {
+        // If we haven't received the client type yet, loop until we have
+        if (!this.context) {
+            console.log("No client context yet");
+            setTimeout(() => {
+                this.boot();
+            }, 100);
+            return;
+        }
+
+        console.log("Booted!");
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -82,13 +128,15 @@ export class App {
     }
 
     /**
-     * @param {SocketIOClient.Socket} value
+     * @return {ClientContext}
      */
-    set socket(value: SocketIOClient.Socket) {
-        this._socket = value;
+    get context(): ClientContext {
+        return this._context;
     }
 
-
+    /**
+     * @return {CategoryList}
+     */
     get categories(): CategoryList {
         return this._categories;
     }
