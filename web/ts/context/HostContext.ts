@@ -2,11 +2,11 @@
 
 import {App} from "../App";
 import * as Vue from "vue";
-import {SleepScreen} from "../component/host/SleepComponent";
+import {SleepScreen} from "../component/host/SleepScreen";
 import {WelcomeScreen} from "../component/host/WelcomeScreen";
-import {CategoriesScreen} from "../component/host/CategoriesScreen";
-import {QuestionsScreen} from "../component/host/QuestionsScreen";
-import {FortuneScreen} from "../component/host/FortuneScreen";
+import {CategoriesScreen} from "../component/CategoriesScreen";
+import {QuestionsScreen} from "../component/QuestionsScreen";
+import {FortuneScreen} from "../component/FortuneScreen";
 import {ClientContext} from "./ClientContext";
 
 export class HostContext extends ClientContext {
