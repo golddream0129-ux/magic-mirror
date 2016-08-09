@@ -18,7 +18,7 @@ export class UserConnection extends Connection {
      * @param {SocketIO.Socket} socket
      */
     protected addHandlers(socket: SocketIO.Socket) {
-        socket.on(Events.JoinQueue, this.joinQueue);
+        socket.on(Events.JoinQueue, this.joinQueueHandler);
     }
 
     /**
@@ -26,8 +26,8 @@ export class UserConnection extends Connection {
      *
      * Moves user connection from new connections to queue
      */
-    joinQueue = () => {
+    joinQueueHandler = () => {
         console.log("adding user connection to queue - " + this.getIdentifierString());
         this._server.addQueuedUserConnection(this);
-    }
+    };
 }
