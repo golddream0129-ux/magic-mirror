@@ -7,6 +7,7 @@ import * as socketIO from "socket.io";
 import {Connection} from "../server/connection/Connection";
 import {HostConnection} from "../server/connection/HostConnection";
 import {Events} from "./connection/Connection";
+import {UserConnection} from "./connection/UserConnection";
 
 /**
  * Main node web server that handles client synchronisation
@@ -23,6 +24,13 @@ export class Server {
      * @private
      */
     private _hostConnections: HostConnectionCollection = {};
+
+    /**
+     *
+     * @type {UserConnectionCollection}
+     * @private
+     */
+    private _newUserConnections: UserConnectionCollection = {};
 
     /**
      * @constructor
@@ -73,20 +81,15 @@ export class Server {
             this.addHostConnection(hostConnection);
             connection = hostConnection;
         } else {
-            throw "Not written yet";
+            let userConnection = new UserConnection(this, socket);
+            this.addNewUserConnection(userConnection);
+            connection = userConnection;
         }
     };
 
     // -----------------------------------------------------------------------------------------------------------------
     // Getters & Setters
     // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * @return {HostConnectionCollection}
-     */
-    get hostConnections(): HostConnectionCollection {
-        return this._hostConnections;
-    }
 
     /**
      * Adds a host connection to the hash of host connections
@@ -96,9 +99,22 @@ export class Server {
     public addHostConnection(connection: HostConnection) {
         this._hostConnections[connection.id] = connection;
     }
+
+    /**
+     * Adds a user connection to the hash of new user connections
+     *
+     * @param {UserConnection} connection
+     */
+    public addNewUserConnection(connection: UserConnection) {
+        this._newUserConnections[connection.id] = connection;
+    }
 }
 
 
 interface HostConnectionCollection {
     [id: string]: HostConnection;
+}
+
+interface UserConnectionCollection {
+    [id: string]: UserConnection;
 }
