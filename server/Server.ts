@@ -215,6 +215,8 @@ export class Server {
 
         // For now, we'll set a timeout on the dancing…
 
+        // @todo Replace with motion detection...
+        // @todo Add Dacing comment page?
         setTimeout(() => {
             connection.emit(Events.Categories);
         }, DANCING_TIMEOUT);
