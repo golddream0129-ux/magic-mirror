@@ -14,4 +14,12 @@ export class HostConnection extends Connection {
     getType(): ConnectionType {
         return "host";
     }
+
+    /**
+     * Implements all host connection specific handlers
+     *
+     * @param {SocketIO.Socket} socket
+     */
+    protected addHandlers(socket: SocketIO.Socket) {
+    }
 }

@@ -24,15 +24,24 @@ export abstract class Connection {
      * @param {Server} _server
      * @param {SocketIO.Socket} _socket
      */
-    constructor(private _server: Server, private _socket: SocketIO.Socket) {
+    constructor(protected _server: Server, private _socket: SocketIO.Socket) {
         console.log("a " + this.getType() + " connected from " + _socket.client.conn.remoteAddress);
 
-        this.id = _socket.client.conn.id;
+        this._id = _socket.client.conn.id;
 
         this.emit(Events.ClientType, this.getType(), this.id);
 
         this._socket.on(Events.ConnectionFriendlyName, this.setFriendlyNameHandler);
+
+        this.addHandlers(this._socket);
     }
+
+    /**
+     * Should implement all connection type specific handlers
+     *
+     * @param {SocketIO.Socket} socket
+     */
+    protected abstract addHandlers(socket: SocketIO.Socket);
 
     // -----------------------------------------------------------------------------------------------------------------
     // Helpers
@@ -56,21 +65,32 @@ export abstract class Connection {
      * @param {string} name
      */
     setFriendlyNameHandler(name: string) {
-        console.log("Setting friendly name (" + name + ") for connection " + this.id);
+        console.log("Setting friendly name (" + name + ") for connection " + this._id);
         this._friendlyName = name;
     }
-
 
     // -----------------------------------------------------------------------------------------------------------------
     // Getters & Setters
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * @return {string}
+     */
     get id(): string {
         return this._id;
     }
 
-    set id(value: string) {
-        this._id = value;
+    /**
+     * Returns the connection friendly name, if available, otherwise returns the conneciton ID
+     *
+     * @return {string}
+     */
+    getConnectionIdentifier(): string {
+        if (this._friendlyName) {
+            return this._friendlyName;
+        }
+
+        return this._id;
     }
 }
 
@@ -81,5 +101,6 @@ export const Events = {
     ID: "id",
     ConnectionFriendlyName: "connectionName",
     ClientType: "clientType",
-    JoinQueue: "joinQueue"
+    JoinQueue: "joinQueue",
+    MirrorOffline: "mirrorOffline",
 };

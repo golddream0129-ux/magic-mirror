@@ -33,6 +33,12 @@ export class Server {
     private _newUserConnections: UserConnectionCollection = {};
 
     /**
+     * @type UserConnection[]
+     * @private
+     */
+    private _queuedUserConnections: UserConnection[] = [];
+
+    /**
      * @constructor
      */
     constructor() {
@@ -107,6 +113,18 @@ export class Server {
      */
     public addNewUserConnection(connection: UserConnection) {
         this._newUserConnections[connection.id] = connection;
+    }
+
+    /**
+     * Adds a user connection to the hash of new user connections
+     *
+     * @param {UserConnection} connection
+     */
+    public addQueuedUserConnection(connection: UserConnection) {
+        console.log("removing connection " + connection.getConnectionIdentifier() + " from new user connections");
+        this._newUserConnections[connection.id] = undefined;
+        console.log("adding connection " + connection.getConnectionIdentifier() + " to. user queue");
+        this._queuedUserConnections.push(connection);
     }
 }
 
