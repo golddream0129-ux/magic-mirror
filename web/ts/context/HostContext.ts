@@ -21,7 +21,7 @@ export class HostContext extends ClientContext {
      *
      * @param {string} el Element selector
      */
-    init(el: string): void {
+    protected init(el: string): void {
         this.setFriendlyName();
 
         this._vue = new Vue({

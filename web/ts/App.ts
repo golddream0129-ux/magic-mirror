@@ -73,7 +73,6 @@ export class App {
             default:
                 throw "Unknown type - " + type;
         }
-
     }
 
     boot(): void {

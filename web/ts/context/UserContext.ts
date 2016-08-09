@@ -39,11 +39,21 @@ export class UserContext extends ClientContext {
             }
         });
 
-        this._vue.$watch("userName", function () {
-            console.log("userName set to " + this.userName);
-            console.log("switching screen to " + UserScreen[UserScreen.Connecting]);
-            this.screen = UserScreen[UserScreen.Connecting];
+        // We use the arrow function here, as init is called within constructor, so class arrow methods are not setup
+        // yet
+        this._vue.$watch("userName", (userName: string) => {
+            this.usernameUpdatedHandler(userName);
         });
+    }
+
+    usernameUpdatedHandler(userName: string): void {
+        console.log("userName set to " + userName);
+
+        console.log("switching screen to " + UserScreen[UserScreen.Connecting]);
+        this._vue.$set("screen", UserScreen[UserScreen.Connecting]);
+
+        console.log("setting connection friendly name");
+        this.emit(Events.ConnectionFriendlyName, userName);
     }
 }
 
