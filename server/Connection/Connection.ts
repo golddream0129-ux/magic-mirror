@@ -66,7 +66,7 @@ export abstract class Connection {
      * Passthru method for socket.emit()
      */
     public emit(...args) {
-        console.log("Triggering: " + args[0], args.slice(1));
+        console.log("Triggering " + args[0] + " on " + this.getIdentifierString(), args.slice(1));
         this._socket.emit.apply(this._socket, args);
     }
 
