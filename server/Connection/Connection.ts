@@ -108,7 +108,7 @@ export abstract class Connection {
      */
     getIdentifierString(): string {
         if (this._friendlyName) {
-            return this._friendlyName;
+            return this._friendlyName + " - " + this._id;
         }
 
         return this._id;

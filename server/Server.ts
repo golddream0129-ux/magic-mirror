@@ -122,7 +122,7 @@ export class Server {
     private updateUsersQueuePosition(connection?: UserConnection): void {
         for (let i in this._queuedUserConnections) {
             if (!connection || connection === this._queuedUserConnections[i]) {
-                this._queuedUserConnections[i].emit(Events.QueuePosition, i);
+                this._queuedUserConnections[i].emit(Events.QueuePosition, Number(i) + 1);
             }
         }
     }
@@ -156,7 +156,7 @@ export class Server {
             nextUserConnection.emit(Events.Ready);
 
             this._requestNextUserTimeout = setTimeout(() => {
-                this.updateUsersQueuePosition();
+                this.updateUsersQueuePosition(nextUserConnection);
                 this._requestNextUserTimeout = undefined;
                 this.offerToNextUser();
             }, 5000);
@@ -176,6 +176,13 @@ export class Server {
      */
     public userReady(connection: UserConnection, ready: boolean) {
 
+
+        if (connection !== this._queuedUserConnections[this._askingUserPointer]) {
+            console.log("ignoring ready request as not from the user under offer");
+        }
+
+        console.log("user " + (ready ? "" : "not " ) + "ready");
+
         // Either way, clear the timeout.  We'll handle things manually from here
         clearTimeout(this._requestNextUserTimeout);
 
@@ -187,9 +194,17 @@ export class Server {
         this.activateUserConnection(connection);
     }
 
-
+    /**
+     * Activates the user
+     *
+     * @param {UserConnection} connection
+     */
     private activateUserConnection(connection: UserConnection) {
+        this.removeQueuedUserConnection(connection);
+        this._activeUserConnection = connection;
+        connection.emit(Events.Activate);
 
+        this.updateUsersQueuePosition();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -267,6 +282,22 @@ export class Server {
     }
 
     /**
+     * Removes a user conenction from the queue
+     *
+     * @param {UserConnection} connection
+     */
+    public removeQueuedUserConnection(connection: UserConnection) {
+        console.log("attempting to remove user from queue - " + connection.getIdentifierString());
+        for (let i = this._queuedUserConnections.length - 1; i >= 0; i--) {
+            console.log("i: " + i);
+            if (this._queuedUserConnections[i] === connection) {
+                console.log("Found & removed ");
+                this._queuedUserConnections.splice(i, 1);
+            }
+        }
+    }
+
+    /**
      * Drops a connection
      *
      * @param {Connection} connection
@@ -318,11 +349,7 @@ export class Server {
         this.dumpNewUserConnections();
 
         // Remove from queued user connections
-        for (let i = this._queuedUserConnections.length - 1; i > 0; i--) {
-            if (this._queuedUserConnections[i] === connection) {
-                this._queuedUserConnections.splice(i, 1);
-            }
-        }
+        this.removeQueuedUserConnection(connection);
         this.dumpQueuedUserConnections();
 
         if (this._activeUserConnection === connection) {
@@ -339,6 +366,7 @@ export class Server {
         this.dumpHostConnections();
         this.dumpNewUserConnections();
         this.dumpQueuedUserConnections();
+        this.dumpActiveUserConnection();
     }
 
     /**

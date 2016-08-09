@@ -33,7 +33,6 @@ export class UserConnection extends Connection {
     };
 
     readyHandler = (ready: boolean) => {
-        console.log("user " + (ready ? "" : "not " ) + "ready");
         this._server.userReady(this, ready);
     };
 }
