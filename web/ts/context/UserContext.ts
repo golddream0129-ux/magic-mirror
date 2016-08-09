@@ -23,6 +23,7 @@ export class UserContext extends ClientContext {
      */
     protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
         socket.on(Events.MirrorOffline, this.mirrorOfflineHandler);
+        socket.on(Events.Ready, this.readyHandler);
         socket.on(Events.Activate, this.activateHandler);
     }
 
@@ -37,6 +38,7 @@ export class UserContext extends ClientContext {
             data: {
                 screen: UserScreen[UserScreen.EnterName],
                 userName: null,
+                ready: null,
                 mirrorOnline: true,
             },
             components: {
@@ -99,6 +101,14 @@ export class UserContext extends ClientContext {
     activateHandler = () => {
         console.log("Event: Events.Activate");
         this._vue.$set("screen", UserScreen[UserScreen.Categories]);
+    };
+
+    /**
+     * Event Events.Ready
+     */
+    readyHandler = () => {
+       console.log("Event Events.Ready");
+        this._vue.$set("screen", UserScreen[UserScreen.Ready]);
     };
 
     /**
