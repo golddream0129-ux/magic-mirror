@@ -28,7 +28,7 @@ export class App {
     /**
      * @type {FortuneMatrix}
      */
-    private _fortunes = {};
+    private _fortunes: FortuneMatrix;
 
     /**
      * @type {ClientContext}
@@ -104,11 +104,12 @@ export class App {
      * @param {Fortune} fortune
      */
     public addFortune(categoryName: string, fortune: Fortune) {
-        this.fortunes[categoryName] = this.fortunes[categoryName] || {};
-        this.fortunes[categoryName][fortune.answer1] = this.fortunes[categoryName][fortune.answer1] || {};
-        this.fortunes[categoryName][fortune.answer1][fortune.answer2] = this.fortunes[categoryName][fortune.answer1][fortune.answer2] || {};
+        this._fortunes = this._fortunes || {};
+        this._fortunes[categoryName] = this._fortunes[categoryName] || {};
+        this._fortunes[categoryName][fortune.answer1] = this._fortunes[categoryName][fortune.answer1] || {};
+        this._fortunes[categoryName][fortune.answer1][fortune.answer2] = this._fortunes[categoryName][fortune.answer1][fortune.answer2] || {};
 
-        this.fortunes[categoryName][fortune.answer1][fortune.answer2][fortune.answer3] = fortune;
+        this._fortunes[categoryName][fortune.answer1][fortune.answer2][fortune.answer3] = fortune;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -141,13 +142,6 @@ export class App {
      */
     get categories(): CategoryList {
         return this._categories;
-    }
-
-    /**
-     * @return {FortuneMatrix}
-     */
-    get fortunes() {
-        return this._fortunes;
     }
 }
 
