@@ -1,3 +1,5 @@
+import {CategoryList} from "../App";
+
 /**
  * Base client context class to extend other types from
  */
@@ -12,7 +14,7 @@ export abstract class ClientContext {
      * @param {string} _el
      * @param {SocketIOClient.Socket} _socket
      */
-    constructor(private _el: string, private _socket: SocketIOClient.Socket, private _connectionId: string) {
+    constructor(private _el: string, private _socket: SocketIOClient.Socket, private _categories: CategoryList) {
     }
 
     /**
@@ -61,5 +63,16 @@ export abstract class ClientContext {
     public emit(...args: any[]) {
         console.log("Triggering: " + args[0], args.slice(1));
         this._socket.emit.apply(this._socket, args);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Getters & Setters
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return {CategoryList}
+     */
+    get categories(): CategoryList {
+        return this._categories;
     }
 }

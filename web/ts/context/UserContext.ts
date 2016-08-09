@@ -43,6 +43,9 @@ export class UserContext extends ClientContext {
                 userName: null,
                 queuePosition: 0,
                 ready: null,
+                categories: this.categories,
+                selectedCategory: null,
+                questions: null,
                 mirrorOnline: true,
             },
             components: {

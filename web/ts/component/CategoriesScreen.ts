@@ -1,4 +1,5 @@
 import ComponentOption = vuejs.ComponentOption;
+import {Category} from "../model/Category";
 
 const TEMPLATE = "<div class='screen-categories'>" +
     "<div class='content'>" +
@@ -14,4 +15,12 @@ const TEMPLATE = "<div class='screen-categories'>" +
 
 export const CategoriesScreen: ComponentOption = {
     template: TEMPLATE,
+    data: function(){
+        return this.$root.$data;
+    },
+    methods: {
+        categorySelected: function (category: Category) {
+            this.$root.$set("selectedCategory", category);
+        }
+    },
 };

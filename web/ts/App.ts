@@ -65,10 +65,10 @@ export class App {
         console.log("Setting context for " + type);
         switch (type) {
             case "host":
-                this._context = new HostContext(this._el, this._socket, id);
+                this._context = new HostContext(this._el, this._socket, this._categories);
                 break;
             case "user":
-                this._context = new UserContext(this._el, this._socket, id);
+                this._context = new UserContext(this._el, this._socket, this._categories);
                 break;
             default:
                 throw "Unknown type - " + type;
@@ -153,7 +153,7 @@ export class App {
     }
 }
 
-interface CategoryList {
+export interface CategoryList {
     [name: string]: Category;
 }
 
