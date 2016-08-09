@@ -63,7 +63,7 @@ export class App {
         console.log("Setting context for " + type);
         switch (type) {
             case "host":
-                this._context = new HostContext(this);
+                this._context = new HostContext(this._el, this._socket);
                 return;
             default:
                 throw "Unknown type - " + type;

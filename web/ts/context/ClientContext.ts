@@ -1,16 +1,19 @@
-import {App} from "../App";
-
 /**
  * Base client context class to extend other types from
  */
 export abstract class ClientContext {
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Initialisation methods
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * @constructor
-     * @param {App} _app
+     * @param {string} _el
+     * @param {SocketIOClient.Socket} _socket
      */
-    constructor(private _app: App) {
-        this.init(this.app.el);
+    constructor(private _el: string, private _socket: SocketIOClient.Socket) {
+        this.init(this._el);
     }
 
     /**
