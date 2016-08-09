@@ -29,9 +29,7 @@ export abstract class Connection {
 
         this.id = _socket.client.conn.id;
 
-        // @todo - Remove debugging line
-        this.emit(Events.ID, this.id);
-        this.emit(Events.ClientType, this.getType());
+        this.emit(Events.ClientType, this.getType(), this.id);
 
         this._socket.on(Events.ConnectionFriendlyName, this.setFriendlyNameHandler);
     }
