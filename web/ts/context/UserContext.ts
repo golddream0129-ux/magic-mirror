@@ -26,6 +26,7 @@ export class UserContext extends ClientContext {
         socket.on(Events.MirrorOffline, this.mirrorOfflineHandler);
         socket.on(Events.QueuePosition, this.queuePositionHandler);
         socket.on(Events.Ready, this.readyHandler);
+        socket.on(Events.ReadyTimer, this.readyTimerHandler);
         socket.on(Events.Activate, this.activateHandler);
         socket.on(Events.Categories, this.categoriesHandler);
     }
@@ -42,6 +43,7 @@ export class UserContext extends ClientContext {
                 screen: UserScreen[UserScreen.EnterName],
                 userName: null,
                 queuePosition: 0,
+                readyTimer: null,
                 ready: null,
                 categories: this.categories,
                 selectedCategory: null,
@@ -128,6 +130,14 @@ export class UserContext extends ClientContext {
     readyHandler = () => {
         console.log("Event Events.Ready");
         this._vue.$set("screen", UserScreen[UserScreen.Ready]);
+    };
+
+    /**
+     * Event: Events.ReadyTimer
+     */
+    readyTimerHandler = (timer: number) => {
+        console.log("Event: Events.ReadyTimer");
+        this._vue.$set("readyTimer", timer);
     };
 
     /**

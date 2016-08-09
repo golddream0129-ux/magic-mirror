@@ -36,15 +36,20 @@ export class Server {
     private _newUserConnections: UserConnectionCollection = {};
 
     /**
-     * @type UserConnection[]
+     * @type {UserConnection[]}
      * @private
      */
     private _queuedUserConnections: UserConnection[] = [];
 
     /**
-     * Pointer used to indicate which user is currently being asked if they're ready
+     * @type {UserConnection}
      */
-    private _askingUserPointer;
+    private _userConnectionUnderOffer: UserConnection;
+
+    /**
+     * @type {NodeJS.Timer}
+     */
+    private _userOfferCountdownTimerInterval: NodeJS.Timer;
 
     /**
      * @type UserConnection
@@ -140,31 +145,28 @@ export class Server {
             return;
         }
 
-        // Wait till the last offer has expired
-        if (this._requestNextUserTimeout) {
+        // Do nothing if there's already a user under offer
+        if (this._userConnectionUnderOffer) {
             return;
         }
 
-        if (undefined === this._askingUserPointer) {
-            this._askingUserPointer = 0;
-        } else {
-            this._askingUserPointer++;
-        }
+        this._userConnectionUnderOffer = this._queuedUserConnections.shift();
 
-        if (this._askingUserPointer >= this._queuedUserConnections.length) {
-            this._askingUserPointer = 0;
-        }
+        let countdownTimer = 30;
+        this._userConnectionUnderOffer.emit(Events.ReadyTimer, countdownTimer);
+        this._userConnectionUnderOffer.emit(Events.Ready);
 
-        let nextUserConnection = this._queuedUserConnections[this._askingUserPointer];
+        this._userOfferCountdownTimerInterval = setInterval(() => {
+            countdownTimer--;
+            this._userConnectionUnderOffer.emit(Events.ReadyTimer, countdownTimer);
 
-        console.log("offering turn to user at position " + this._askingUserPointer + " - " + nextUserConnection.getIdentifierString());
-        nextUserConnection.emit(Events.Ready);
+            if (0 === countdownTimer) {
+                clearInterval(this._userOfferCountdownTimerInterval);
+                this._userConnectionUnderOffer.emit(Events.Timeout);
 
-        this._requestNextUserTimeout = setTimeout(() => {
-            this.updateUsersQueuePosition(nextUserConnection);
-            this._requestNextUserTimeout = undefined;
-            this.offerToNextUser();
-        }, 5000);
+                this.offerToNextUser();
+            }
+        }, 1000);
     }
 
     /**
@@ -174,25 +176,14 @@ export class Server {
      */
     public userReady(connection: UserConnection, ready: boolean) {
 
-        if (connection !== this._queuedUserConnections[this._askingUserPointer]) {
+        if (connection !== this._userConnectionUnderOffer) {
             console.log("ignoring ready request as not from the user under offer");
         }
 
-        console.log("user " + (ready ? "" : "not " ) + "ready");
+        console.log("user ready - " + connection.getIdentifierString());
 
         // Either way, clear the timeout.  We'll handle things manually from here
-        clearTimeout(this._requestNextUserTimeout);
-        this._requestNextUserTimeout = undefined;
-
-        // Offer to the next user
-        if (!ready) {
-            this.offerToNextUser();
-            return;
-        }
-
-
-        // Clear the offer marker
-        this._askingUserPointer = undefined;
+        clearTimeout(this._userOfferCountdownTimerInterval);
 
         this.activateUserConnection(connection);
     }
@@ -203,7 +194,16 @@ export class Server {
      * @param {UserConnection} connection
      */
     private activateUserConnection(connection: UserConnection) {
+
+        if (connection !== this._userConnectionUnderOffer) {
+            console.log("ignoring ready request as not from the user under offer");
+        }
+
+        this._userConnectionUnderOffer = undefined;
+
+        // User shouldn't be in the queue, but make sure
         this.removeQueuedUserConnection(connection);
+
         this._activeUserConnection = connection;
         connection.emit(Events.Activate);
 
@@ -212,7 +212,7 @@ export class Server {
         // For now, we'll set a timeout on the dancing…
 
         // @todo Replace with motion detection...
-        // @todo Add Dacing comment page?
+        // @todo Add Dancing comment page?
         setTimeout(() => {
             connection.emit(Events.Categories);
         }, DANCING_TIMEOUT);

@@ -125,6 +125,8 @@ export const Events = {
     JoinQueue: "joinQueue",
     QueuePosition: "queuePosition",
     Ready: "ready",
+    ReadyTimer: "readyTimer",
+    Timeout: "timeout",
     Activate: "activate",
     Categories: "categories",
     MirrorOffline: "mirrorOffline",
