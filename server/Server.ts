@@ -152,24 +152,20 @@ export class Server {
             this._askingUserPointer++;
         }
 
-        let nextUserConnection = this._queuedUserConnections[this._askingUserPointer];
-
-        if (nextUserConnection) {
-            console.log("offering turn to user at position " + this._askingUserPointer + " - " + nextUserConnection.getIdentifierString());
-            nextUserConnection.emit(Events.Ready);
-
-            this._requestNextUserTimeout = setTimeout(() => {
-                this.updateUsersQueuePosition(nextUserConnection);
-                this._requestNextUserTimeout = undefined;
-                this.offerToNextUser();
-            }, 5000);
-
-            return;
+        if (this._askingUserPointer >= this._queuedUserConnections.length) {
+            this._askingUserPointer = 0;
         }
 
-        // Clear the counter & start again from the beginning
-        this._askingUserPointer = undefined;
-        this.offerToNextUser();
+        let nextUserConnection = this._queuedUserConnections[this._askingUserPointer];
+
+        console.log("offering turn to user at position " + this._askingUserPointer + " - " + nextUserConnection.getIdentifierString());
+        nextUserConnection.emit(Events.Ready);
+
+        this._requestNextUserTimeout = setTimeout(() => {
+            this.updateUsersQueuePosition(nextUserConnection);
+            this._requestNextUserTimeout = undefined;
+            this.offerToNextUser();
+        }, 5000);
     }
 
     /**
