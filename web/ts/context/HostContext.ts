@@ -1,6 +1,5 @@
 "use strict";
 
-import {App} from "../App";
 import * as Vue from "vue";
 import {SleepScreen} from "../component/host/SleepScreen";
 import {WelcomeScreen} from "../component/host/WelcomeScreen";
@@ -11,20 +10,19 @@ import {ClientContext} from "./ClientContext";
 
 export class HostContext extends ClientContext {
 
+    /**
+     * @type {vuejs.Vue}
+     */
     private _vue: vuejs.Vue;
 
     /**
-     * @constructor
+     * Initialises the main Vue component
      *
-     * Initialises the Vue element
-     *
-     * @param {App} _app
+     * @param {string} el Element selector
      */
-    constructor(private _app: App) {
-        super(this.app);
-
+    init(el: string): void {
         this._vue = new Vue({
-            el: this.app.el,
+            el: el,
             data: {
                 screen: HostScreen[HostScreen.Sleep],
             },
@@ -36,11 +34,6 @@ export class HostContext extends ClientContext {
                 Fortune: FortuneScreen,
             }
         });
-    }
-
-
-    get app(): App {
-        return this._app;
     }
 }
 
