@@ -81,4 +81,5 @@ export const Events = {
     ID: "id",
     ConnectionFriendlyName: "connectionName",
     ClientType: "clientType",
+    JoinQueue: "joinQueue"
 };

@@ -7,6 +7,7 @@ import {EnterNameScreen} from "../component/user/EnterNameScreen";
 import {ConnectingScreen} from "../component/user/ConnectingScreen";
 import {ReadyScreen} from "../component/user/ReadyScreen";
 import {PoweredByDanceScreen} from "../component/user/PoweredByDanceScreen";
+import {Events} from "../../../server/Connection/Connection";
 
 export class UserContext extends ClientContext {
 
@@ -54,6 +55,8 @@ export class UserContext extends ClientContext {
 
         console.log("setting connection friendly name");
         this.emit(Events.ConnectionFriendlyName, userName);
+
+        this.emit(Events.JoinQueue);
     }
 }
 
