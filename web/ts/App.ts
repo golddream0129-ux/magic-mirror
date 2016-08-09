@@ -48,7 +48,7 @@ export class App {
 
         this._socket = io();
 
-        this.socket.on(Events.ClientType, (type: ConnectionType) => {
+        this._socket.on(Events.ClientType, (type: ConnectionType) => {
             console.log("Event: " + Events.ClientType, type);
             this.setContextFor(type);
         });
