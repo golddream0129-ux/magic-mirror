@@ -11,7 +11,6 @@ export abstract class ClientContext {
      * @constructor
      * @param {string} _el
      * @param {SocketIOClient.Socket} _socket
-     * @param {string} _connectionId
      */
     constructor(private _el: string, private _socket: SocketIOClient.Socket, private _connectionId: string) {
         this.init(this._el);

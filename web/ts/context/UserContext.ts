@@ -38,8 +38,13 @@ export class UserContext extends ClientContext {
                 Fortune: FortuneScreen,
             }
         });
-    }
 
+        this._vue.$watch("userName", function () {
+            console.log("userName set to " + this.userName);
+            console.log("switching screen to " + UserScreen[UserScreen.Connecting]);
+            this.screen = UserScreen[UserScreen.Connecting];
+        });
+    }
 }
 
 export enum UserScreen {
