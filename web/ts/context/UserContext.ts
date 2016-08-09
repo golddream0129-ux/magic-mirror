@@ -18,8 +18,10 @@ export class UserContext extends ClientContext {
 
     /**
      * Adds socket message event handlers
+     *
+     * @param {SocketIOClient.Socket} socket
      */
-    protected addSocketEventHandlers() {
+    protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
     }
 
     /**

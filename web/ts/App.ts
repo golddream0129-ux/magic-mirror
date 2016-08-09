@@ -66,13 +66,15 @@ export class App {
         switch (type) {
             case "host":
                 this._context = new HostContext(this._el, this._socket, id);
-                return;
+                break;
             case "user":
                 this._context = new UserContext(this._el, this._socket, id);
-                return;
+                break;
             default:
                 throw "Unknown type - " + type;
         }
+
+        this.context.init();
     }
 
     boot(): void {

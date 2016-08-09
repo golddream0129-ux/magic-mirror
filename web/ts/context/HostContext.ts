@@ -18,8 +18,10 @@ export class HostContext extends ClientContext {
 
     /**
      * Adds socket message event handlers
+     *
+     * @param {SocketIOClient.Socket} socket
      */
-    protected addSocketEventHandlers(): void {
+    protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
         this.setFriendlyName();
     }
 

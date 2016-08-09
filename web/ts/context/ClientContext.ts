@@ -13,7 +13,6 @@ export abstract class ClientContext {
      * @param {SocketIOClient.Socket} _socket
      */
     constructor(private _el: string, private _socket: SocketIOClient.Socket, private _connectionId: string) {
-        this.init(this._el);
     }
 
     /**
@@ -21,16 +20,18 @@ export abstract class ClientContext {
      *
      * @param {string} el Element selector
      */
-    protected init(el: string): void {
-        this.initialiseVue(el);
+    public init(): void {
+        this.addSocketEventHandlers(this._socket);
+        this.initialiseVue(this._el);
         this.addVueEventHandlers();
-        this.addSocketEventHandlers();
     }
 
     /**
      * Should add socket message event handlers
+     *
+     * @param {SocketIOClient.Socket} socket
      */
-    protected abstract addSocketEventHandlers(): void;
+    protected abstract addSocketEventHandlers(socket: SocketIOClient.Socket): void;
 
     /**
      * Should initialise the Vue
