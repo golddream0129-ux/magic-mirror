@@ -25,7 +25,7 @@ export class App {
     /**
      * @type {FortuneMatrix}
      */
-    private _fortunes;
+    private _fortunes = {};
 
     /**
      * @constructor
