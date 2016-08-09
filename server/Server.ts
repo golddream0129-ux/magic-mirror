@@ -145,7 +145,6 @@ export class Server {
             return;
         }
 
-
         if (undefined === this._askingUserPointer) {
             this._askingUserPointer = 0;
         } else {
