@@ -254,6 +254,11 @@ export class Server {
             }
         }
         this.dumpQueuedUserConnections();
+
+        if (this._activeUserConnection === connection) {
+            this._activeUserConnection = undefined;
+            this.activateNextUser();
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
