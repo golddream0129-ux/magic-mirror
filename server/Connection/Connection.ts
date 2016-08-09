@@ -126,6 +126,7 @@ export const Events = {
     QueuePosition: "queuePosition",
     Ready: "ready",
     Activate: "activate",
+    Categories: "categories",
     MirrorOffline: "mirrorOffline",
     Disconnect: "disconnect",
     DumpQueues: "dumpQueues",

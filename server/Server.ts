@@ -9,6 +9,9 @@ import {HostConnection} from "../server/connection/HostConnection";
 import {Events} from "./connection/Connection";
 import {UserConnection} from "./connection/UserConnection";
 
+
+const DANCING_TIMEOUT = 5000;
+
 /**
  * Main node web server that handles client synchronisation
  */
@@ -209,6 +212,12 @@ export class Server {
         connection.emit(Events.Activate);
 
         this.updateUsersQueuePosition();
+
+        // For now, we'll set a timeout on the dancing…
+
+        setTimeout(() => {
+            connection.emit(Events.Categories);
+        }, DANCING_TIMEOUT);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
