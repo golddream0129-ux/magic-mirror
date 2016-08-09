@@ -1,6 +1,8 @@
-"use strict";
 import {App} from "../App";
 
+/**
+ * Base client context class to extend other types from
+ */
 export abstract class ClientContext {
 
     /**
