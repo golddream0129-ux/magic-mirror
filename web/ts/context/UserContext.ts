@@ -123,7 +123,7 @@ export class UserContext extends ClientContext {
      */
     activateHandler = () => {
         console.log("Event: Events.Activate");
-        this._vue.$set("screen", UserScreen[UserScreen.Categories]);
+        this._vue.$set("screen", UserScreen[UserScreen.PoweredByDance]);
     };
 
     /**
