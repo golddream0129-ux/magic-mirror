@@ -58,7 +58,7 @@ export class UserContext extends ClientContext {
         // yet
         this._vue.$watch("userName", this.usernameUpdatedHandler);
 
-        this._vue.$watch("mirrorOnline", this.mirrorOnlineToggleHandler)
+        this._vue.$watch("mirrorOnline", this.mirrorOnlineToggleHandler);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
