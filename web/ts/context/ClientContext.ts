@@ -20,8 +20,6 @@ export abstract class ClientContext {
 
     /**
      * Initialises the main Vue component
-     *
-     * @param {string} el Element selector
      */
     public init(): void {
         this.addSocketEventHandlers(this._socket);
