@@ -10,6 +10,11 @@ export abstract class Connection {
     private _id: string;
 
     /**
+     * Friendly connection name
+     */
+    private _friendlyName: string;
+
+    /**
      * Should return the type of the connection
      */
     abstract getType(): ConnectionType;
@@ -26,8 +31,9 @@ export abstract class Connection {
 
         // @todo - Remove debugging line
         this.emit(Events.ID, this.id);
-
         this.emit(Events.ClientType, this.getType());
+
+        this._socket.on(Events.ConnectionFriendlyName, this.setFriendlyNameHandler);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -40,6 +46,21 @@ export abstract class Connection {
     public emit(...args) {
         this._socket.emit.apply(this._socket, args);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Event handlers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Event: {Events.ConnectionFriendlyName}
+     *
+     * @param {string} name
+     */
+    setFriendlyNameHandler(name: string) {
+        console.log("Setting friendly name (" + name + ") for connection " + this.id);
+        this._friendlyName = name;
+    }
+
 
     // -----------------------------------------------------------------------------------------------------------------
     // Getters & Setters
@@ -58,5 +79,6 @@ export type ConnectionType = "host" | "user";
 
 export const Events = {
     ID: "id",
+    ConnectionFriendlyName: "connectionName",
     ClientType: "clientType",
 };
