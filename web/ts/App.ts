@@ -5,6 +5,7 @@ import {Fortune} from "./model/Fortune";
 import {ConnectionType, Events} from "../../server/Connection/Connection";
 import {HostContext} from "./context/HostContext";
 import {ClientContext} from "./context/ClientContext";
+import {UserContext} from "./context/UserContext";
 
 /**
  * Main client side App class
@@ -65,6 +66,9 @@ export class App {
         switch (type) {
             case "host":
                 this._context = new HostContext(this._el, this._socket, id);
+                return;
+            case "user":
+                this._context = new UserContext(this._el, this._socket, id);
                 return;
             default:
                 throw "Unknown type - " + type;
