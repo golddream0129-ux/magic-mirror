@@ -132,13 +132,13 @@ export class Server {
      */
     private offerToNextUser() {
 
-        // Wait till the last offer has expired
-        if (this._requestNextUserTimeout) {
+        // Do nothing if there aren't any queued users
+        if (!this._queuedUserConnections.length) {
             return;
         }
 
-        // Do nothing if there aren't any queued users
-        if (!this._queuedUserConnections.length) {
+        // Wait till the last offer has expired
+        if (this._requestNextUserTimeout) {
             return;
         }
 
@@ -176,7 +176,6 @@ export class Server {
      */
     public userReady(connection: UserConnection, ready: boolean) {
 
-
         if (connection !== this._queuedUserConnections[this._askingUserPointer]) {
             console.log("ignoring ready request as not from the user under offer");
         }
@@ -185,11 +184,16 @@ export class Server {
 
         // Either way, clear the timeout.  We'll handle things manually from here
         clearTimeout(this._requestNextUserTimeout);
+        this._requestNextUserTimeout = undefined;
 
         // Offer to the next user
         if (!ready) {
             this.offerToNextUser();
         }
+
+
+        // Clear the offer marker
+        this._askingUserPointer = undefined;
 
         this.activateUserConnection(connection);
     }
@@ -352,7 +356,16 @@ export class Server {
         this.removeQueuedUserConnection(connection);
         this.dumpQueuedUserConnections();
 
-        if (this._activeUserConnection === connection) {
+        this.removeActiveUserConnection(connection);
+    }
+
+    /**
+     * Removes the currently active user
+     */
+    private removeActiveUserConnection(connection?: UserConnection) {
+        console.log("removing active user");
+        console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
+        if (!connection || (this._activeUserConnection === connection)) {
             this._activeUserConnection = undefined;
             this.offerToNextUser();
         }
