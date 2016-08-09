@@ -29,7 +29,15 @@ export abstract class Connection {
 
         this._id = _socket.client.conn.id;
 
+        this._socket.on(Events.Disconnect, () => {
+            // this._server.disconnectionConnection(this);
+        });
+
         this.emit(Events.ClientType, this.getType(), this.id);
+    }
+
+
+    public init(): void {
 
         this._socket.on(Events.ConnectionFriendlyName, this.setFriendlyNameHandler);
 
@@ -64,10 +72,10 @@ export abstract class Connection {
      *
      * @param {string} name
      */
-    setFriendlyNameHandler(name: string) {
+    setFriendlyNameHandler = (name: string): void => {
         console.log("Setting friendly name (" + name + ") for connection " + this._id);
         this._friendlyName = name;
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------------------
     // Getters & Setters
@@ -85,7 +93,7 @@ export abstract class Connection {
      *
      * @return {string}
      */
-    getConnectionIdentifier(): string {
+    getIdentifierString(): string {
         if (this._friendlyName) {
             return this._friendlyName;
         }
@@ -103,4 +111,5 @@ export const Events = {
     ClientType: "clientType",
     JoinQueue: "joinQueue",
     MirrorOffline: "mirrorOffline",
+    Disconnect: "disconnect",
 };

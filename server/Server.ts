@@ -91,6 +91,8 @@ export class Server {
             this.addNewUserConnection(userConnection);
             connection = userConnection;
         }
+
+        connection.init();
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -103,6 +105,7 @@ export class Server {
      * @param {HostConnection} connection
      */
     public addHostConnection(connection: HostConnection) {
+        console.log("adding host connection " + connection.getIdentifierString());
         this._hostConnections[connection.id] = connection;
     }
 
@@ -112,6 +115,7 @@ export class Server {
      * @param {UserConnection} connection
      */
     public addNewUserConnection(connection: UserConnection) {
+        console.log("adding new user connection " + connection.getIdentifierString());
         this._newUserConnections[connection.id] = connection;
     }
 
@@ -121,11 +125,12 @@ export class Server {
      * @param {UserConnection} connection
      */
     public addQueuedUserConnection(connection: UserConnection) {
-        console.log("removing connection " + connection.getConnectionIdentifier() + " from new user connections");
+        console.log("removing connection " + connection.getIdentifierString() + " from new user connections");
         this._newUserConnections[connection.id] = undefined;
-        console.log("adding connection " + connection.getConnectionIdentifier() + " to. user queue");
+        console.log("adding connection " + connection.getIdentifierString() + " to. user queue");
         this._queuedUserConnections.push(connection);
 
+        console.log(Object.keys(this._hostConnections));
         if (!Object.keys(this._hostConnections).length) {
             connection.emit(Events.MirrorOffline);
             return;
