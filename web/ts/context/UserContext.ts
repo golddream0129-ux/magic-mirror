@@ -57,9 +57,8 @@ export class UserContext extends ClientContext {
      * Adds event handlers for Vue
      */
     protected addVueEventHandlers() {
-        // We use the arrow function here, as init is called within constructor, so class arrow methods are not setup
-        // yet
         this._vue.$watch("userName", this.usernameUpdatedHandler);
+        this._vue.$watch("ready", this.readyUpdatedHandler);
 
         this._vue.$watch("mirrorOnline", this.mirrorOnlineToggleHandler);
     }
@@ -85,6 +84,17 @@ export class UserContext extends ClientContext {
         this.emit(Events.JoinQueue);
     };
 
+    /**
+     * Vue watch: ready
+     *
+     * @param {boolean} ready
+     */
+    readyUpdatedHandler = (ready: boolean) => {
+        console.log("ready set to " + ready);
+
+        this.emit(Events.Ready, ready);
+    };
+
     mirrorOnlineToggleHandler = (online: boolean): void => {
         if (!online) {
             this._vue.$set("screen", UserScreen[UserScreen.Connecting]);
@@ -107,7 +117,7 @@ export class UserContext extends ClientContext {
      * Event Events.Ready
      */
     readyHandler = () => {
-       console.log("Event Events.Ready");
+        console.log("Event Events.Ready");
         this._vue.$set("screen", UserScreen[UserScreen.Ready]);
     };
 
