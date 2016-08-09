@@ -78,6 +78,7 @@ export abstract class Connection {
 export type ConnectionType = "host" | "user";
 
 export const Events = {
+    Connect: "connection",
     ID: "id",
     ConnectionFriendlyName: "connectionName",
     ClientType: "clientType",

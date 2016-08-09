@@ -6,6 +6,7 @@ import * as http from "http";
 import * as socketIO from "socket.io";
 import {Connection} from "../server/connection/Connection";
 import {HostConnection} from "../server/connection/HostConnection";
+import {Events} from "./connection/Connection";
 
 /**
  * Main node web server that handles client synchronisation
@@ -60,7 +61,7 @@ export class Server {
      * Adds handlers for socket
      */
     addSocketConnectionHandler(): void {
-        this._io.on("connection", this.newConnectionHandler);
+        this._io.on(Events.Connect, this.newConnectionHandler);
     }
 
     newConnectionHandler = (socket: SocketIO.Socket) => {
