@@ -125,6 +125,11 @@ export class Server {
         this._newUserConnections[connection.id] = undefined;
         console.log("adding connection " + connection.getConnectionIdentifier() + " to. user queue");
         this._queuedUserConnections.push(connection);
+
+        if (!Object.keys(this._hostConnections).length) {
+            connection.emit(Events.MirrorOffline);
+            return;
+        }
     }
 }
 
