@@ -152,7 +152,9 @@ export class Server {
 
         this._userConnectionUnderOffer = this._queuedUserConnections.shift();
 
-        let countdownTimer = 30;
+        this.updateUsersQueuePosition();
+
+        let countdownTimer = 10;
         this._userConnectionUnderOffer.emit(Events.ReadyTimer, countdownTimer);
         this._userConnectionUnderOffer.emit(Events.Ready);
 
@@ -163,6 +165,8 @@ export class Server {
             if (0 === countdownTimer) {
                 clearInterval(this._userOfferCountdownTimerInterval);
                 this._userConnectionUnderOffer.emit(Events.Timeout);
+
+                this._userConnectionUnderOffer = undefined;
 
                 this.offerToNextUser();
             }
