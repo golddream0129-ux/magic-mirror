@@ -17,6 +17,9 @@ export var EnterNameScreen: ComponentOption = {
             userName: "",
         };
     },
+    ready: function () {
+        this.$el.querySelector("#name").focus();
+    },
     methods: {
         submitForm: function () {
             this.$root.$set("userName", this.userName);
