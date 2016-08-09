@@ -38,6 +38,6 @@ export abstract class ClientContext {
      */
     public emit(...args: any[]) {
         console.log("Triggering: " + args[0], args.slice(1));
-        this._socket.emit.apply(null, args);
+        this._socket.emit.apply(this._socket, args);
     }
 }
