@@ -15,9 +15,6 @@ const TEMPLATE = "<div class='screen-connecting'>" +
 export const ConnectingScreen: ComponentOption = {
     template: TEMPLATE,
     data: function () {
-        return {
-            mirrorOnline: this.$root.$get("mirrorOnline"),
-            userName: this.$root.$get("userName"),
-        };
+        return this.$root.$data;
     }
 };

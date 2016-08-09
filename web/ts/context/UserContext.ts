@@ -82,7 +82,7 @@ export class UserContext extends ClientContext {
         this.emit(Events.JoinQueue);
     }
 
-    mirrorOfflineHandler(): void {
+    mirrorOfflineHandler = (): void => {
         console.log("mirror offline");
 
         this._vue.$set("mirrorOnline", false);
