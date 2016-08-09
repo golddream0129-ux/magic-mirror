@@ -196,6 +196,8 @@ export class Server {
             return;
         }
 
+        this.updateUsersQueuePosition();
+
         if (!this._activeUserConnection) {
             this.requestNextUser();
         }
