@@ -21,11 +21,11 @@ body {
   font-family: 'Uncial Antiqua', cursive;
   font-size: 30pt;
 
-  @media (max-width: 800px) {
+  @media (max-width: 900px) {
     font-size: 20pt;
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 750px) {
     font-size: 16pt;
   }
 }
@@ -117,10 +117,56 @@ body {
   }
 }
 
-.screen-categories {
+.screen-categories, .screen-questions {
   .screen;
 
+  header {
+    position: absolute;
+    display: table;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 10%;
+  }
 
+  h2 {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 1.2em;
+  }
+
+  ul {
+    position: absolute;
+    top: 10%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: table;
+    float: left;
+    height: 50%;
+    width: 50%;
+    padding: 0;
+    text-align: center;
+    font-size: 1.6em;
+
+    @media (max-width: 600px) {
+      height: 25%;
+      width: 100%;
+    }
+  }
+
+  .category, .answer {
+    display: table-cell;
+    vertical-align: middle;
+  }
 }
 
 .main-screen {
@@ -129,54 +175,6 @@ body {
   .category-selector, .question-asker {
     .full-height;
     .full-width;
-
-    header {
-      position: absolute;
-      display: table;
-      top: 0;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      height: 10%;
-    }
-
-    h2 {
-      display: table-cell;
-      vertical-align: middle;
-      text-align: center;
-      font-size: 1.2em;
-    }
-
-    ul {
-      position: absolute;
-      top: 10%;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    li {
-      display: table;
-      float: left;
-      height: 50%;
-      width: 50%;
-      padding: 0;
-      text-align: center;
-      font-size: 1.6em;
-
-      @media (max-width: 500px) {
-        height: 25%;
-        width: 100%;
-      }
-    }
-
-    .category, .answer {
-      display: table-cell;
-      vertical-align: middle;
-    }
   }
 
   .category-icon {

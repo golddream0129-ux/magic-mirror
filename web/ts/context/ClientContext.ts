@@ -13,6 +13,7 @@ export abstract class ClientContext {
      * @constructor
      * @param {string} _el
      * @param {SocketIOClient.Socket} _socket
+     * @param _categories
      */
     constructor(private _el: string, private _socket: SocketIOClient.Socket, private _categories: CategoryList) {
     }
