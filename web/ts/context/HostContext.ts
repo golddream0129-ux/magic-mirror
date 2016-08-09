@@ -7,6 +7,7 @@ import {CategoriesScreen} from "../component/CategoriesScreen";
 import {QuestionsScreen} from "../component/QuestionsScreen";
 import {FortuneScreen} from "../component/FortuneScreen";
 import {ClientContext} from "./ClientContext";
+import {Events} from "../../../server/connection/Connection";
 
 export class HostContext extends ClientContext {
 
@@ -21,6 +22,8 @@ export class HostContext extends ClientContext {
      * @param {string} el Element selector
      */
     init(el: string): void {
+        this.setFriendlyName();
+
         this._vue = new Vue({
             el: el,
             data: {
@@ -34,6 +37,15 @@ export class HostContext extends ClientContext {
                 Fortune: FortuneScreen,
             }
         });
+    }
+
+    /**
+     * Sets the connection friendly name, if available
+     */
+    private setFriendlyName() {
+        if (window.location.hash) {
+            this.emit(Events.ConnectionFriendlyName, window.location.hash);
+        }
     }
 }
 
