@@ -94,7 +94,7 @@ export class Server {
      * @param {HostConnection} connection
      */
     public addHostConnection(connection: HostConnection) {
-        this.hostConnections[connection.id] = connection;
+        this._hostConnections[connection.id] = connection;
     }
 }
 
