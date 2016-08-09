@@ -9,6 +9,7 @@ import {ReadyScreen} from "../component/user/ReadyScreen";
 import {PoweredByDanceScreen} from "../component/user/PoweredByDanceScreen";
 import {Events} from "../../../server/Connection/Connection";
 import {QueueingScreen} from "../component/user/QueueingScreen";
+import {TimeoutScreen} from "../component/user/TimeoutScreen";
 
 export class UserContext extends ClientContext {
 
@@ -27,6 +28,7 @@ export class UserContext extends ClientContext {
         socket.on(Events.QueuePosition, this.queuePositionHandler);
         socket.on(Events.Ready, this.readyHandler);
         socket.on(Events.ReadyTimer, this.readyTimerHandler);
+        socket.on(Events.Timeout, this.timeoutHandler);
         socket.on(Events.Activate, this.activateHandler);
         socket.on(Events.Categories, this.categoriesHandler);
     }
@@ -59,6 +61,7 @@ export class UserContext extends ClientContext {
                 Categories: CategoriesScreen,
                 Questions: QuestionsScreen,
                 Fortune: FortuneScreen,
+                Timeout: TimeoutScreen,
             }
         });
     }
@@ -141,6 +144,14 @@ export class UserContext extends ClientContext {
     };
 
     /**
+     * Event: Events.Timeout
+     */
+    timeoutHandler = () => {
+        console.log("Event: Events.Timeout");
+        this._vue.$set("screen", UserScreen[UserScreen.Timeout]);
+    };
+
+    /**
      * Event: Events.Activate
      */
     activateHandler = () => {
@@ -175,4 +186,5 @@ export enum UserScreen {
     Categories,
     Questions,
     Fortune,
+    Timeout,
 }
