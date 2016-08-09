@@ -27,6 +27,7 @@ export class UserContext extends ClientContext {
         socket.on(Events.QueuePosition, this.queuePositionHandler);
         socket.on(Events.Ready, this.readyHandler);
         socket.on(Events.Activate, this.activateHandler);
+        socket.on(Events.Categories, this.categoriesHandler);
     }
 
     /**
@@ -119,6 +120,14 @@ export class UserContext extends ClientContext {
     };
 
     /**
+     * Event Events.Ready
+     */
+    readyHandler = () => {
+        console.log("Event Events.Ready");
+        this._vue.$set("screen", UserScreen[UserScreen.Ready]);
+    };
+
+    /**
      * Event: Events.Activate
      */
     activateHandler = () => {
@@ -127,11 +136,11 @@ export class UserContext extends ClientContext {
     };
 
     /**
-     * Event Events.Ready
+     * Event: Events.Categories
      */
-    readyHandler = () => {
-        console.log("Event Events.Ready");
-        this._vue.$set("screen", UserScreen[UserScreen.Ready]);
+    categoriesHandler = () => {
+        console.log("Event: Events.Categories");
+        this._vue.$set("screen", UserScreen[UserScreen.Categories]);
     };
 
     /**
