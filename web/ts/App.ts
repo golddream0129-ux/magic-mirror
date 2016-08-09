@@ -142,6 +142,15 @@ export class App {
     get categories(): CategoryList {
         return this._categories;
     }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Debugging methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public dumpQueues() {
+        this._socket.emit(Events.DumpQueues);
+    }
 }
 
 interface CategoryList {

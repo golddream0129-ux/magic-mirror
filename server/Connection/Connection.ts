@@ -41,6 +41,8 @@ export abstract class Connection {
 
         this._socket.on(Events.ConnectionFriendlyName, this.setFriendlyNameHandler);
 
+        this._socket.on(Events.DumpQueues, this.dumpQueuesHansler);
+
         this.addHandlers(this._socket);
     }
 
@@ -84,6 +86,10 @@ export abstract class Connection {
         this._friendlyName = name;
     };
 
+    dumpQueuesHansler = (): void => {
+        this._server.dumpAllQueues();
+    };
+
     // -----------------------------------------------------------------------------------------------------------------
     // Getters & Setters
     // -----------------------------------------------------------------------------------------------------------------
@@ -120,4 +126,5 @@ export const Events = {
     Activate: "activate",
     MirrorOffline: "mirrorOffline",
     Disconnect: "disconnect",
+    DumpQueues: "dumpQueues",
 };

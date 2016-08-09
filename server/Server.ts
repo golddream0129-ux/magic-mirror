@@ -260,6 +260,12 @@ export class Server {
     // Debugging methods
     // -----------------------------------------------------------------------------------------------------------------
 
+    public dumpAllQueues(): void {
+        this.dumpHostConnections();
+        this.dumpNewUserConnections();
+        this.dumpQueuedUserConnections();
+    }
+
     /**
      * Logs the current pending connection stack
      */
@@ -275,7 +281,7 @@ export class Server {
         }
 
         for (let i in this._hostConnections) {
-            console.log(this._hostConnections[i].getIdentifierString());
+            console.log("  " + this._hostConnections[i].getIdentifierString());
         }
     }
 
@@ -294,7 +300,7 @@ export class Server {
         }
 
         for (let i in this._newUserConnections) {
-            console.log(this._newUserConnections[i].getIdentifierString());
+            console.log("  " + this._newUserConnections[i].getIdentifierString());
         }
     }
 
@@ -313,8 +319,25 @@ export class Server {
         }
 
         for (let i in this._queuedUserConnections) {
-            console.log(this._queuedUserConnections[i].getIdentifierString());
+            console.log("  " + this._queuedUserConnections[i].getIdentifierString());
         }
+    }
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpActiveUserConnection() {
+
+        let connectionCount: number = Object.keys(this._queuedUserConnections).length;
+
+        console.log("Active user connection...");
+
+        if (!this._activeUserConnection) {
+            console.log("  [None]");
+            return;
+        }
+
+        console.log("  " + this._activeUserConnection.getIdentifierString());
     }
 }
 
