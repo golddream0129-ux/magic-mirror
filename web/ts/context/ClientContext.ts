@@ -71,7 +71,7 @@ export abstract class ClientContext {
      * Event: Events.Welcome
      */
     welcomeHandler = () => {
-        console.log("Event: Events.Welcome");
+        console.log("Event: Events.Welcome", arguments);
         this._vue.$set("screen", SharedScreen[SharedScreen.Welcome]);
     };
 
@@ -79,7 +79,7 @@ export abstract class ClientContext {
      * Event: Events.Categories
      */
     categoriesHandler = () => {
-        console.log("Event: Events.Categories");
+        console.log("Event: Events.Categories", arguments);
         this._vue.$set("screen", SharedScreen[SharedScreen.Categories]);
     };
 
