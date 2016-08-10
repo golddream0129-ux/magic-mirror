@@ -11,6 +11,7 @@ import {Events} from "../../../server/Connection/Connection";
 import {QueueingScreen} from "../component/user/QueueingScreen";
 import {TimeoutScreen} from "../component/user/TimeoutScreen";
 import {WelcomeScreen} from "../component/WelcomeScreen";
+import {Category} from "../model/Category";
 
 export class UserContext extends ClientContext {
 
@@ -67,6 +68,7 @@ export class UserContext extends ClientContext {
     protected addVueEventHandlers() {
         this._vue.$watch("userName", this.usernameUpdatedHandler);
         this._vue.$watch("ready", this.readyUpdatedHandler);
+        this._vue.$watch("selectedCategory", this.selectedCategoryHandler);
 
         this._vue.$watch("mirrorOnline", this.mirrorOnlineToggleHandler);
     }
@@ -102,6 +104,16 @@ export class UserContext extends ClientContext {
 
         this.emit(Events.Ready, ready);
     };
+
+    /**
+     * Vue watch: selectedCategory
+     *
+     * @param {Category} category
+     */
+    selectedCategoryHandler = (category: Category) => {
+        console.log("category " + category.name + " selected");
+        this.emit(Events.CategorySelected, category.name);
+    }
 
     mirrorOnlineToggleHandler = (online: boolean): void => {
         if (!online) {
