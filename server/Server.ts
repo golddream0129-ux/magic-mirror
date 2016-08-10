@@ -10,8 +10,8 @@ import {Events} from "./connection/Connection";
 import {UserConnection} from "./connection/UserConnection";
 
 
-const DANCING_TIMEOUT = 5000;
-const WELCOME_TIMEOUT = 5000;
+const DANCING_TIMEOUT = 1000;
+const WELCOME_TIMEOUT = 1000;
 const LOST_USER_TIMEOUT = 3000;
 
 /**
