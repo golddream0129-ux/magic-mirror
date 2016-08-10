@@ -70,8 +70,8 @@ export abstract class ClientContext {
     /**
      * Event: Events.Welcome
      */
-    welcomeHandler = () => {
-        console.log("Event: Events.Welcome", arguments);
+    welcomeHandler = (timeout: number) => {
+        console.log("Event: Events.Welcome", timeout);
         this._vue.$set("screen", SharedScreen[SharedScreen.Welcome]);
     };
 
@@ -79,7 +79,7 @@ export abstract class ClientContext {
      * Event: Events.Categories
      */
     categoriesHandler = () => {
-        console.log("Event: Events.Categories", arguments);
+        console.log("Event: Events.Categories");
         this._vue.$set("screen", SharedScreen[SharedScreen.Categories]);
     };
 

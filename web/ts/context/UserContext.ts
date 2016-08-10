@@ -118,7 +118,7 @@ export class UserContext extends ClientContext {
      * Event: Events.QueuePosition
      */
     queuePositionHandler = (position: number) => {
-        console.log("Event: Events.QueuePosition", arguments);
+        console.log("Event: Events.QueuePosition", position);
         this._vue.$set("queuePosition", position);
         this._vue.$set("screen", UserScreen[UserScreen.Queueing]);
     };
@@ -127,7 +127,7 @@ export class UserContext extends ClientContext {
      * Event Events.Ready
      */
     readyHandler = () => {
-        console.log("Event: Events.Ready", arguments);
+        console.log("Event: Events.Ready");
         this._vue.$set("screen", UserScreen[UserScreen.Ready]);
     };
 
@@ -135,7 +135,7 @@ export class UserContext extends ClientContext {
      * Event: Events.ReadyTimer
      */
     readyTimerHandler = (timer: number) => {
-        console.log("Event: Events.ReadyTimer", arguments);
+        console.log("Event: Events.ReadyTimer", timer);
         this._vue.$set("readyTimer", timer);
     };
 
@@ -143,15 +143,15 @@ export class UserContext extends ClientContext {
      * Event: Events.Timeout
      */
     timeoutHandler = () => {
-        console.log("Event: Events.Timeout", arguments);
+        console.log("Event: Events.Timeout");
         this._vue.$set("screen", UserScreen[UserScreen.Timeout]);
     };
 
     /**
      * Event: Events.Activate
      */
-    activateHandler = () => {
-        console.log("Event: Events.Activate", arguments);
+    activateHandler = (timeout: number) => {
+        console.log("Event: Events.Activate", timeout);
         this._vue.$set("screen", UserScreen[UserScreen.PoweredByDance]);
     };
 
@@ -159,7 +159,7 @@ export class UserContext extends ClientContext {
      * Event: Events.MirrorOffline
      */
     mirrorOfflineHandler = (): void => {
-        console.log("Event: Events.MirrorOffline", arguments);
+        console.log("Event: Events.MirrorOffline");
 
         this._vue.$set("mirrorOnline", false);
     }
