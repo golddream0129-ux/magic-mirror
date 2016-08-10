@@ -22,12 +22,12 @@ export const QuestionsScreen: ComponentOption = {
 
         return {
             question: questions[questionNo],
-        }
-            ;
+        };
     },
     methods: {
         answerSelected: function (answer: Answer) {
-            this.$root.setAnswer(answer);
+            let questionNo: number = this.$root.$get("currentQuestionNo");
+            this.$root.$set("answers[" + questionNo + "]", answer);
         }
     },
 };
