@@ -73,6 +73,12 @@ export class HostContext extends ClientContext {
      */
     lostUser = (): void => {
         console.log("Event: Events.LostUser");
+
+        // If still waiting to be powered on by the user's dancing, don't wake up just to display the lost user message
+        if (this._vue.$get("screen") === HostScreen[HostScreen.Sleep]) {
+            return;
+        }
+
         this._vue.$set("screen", HostScreen[HostScreen.LostUser]);
     };
 
