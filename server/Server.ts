@@ -464,6 +464,7 @@ export class Server {
         this.dumpHostConnections();
         this.dumpNewUserConnections();
         this.dumpQueuedUserConnections();
+        this.dumpUserUnderOfferConnection();
         this.dumpActiveUserConnection();
     }
 
@@ -527,9 +528,22 @@ export class Server {
     /**
      * Logs the current pending connection stack
      */
-    private dumpActiveUserConnection() {
+    private dumpUserUnderOfferConnection() {
 
-        let connectionCount: number = Object.keys(this._queuedUserConnections).length;
+        console.log("User under offer connection...");
+
+        if (!this._userConnectionUnderOffer) {
+            console.log("  [None]");
+            return;
+        }
+
+        console.log("  " + this._userConnectionUnderOffer.getIdentifierString());
+    }
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpActiveUserConnection() {
 
         console.log("Active user connection...");
 
