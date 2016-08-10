@@ -1,5 +1,5 @@
 import * as Vue from "vue";
-import {ClientContext} from "./ClientContext";
+import {ClientContext, SharedScreen} from "./ClientContext";
 import {QuestionsScreen} from "../component/QuestionsScreen";
 import {CategoriesScreen} from "../component/CategoriesScreen";
 import {FortuneScreen} from "../component/FortuneScreen";
@@ -113,7 +113,8 @@ export class UserContext extends ClientContext {
     selectedCategoryHandler = (category: Category) => {
         console.log("category " + category.name + " selected");
         this.emit(Events.CategorySelected, category.name);
-    }
+        this._vue.$set("screen", SharedScreen.Questions);
+    };
 
     mirrorOnlineToggleHandler = (online: boolean): void => {
         if (!online) {
