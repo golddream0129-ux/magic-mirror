@@ -233,7 +233,7 @@ export class Server {
 
         // @todo Replace with motion detection...
         // @todo Add Dancing comment page?
-        setTimeout(() => {
+        this._userHostTimeout = setTimeout(() => {
             this.emitToActiveUserAndHostConnections(Events.Welcome, WELCOME_TIMEOUT);
 
             // Redirect after time to read
