@@ -128,6 +128,7 @@ export const Events = {
     ReadyTimer: "readyTimer",
     Timeout: "timeout",
     Activate: "activate",
+    Welcome: "welcome",
     Categories: "categories",
     MirrorOffline: "mirrorOffline",
     Disconnect: "disconnect",

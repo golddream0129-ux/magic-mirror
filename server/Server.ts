@@ -218,7 +218,8 @@ export class Server {
         // @todo Replace with motion detection...
         // @todo Add Dancing comment page?
         setTimeout(() => {
-            connection.emit(Events.Categories);
+            connection.emit(Events.Welcome);
+            this.emitToHosts(Events.Welcome);
         }, DANCING_TIMEOUT);
     }
 
@@ -231,9 +232,21 @@ export class Server {
      *
      * @param args
      */
+    emitToHosts(...args: any[]) {
+        console.log("emitting " + args[0] + " to all hosts", args.slice(1));
+        for (let i in this._hostConnections) {
+            let hostConnection = this._hostConnections[i];
+            hostConnection.emit.apply(hostConnection, args);
+        }
+    }
+
+    /**
+     * Emits the give event to all user connections
+     *
+     * @param args
+     */
     emitToAllUsers(...args: any[]) {
         console.log("emitting " + args[0] + " to all users", args.slice(1));
-        console.log(this._queuedUserConnections.length);
         if (this._activeUserConnection) {
             this._activeUserConnection.emit.apply(this._activeUserConnection, args);
         }
