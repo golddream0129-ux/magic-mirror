@@ -45,6 +45,8 @@ export class UserContext extends ClientContext {
                 ready: null,
                 categories: this.categories,
                 selectedCategory: null,
+                currentQuestionNo: null,
+                answers: {},
                 mirrorOnline: true,
             },
             components: {
@@ -76,6 +78,19 @@ export class UserContext extends ClientContext {
     // -----------------------------------------------------------------------------------------------------------------
     // Event handlers
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Performs context specific reset tasks
+     *
+     * Called from parent class
+     */
+    contextSpecificReset(): void {
+        this._vue.$set("userName", null);
+        this._vue.$set("queuePosition", 0);
+        this._vue.$set("readyTimer", null);
+        this._vue.$set("ready", null);
+        this._vue.$set("screen", UserScreen[UserScreen.EnterName]);
+    };
 
     /**
      * Vue watch: userName

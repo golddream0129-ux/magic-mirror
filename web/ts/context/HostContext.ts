@@ -35,6 +35,8 @@ export class HostContext extends ClientContext {
                 screen: HostScreen[HostScreen.Sleep],
                 categories: this.categories,
                 selectedCategory: null,
+                currentQuestionNo: null,
+                answers: {},
             },
             components: {
                 Sleep: SleepScreen,
@@ -56,6 +58,15 @@ export class HostContext extends ClientContext {
     // -----------------------------------------------------------------------------------------------------------------
     // Socket event handlers
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Performs context specific reset tasks
+     *
+     * Called from parent class
+     */
+    contextSpecificReset(): void {
+        this._vue.$set("screen", HostScreen[HostScreen.Sleep]);
+    };
 
     /**
      * Event: Events.LostUser

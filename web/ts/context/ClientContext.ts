@@ -40,6 +40,7 @@ export abstract class ClientContext {
      * @param {SocketIOClient.Socket} socket
      */
     private addUniversalSocketHandlers(socket: SocketIOClient.Socket) {
+        socket.on(Events.Welcome, this.resetHandler);
         socket.on(Events.Welcome, this.welcomeHandler);
         socket.on(Events.Categories, this.categoriesHandler);
     }
@@ -66,6 +67,25 @@ export abstract class ClientContext {
     // -----------------------------------------------------------------------------------------------------------------
     // Event handlers
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Event: Events.Reset
+     *
+     * Resets common context data.  You should override & super.reset() to clear context specific data & perform other
+     * tasks
+     */
+    resetHandler = ()  => {
+        console.log("Event: Events.Reset");
+        this._vue.$set("selectedCategory", null);
+        this._vue.$set("answer", {});
+
+        this.contextSpecificReset();
+    };
+
+    /**
+     * Performs context specific reset tasks
+     */
+    protected abstract contextSpecificReset();
 
     /**
      * Event: Events.Welcome
