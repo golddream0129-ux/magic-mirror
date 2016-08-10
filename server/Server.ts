@@ -11,6 +11,7 @@ import {UserConnection} from "./connection/UserConnection";
 
 
 const DANCING_TIMEOUT = 5000;
+const WELCOME_TIMEOUT = 5000;
 
 /**
  * Main node web server that handles client synchronisation
@@ -209,7 +210,8 @@ export class Server {
         this.removeQueuedUserConnection(connection);
 
         this._activeUserConnection = connection;
-        connection.emit(Events.Activate);
+
+        this.emitToActiveUser(Events.Activate, DANCING_TIMEOUT);
 
         this.updateUsersQueuePosition();
 
@@ -218,8 +220,12 @@ export class Server {
         // @todo Replace with motion detection...
         // @todo Add Dancing comment page?
         setTimeout(() => {
-            connection.emit(Events.Welcome);
-            this.emitToHosts(Events.Welcome);
+            this.emitToActiveUserAndHostConnections(Events.Welcome, WELCOME_TIMEOUT);
+
+            // Redirect after time to read
+            setTimeout(() => {
+                this.emitToActiveUserAndHostConnections(Events.Categories);
+            }, WELCOME_TIMEOUT);
         }, DANCING_TIMEOUT);
     }
 
@@ -228,11 +234,11 @@ export class Server {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Emits the give event to all user connections
+     * Emits the give event to all host connections
      *
      * @param args
      */
-    emitToHosts(...args: any[]) {
+    emitToHosts(...args: any[]): void {
         console.log("emitting " + args[0] + " to all hosts", args.slice(1));
         for (let i in this._hostConnections) {
             let hostConnection = this._hostConnections[i];
@@ -241,11 +247,37 @@ export class Server {
     }
 
     /**
+     * Eits the given event to the active user connection
+     *
+     * Checks for the active user first
+     *
+     * @param args
+     */
+    emitToActiveUser(...args: any[]): void {
+        // check for active user first
+        if (!this._activeUserConnection) {
+            return;
+        }
+
+        this._activeUserConnection.emit.apply(this._activeUserConnection, args);
+    }
+
+    /**
+     * Emits the given event to the active user, and all host connections
+     *
+     * @param args
+     */
+    emitToActiveUserAndHostConnections(...args: any[]): void {
+        this.emitToActiveUser.apply(this, args);
+        this.emitToHosts.apply(this, args);
+    }
+
+    /**
      * Emits the give event to all user connections
      *
      * @param args
      */
-    emitToAllUsers(...args: any[]) {
+    emitToAllUsers(...args: any[]): void {
         console.log("emitting " + args[0] + " to all users", args.slice(1));
         if (this._activeUserConnection) {
             this._activeUserConnection.emit.apply(this._activeUserConnection, args);
