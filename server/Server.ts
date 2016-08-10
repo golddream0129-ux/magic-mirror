@@ -156,8 +156,8 @@ export class Server {
         this.updateUsersQueuePosition();
 
         let countdownTimer = 10;
-        this._userConnectionUnderOffer.emit(Events.ReadyTimer, countdownTimer);
-        this._userConnectionUnderOffer.emit(Events.Ready);
+        this.emitToUserUnderOffer(Events.ReadyTimer, countdownTimer);
+        this.emitToUserUnderOffer(Events.Ready);
 
         this._userOfferCountdownTimerInterval = setInterval(() => {
             countdownTimer--;
@@ -247,7 +247,22 @@ export class Server {
     }
 
     /**
-     * Eits the given event to the active user connection
+     * Emits to user connection currently under offer
+     *
+     * @param args
+     */
+    emitToUserUnderOffer(...args: any[]): void {
+
+        // Check we have a user under offer
+        if (!this._userConnectionUnderOffer) {
+            return;
+        }
+
+        this._userConnectionUnderOffer.emit.apply(this._userConnectionUnderOffer, args);
+    }
+
+    /**
+     * Emits the given event to the active user connection
      *
      * Checks for the active user first
      *
