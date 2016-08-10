@@ -156,6 +156,7 @@ export class Server {
         this.updateUsersQueuePosition();
 
         let countdownTimer = 10;
+        console.log("offering to " + this._userConnectionUnderOffer.getIdentifierString());
         this.emitToUserUnderOffer(Events.ReadyTimer, countdownTimer);
         this.emitToUserUnderOffer(Events.Ready);
 
@@ -340,7 +341,7 @@ export class Server {
     public addQueuedUserConnection(connection: UserConnection) {
         console.log("removing connection " + connection.getIdentifierString() + " from new user connections");
         delete this._newUserConnections[connection.id];
-        console.log("adding connection " + connection.getIdentifierString() + " to. user queue");
+        console.log("adding connection " + connection.getIdentifierString() + " to user queue");
         this._queuedUserConnections.push(connection);
 
         console.log(Object.keys(this._hostConnections));
@@ -401,13 +402,26 @@ export class Server {
         this.dumpHostConnections();
 
         if (!Object.keys(this._hostConnections).length) {
-            this.emitToAllUsers(Events.MirrorOffline);
+            // Move the active user back onto the top of queue
+            this.putActiveUserBackAtBeginningOfQueue();
 
-            // And move the active user back onto the top of queue
-            this._queuedUserConnections.unshift(this._activeUserConnection);
-            this._activeUserConnection = undefined;
+            // And notify all the mirror is offline
+            this.emitToAllUsers(Events.MirrorOffline);
         }
     }
+
+    /**
+     * Puts the active user back on the beginning of the queue
+     */
+    putActiveUserBackAtBeginningOfQueue(): void {
+        if (!this._activeUserConnection) {
+            return;
+        }
+
+        this._queuedUserConnections.unshift(this._activeUserConnection);
+        this._activeUserConnection = undefined;
+    }
+
 
     /**
      * Drops a user connection
