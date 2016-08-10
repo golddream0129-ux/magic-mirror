@@ -6,9 +6,10 @@ import {WelcomeScreen} from "../component/WelcomeScreen";
 import {CategoriesScreen} from "../component/CategoriesScreen";
 import {QuestionsScreen} from "../component/QuestionsScreen";
 import {FortuneScreen} from "../component/FortuneScreen";
-import {ClientContext} from "./ClientContext";
+import {ClientContext, SharedScreen} from "./ClientContext";
 import {Events} from "../../../server/connection/Connection";
 import {LostUserScreen} from "../component/host/LostUserScreen";
+import {CategoryList} from "./../App";
 
 export class HostContext extends ClientContext {
 
@@ -21,6 +22,7 @@ export class HostContext extends ClientContext {
         this.setFriendlyName();
 
         socket.on(Events.LostUser, this.lostUserHandler);
+        socket.on(Events.CategorySelected, this.categorySelectedHandler);
     }
 
     /**
@@ -81,6 +83,27 @@ export class HostContext extends ClientContext {
 
         this._vue.$set("screen", HostScreen[HostScreen.LostUser]);
     };
+
+    /**
+     * Event: Events.CategorySelected
+     */
+    categorySelectedHandler = (categoryName: string): void => {
+        console.log("Event: Events.CategorySelected", categoryName);
+
+        let categories: CategoryList = this._vue.$get("categories");
+
+        if (undefined === categories[categoryName]) {
+            console.log("unable to find category selected");
+        }
+
+        this._vue.$set("selectedCategory", categories[categoryName]);
+
+        this._vue.$set("screen", SharedScreen[SharedScreen.Questions]);
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Helper methods
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Sets the connection friendly name, if available
