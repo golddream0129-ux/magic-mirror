@@ -40,7 +40,7 @@ export abstract class ClientContext {
      * @param {SocketIOClient.Socket} socket
      */
     private addUniversalSocketHandlers(socket: SocketIOClient.Socket) {
-        socket.on(Events.Welcome, this.resetHandler);
+        socket.on(Events.Reset, this.resetHandler);
         socket.on(Events.Welcome, this.welcomeHandler);
         socket.on(Events.Categories, this.categoriesHandler);
     }
