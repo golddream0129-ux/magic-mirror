@@ -78,7 +78,7 @@ export abstract class ClientContext {
         console.log("Event: Events.Reset");
         this._vue.$set("selectedCategory", null);
         this._vue.$set("currentQuestionNo", 1);
-        this._vue.$set("answer", {});
+        this._vue.$set("answers", {});
 
         this.contextSpecificReset();
     };
