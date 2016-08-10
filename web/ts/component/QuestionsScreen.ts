@@ -2,7 +2,7 @@ import ComponentOption = vuejs.ComponentOption;
 import {Answer} from "../model/Answer";
 import {Category, CategoryQuestions} from "../model/Category";
 
-const TEMPLATE = "<div class='question-asker'>" +
+const TEMPLATE = "<div class='screen-questions'>" +
     "<header>" +
     "<h2>{{ question.wording }}</h2>" +
     "</header>" +
