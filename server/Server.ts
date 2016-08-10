@@ -165,15 +165,22 @@ export class Server {
             this._userConnectionUnderOffer.emit(Events.ReadyTimer, countdownTimer);
 
             if (0 === countdownTimer) {
-                clearInterval(this._userOfferCountdownTimerInterval);
-                this._userConnectionUnderOffer.emit(Events.Timeout);
-
-                this._userConnectionUnderOffer = undefined;
-
-                this.offerToNextUser();
+                this.cancelOffertoUser();
             }
         }, 1000);
     }
+
+    /**
+     * Cancels the offer to the user currently under offer
+     */
+    private cancelOffertoUser = (): void => {
+        clearInterval(this._userOfferCountdownTimerInterval);
+        this._userConnectionUnderOffer.emit(Events.Timeout);
+
+        this._userConnectionUnderOffer = undefined;
+
+        this.offerToNextUser();
+    };
 
     /**
      *
