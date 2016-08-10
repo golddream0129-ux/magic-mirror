@@ -30,6 +30,8 @@ export class HostContext extends ClientContext {
             el: el,
             data: {
                 screen: HostScreen[HostScreen.Sleep],
+                categories: this.categories,
+                selectedCategory: null,
             },
             components: {
                 Sleep: SleepScreen,
