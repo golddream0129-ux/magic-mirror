@@ -8,6 +8,7 @@ import {QuestionsScreen} from "../component/QuestionsScreen";
 import {FortuneScreen} from "../component/FortuneScreen";
 import {ClientContext} from "./ClientContext";
 import {Events} from "../../../server/connection/Connection";
+import {LostUserScreen} from "../component/host/LostUserScreen";
 
 export class HostContext extends ClientContext {
 
@@ -18,6 +19,8 @@ export class HostContext extends ClientContext {
      */
     protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
         this.setFriendlyName();
+
+        socket.on(Events.LostUser, this.lostUser);
     }
 
     /**
@@ -39,6 +42,7 @@ export class HostContext extends ClientContext {
                 Categories: CategoriesScreen,
                 Questions: QuestionsScreen,
                 Fortune: FortuneScreen,
+                LostUser: LostUserScreen,
             }
         });
     }
@@ -49,10 +53,22 @@ export class HostContext extends ClientContext {
     protected addVueEventHandlers(): void {
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Socket event handlers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Event: Events.LostUser
+     */
+    lostUser = (): void => {
+        console.log("Event: Events.LostUser");
+        this._vue.$set("screen", HostScreen[HostScreen.LostUser]);
+    };
+
     /**
      * Sets the connection friendly name, if available
      */
-    private setFriendlyName() {
+    private setFriendlyName(): void {
         if (window.location.hash) {
             this.emit(Events.ConnectionFriendlyName, window.location.hash);
         }
@@ -61,4 +77,5 @@ export class HostContext extends ClientContext {
 
 export enum HostScreen {
     Sleep,
+    LostUser,
 }

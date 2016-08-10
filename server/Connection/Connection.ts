@@ -127,6 +127,7 @@ export const Events = {
     Ready: "ready",
     ReadyTimer: "readyTimer",
     Timeout: "timeout",
+    LostUser: "lostUser",
     Activate: "activate",
     Welcome: "welcome",
     Categories: "categories",

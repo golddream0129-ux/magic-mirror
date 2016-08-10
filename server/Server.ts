@@ -471,7 +471,7 @@ export class Server {
         console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
         if (!connection || (this._activeUserConnection === connection)) {
             this._activeUserConnection = undefined;
-            this.offerToNextUser();
+            this.emitToHosts(Events.LostUser);
         }
     }
 
