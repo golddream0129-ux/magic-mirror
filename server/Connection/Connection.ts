@@ -39,6 +39,8 @@ export abstract class Connection {
 
     public init(): void {
 
+        this._socket.emit(Events.Reset);
+
         this._socket.on(Events.ConnectionFriendlyName, this.setFriendlyNameHandler);
 
         this._socket.on(Events.DumpQueues, this.dumpQueuesHansler);
