@@ -444,11 +444,23 @@ export class Server {
         }
         this.dumpNewUserConnections();
 
-        // Remove from queued user connections
         this.removeQueuedUserConnection(connection);
         this.dumpQueuedUserConnections();
 
+        this.removeUserUnderOfferConnection(connection);
+
         this.removeActiveUserConnection(connection);
+    }
+
+    /**
+     * Removes the currently active user
+     */
+    private removeUserUnderOfferConnection(connection?: UserConnection) {
+        console.log("removing user under offer");
+        console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
+        if (!connection || (this._userConnectionUnderOffer === connection)) {
+            this.cancelOffertoUser();
+        }
     }
 
     /**
