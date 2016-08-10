@@ -10,13 +10,9 @@ import {PoweredByDanceScreen} from "../component/user/PoweredByDanceScreen";
 import {Events} from "../../../server/Connection/Connection";
 import {QueueingScreen} from "../component/user/QueueingScreen";
 import {TimeoutScreen} from "../component/user/TimeoutScreen";
+import {WelcomeScreen} from "../component/WelcomeScreen";
 
 export class UserContext extends ClientContext {
-
-    /**
-     * @type {vuejs.Vue}
-     */
-    private _vue: vuejs.Vue;
 
     /**
      * Adds socket message event handlers
@@ -58,6 +54,7 @@ export class UserContext extends ClientContext {
                 Queueing: QueueingScreen,
                 Ready: ReadyScreen,
                 PoweredByDance: PoweredByDanceScreen,
+                Welcome: WelcomeScreen,
                 Categories: CategoriesScreen,
                 Questions: QuestionsScreen,
                 Fortune: FortuneScreen,
@@ -160,14 +157,6 @@ export class UserContext extends ClientContext {
     };
 
     /**
-     * Event: Events.Categories
-     */
-    categoriesHandler = () => {
-        console.log("Event: Events.Categories");
-        this._vue.$set("screen", UserScreen[UserScreen.Categories]);
-    };
-
-    /**
      * Event: Events.MirrorOffline
      */
     mirrorOfflineHandler = (): void => {
@@ -183,8 +172,5 @@ export enum UserScreen {
     Queueing,
     Ready,
     PoweredByDance,
-    Categories,
-    Questions,
-    Fortune,
     Timeout,
 }

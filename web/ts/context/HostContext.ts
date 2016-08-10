@@ -2,7 +2,7 @@
 
 import * as Vue from "vue";
 import {SleepScreen} from "../component/host/SleepScreen";
-import {WelcomeScreen} from "../component/host/WelcomeScreen";
+import {WelcomeScreen} from "../component/WelcomeScreen";
 import {CategoriesScreen} from "../component/CategoriesScreen";
 import {QuestionsScreen} from "../component/QuestionsScreen";
 import {FortuneScreen} from "../component/FortuneScreen";
@@ -10,11 +10,6 @@ import {ClientContext} from "./ClientContext";
 import {Events} from "../../../server/connection/Connection";
 
 export class HostContext extends ClientContext {
-
-    /**
-     * @type {vuejs.Vue}
-     */
-    private _vue: vuejs.Vue;
 
     /**
      * Adds socket message event handlers

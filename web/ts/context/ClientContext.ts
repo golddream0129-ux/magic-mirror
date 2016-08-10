@@ -1,9 +1,15 @@
 import {CategoryList} from "../App";
+import {Events} from "../../../server/Connection/Connection";
 
 /**
  * Base client context class to extend other types from
  */
 export abstract class ClientContext {
+
+    /**
+     * @type {vuejs.Vue}
+     */
+    protected _vue: vuejs.Vue;
 
     // -----------------------------------------------------------------------------------------------------------------
     // Initialisation methods
@@ -22,9 +28,19 @@ export abstract class ClientContext {
      * Initialises the main Vue component
      */
     public init(): void {
+        this.addUniversalSocketHandlers(this._socket);
         this.addSocketEventHandlers(this._socket);
         this.initialiseVue(this._el);
         this.addVueEventHandlers();
+    }
+
+    /**
+     * Adds handlers relevant to all context types
+     *
+     * @param {SocketIOClient.Socket} socket
+     */
+    private addUniversalSocketHandlers(socket: SocketIOClient.Socket) {
+        socket.on(Events.Welcome, this.welcomeHandler);
     }
 
     /**
@@ -50,6 +66,22 @@ export abstract class ClientContext {
     // Event handlers
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Event: Events.Welcome
+     */
+    welcomeHandler = () => {
+        console.log("Event: Events.Welcome");
+        this._vue.$set("screen", SharedScreen[SharedScreen.Welcome]);
+    };
+
+    /**
+     * Event: Events.Categories
+     */
+    categoriesHandler = () => {
+        console.log("Event: Events.Categories");
+        this._vue.$set("screen", SharedScreen[SharedScreen.Categories]);
+    };
+
     // -----------------------------------------------------------------------------------------------------------------
     // Helper methods
     // -----------------------------------------------------------------------------------------------------------------
@@ -74,4 +106,11 @@ export abstract class ClientContext {
     get categories(): CategoryList {
         return this._categories;
     }
+}
+
+export enum SharedScreen {
+    Welcome,
+    Categories,
+    Questions,
+    Fortune,
 }
