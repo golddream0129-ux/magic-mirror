@@ -131,6 +131,11 @@ export class UserContext extends ClientContext {
         this._vue.$set("screen", SharedScreen[SharedScreen.Questions]);
     };
 
+    /**
+     * Vue watch: mirrorOnline
+     *
+     * @param {boolean} online
+     */
     mirrorOnlineToggleHandler = (online: boolean): void => {
         if (!online) {
             this._vue.$set("screen", UserScreen[UserScreen.Connecting]);
