@@ -26,7 +26,6 @@ export class UserContext extends ClientContext {
         socket.on(Events.ReadyTimer, this.readyTimerHandler);
         socket.on(Events.Timeout, this.timeoutHandler);
         socket.on(Events.Activate, this.activateHandler);
-        socket.on(Events.Categories, this.categoriesHandler);
     }
 
     /**
