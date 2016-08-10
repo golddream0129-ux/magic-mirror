@@ -61,8 +61,4 @@ export class HostContext extends ClientContext {
 
 export enum HostScreen {
     Sleep,
-    Welcome,
-    Categories,
-    Questions,
-    Fortune,
 }
