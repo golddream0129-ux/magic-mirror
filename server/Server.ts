@@ -12,6 +12,7 @@ import {UserConnection} from "./connection/UserConnection";
 
 const DANCING_TIMEOUT = 5000;
 const WELCOME_TIMEOUT = 5000;
+const LOST_USER_TIMEOUT = 3000;
 
 /**
  * Main node web server that handles client synchronisation
@@ -480,6 +481,10 @@ export class Server {
             clearTimeout(this._userHostTimeout);
             this._userHostTimeout = undefined;
             this.emitToHosts(Events.LostUser);
+            setTimeout(() => {
+                this.emitToHosts(Events.Reset);
+                this.offerToNextUser();
+            }, LOST_USER_TIMEOUT);
         }
     }
 

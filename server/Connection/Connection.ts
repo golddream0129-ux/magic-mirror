@@ -119,6 +119,7 @@ export type ConnectionType = "host" | "user";
 
 export const Events = {
     Connect: "connection",
+    Reset: "reset",
     ID: "id",
     ConnectionFriendlyName: "connectionName",
     ClientType: "clientType",
