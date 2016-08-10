@@ -113,7 +113,7 @@ export class UserContext extends ClientContext {
     selectedCategoryHandler = (category: Category) => {
         console.log("category " + category.name + " selected");
         this.emit(Events.CategorySelected, category.name);
-        this._vue.$set("screen", SharedScreen.Questions);
+        this._vue.$set("screen", SharedScreen[SharedScreen.Questions]);
     };
 
     mirrorOnlineToggleHandler = (online: boolean): void => {
