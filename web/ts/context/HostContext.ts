@@ -20,7 +20,7 @@ export class HostContext extends ClientContext {
     protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
         this.setFriendlyName();
 
-        socket.on(Events.LostUser, this.lostUser);
+        socket.on(Events.LostUser, this.lostUserHandler);
     }
 
     /**
@@ -71,7 +71,7 @@ export class HostContext extends ClientContext {
     /**
      * Event: Events.LostUser
      */
-    lostUser = (): void => {
+    lostUserHandler = (): void => {
         console.log("Event: Events.LostUser");
 
         // If still waiting to be powered on by the user's dancing, don't wake up just to display the lost user message
