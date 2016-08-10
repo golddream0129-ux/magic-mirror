@@ -64,6 +64,11 @@ export class Server {
     private _requestNextUserTimeout;
 
     /**
+     * Timeout for active user operations screen
+     */
+    private _userHostTimeout;
+
+    /**
      * @constructor
      */
     constructor() {
@@ -231,7 +236,8 @@ export class Server {
             this.emitToActiveUserAndHostConnections(Events.Welcome, WELCOME_TIMEOUT);
 
             // Redirect after time to read
-            setTimeout(() => {
+            this._userHostTimeout = setTimeout(() => {
+                this._userHostTimeout = undefined;
                 this.emitToActiveUserAndHostConnections(Events.Categories);
             }, WELCOME_TIMEOUT);
         }, DANCING_TIMEOUT);
@@ -471,6 +477,8 @@ export class Server {
         console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
         if (!connection || (this._activeUserConnection === connection)) {
             this._activeUserConnection = undefined;
+            clearTimeout(this._userHostTimeout);
+            this._userHostTimeout = undefined;
             this.emitToHosts(Events.LostUser);
         }
     }
