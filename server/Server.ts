@@ -303,6 +303,26 @@ export class Server {
     }
 
     /**
+     *
+     * @param {UserConnection} connection
+     * @param eventName
+     * @param args
+     */
+    relayActiveConnectionMessageToHost(connection: UserConnection, eventName: string, ...args): void {
+        if (connection !== this._activeUserConnection) {
+            return;
+        }
+
+        // Clone the array so as not to modify the original array, apssed by reference
+        args = args.slice(0);
+
+        // Prepend the event name to the args
+        args.unshift(eventName);
+
+        this.emitToHosts.apply(this, args);
+    }
+
+    /**
      * Emits the give event to all user connections
      *
      * @param args
