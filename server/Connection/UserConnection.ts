@@ -21,6 +21,7 @@ export class UserConnection extends Connection {
         socket.on(Events.JoinQueue, this.joinQueueHandler);
         socket.on(Events.Ready, this.readyHandler);
         socket.on(Events.CategorySelected, this.categorySelectedHandler);
+        socket.on(Events.Answers, this.answersHandler);
     }
 
     /**
@@ -28,7 +29,7 @@ export class UserConnection extends Connection {
      *
      * Moves user connection from new connections to queue
      */
-    joinQueueHandler = () => {
+    joinQueueHandler = (): void => {
         console.log("adding user connection to queue - " + this.getIdentifierString());
         this._server.addQueuedUserConnection(this);
     };
@@ -38,16 +39,28 @@ export class UserConnection extends Connection {
      *
      * @param {boolean} ready
      */
-    readyHandler = (ready: boolean) => {
+    readyHandler = (ready: boolean): void => {
+        console.log("user is ready? - " + ready);
         this._server.userReady(this, ready);
+    };
+
+    /**
+     * Event: Events.CategorySelected
+     *
+     * @param {string} categoryName
+     */
+    categorySelectedHandler = (categoryName: string): void => {
+        console.log("category selected - " + categoryName);
+        this._server.relayActiveConnectionMessageToHost(this, Events.CategorySelected, categoryName);
     };
 
     /**
      * Event: Events.categorySelected
      *
-     * @param {string} categoryName
+     * @param {string[]} answerKeys
      */
-    categorySelectedHandler = (categoryName: string) => {
-        this._server.relayActiveConnectionMessageToHost(this, Events.CategorySelected, categoryName);
+    answersHandler = (answerKeys: string[]): void => {
+        console.log("answers update", answerKeys);
+        this._server.relayActiveConnectionMessageToHost(this, Events.Answers, answerKeys);
     };
 }
