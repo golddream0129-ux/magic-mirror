@@ -22,6 +22,7 @@ export class HostContext extends ClientContext {
     protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
         this.setFriendlyName();
 
+        // Also see ClientContext.addUniversalSocketHandlers()
         socket.on(Events.LostUser, this.lostUserHandler);
         socket.on(Events.CategorySelected, this.categorySelectedHandler);
         socket.on(Events.Answers, this.answersHandler);
