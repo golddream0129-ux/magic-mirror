@@ -24,6 +24,9 @@ export class UserContext extends ClientContext {
      * @param {SocketIOClient.Socket} socket
      */
     protected addSocketEventHandlers(socket: SocketIOClient.Socket): void {
+        // Prevent users from reconnecting if they get cut off
+        socket.io.reconnection(false);
+
         socket.on(Events.MirrorOffline, this.mirrorOfflineHandler);
         socket.on(Events.QueuePosition, this.queuePositionHandler);
         socket.on(Events.Ready, this.readyHandler);
