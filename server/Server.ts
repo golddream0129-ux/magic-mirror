@@ -10,10 +10,39 @@ import {Events} from "./connection/Connection";
 import {UserConnection} from "./connection/UserConnection";
 
 
+/**
+ * How long to wait before powering on the mirror after user is ready
+ * @type {number}
+ */
 const DANCING_TIMEOUT = 1000;
+
+/**
+ * How long (in ms) to display the welcome message
+ *
+ * @type {number}
+ */
 const WELCOME_TIMEOUT = 1000;
+
+/**
+ * How long (in ms) to display the "Where did you go?" message before sleeping & offering to next user
+ *
+ * @type {number}
+ */
 const LOST_USER_TIMEOUT = 3000;
+
+/**
+ * How long (in ms) to display the fortune on the mirror before going back to sleep & offering to next user
+ *
+ * @type {number}
+ */
 const FORTUNE_TIMEOUT = 1000;
+
+/**
+ * How long (in ms) to wait before timing out the active user for a lack of response
+ *
+ * @type {number}
+ */
+const ACTIVE_TIMEOUT = 3000;
 
 /**
  * Main node web server that handles client synchronisation
@@ -64,6 +93,11 @@ export class Server {
      * Timeout for active user operations screen
      */
     private _userHostTimeout;
+
+    /**
+     * Timeout for active user ping check
+     */
+    private _activeUserPingTimeout;
 
     /**
      * @constructor
@@ -242,6 +276,7 @@ export class Server {
             this._userHostTimeout = setTimeout(() => {
                 this._userHostTimeout = undefined;
                 this.emitToActiveUserAndHostConnections(Events.Categories);
+                this.resetActiveUserPingTimeout(this._activeUserConnection);
             }, WELCOME_TIMEOUT);
         }, DANCING_TIMEOUT);
     }
@@ -260,6 +295,53 @@ export class Server {
             this.removeActiveUserConnection();
             this.emitToHosts(Events.Reset);
         }, FORTUNE_TIMEOUT);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // User check methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * The active user is given a certain amount of time to respond, otherwise they're timed out
+     */
+    resetActiveUserPingTimeout(connection: UserConnection): void {
+
+        // Don't reset for active user
+        if (connection !== this._activeUserConnection) {
+            console.log("not resetting ping timer as non-active user");
+            return;
+        }
+
+        console.log("Resetting active user ping timer");
+
+        // Clear existing timeout
+        this.clearActiveUserPingTimeout(connection);
+
+        // And start a new one
+        console.log("adding new active user ping timer");
+        this._activeUserPingTimeout = setTimeout((): void => {
+            if (this._activeUserConnection) {
+                this._activeUserPingTimeout = undefined;
+                this.dropConnection(this._activeUserConnection);
+            }
+        }, ACTIVE_TIMEOUT);
+    };
+
+    /**
+     * Clears (if set) the current active user ping timeout
+     */
+    clearActiveUserPingTimeout(connection: UserConnection): void {
+
+        // Don't reset for active user
+        if (connection !== this._activeUserConnection) {
+            console.log("not resetting ping timer as non-active user");
+            return;
+        }
+
+        console.log("clearing active user ping timer");
+        if (this._activeUserPingTimeout) {
+            clearTimeout(this._activeUserPingTimeout);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -515,15 +597,18 @@ export class Server {
         console.log("removing active user");
         console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
         if (connection && (this._activeUserConnection !== connection)) {
+            console.log("... actually, this is not the active user, so not removing them");
             return;
         }
+
+        this.emitToHosts(Events.LostUser);
+        this._activeUserConnection.emit(Events.Timeout);
 
         this._activeUserConnection = undefined;
         if (this._userHostTimeout) {
             clearTimeout(this._userHostTimeout);
             this._userHostTimeout = undefined;
         }
-        this.emitToHosts(Events.LostUser);
         setTimeout(() => {
             this.emitToHosts(Events.Reset);
             this.offerToNextUser();

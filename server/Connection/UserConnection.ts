@@ -52,6 +52,7 @@ export class UserConnection extends Connection {
      */
     categorySelectedHandler = (categoryName: string): void => {
         console.log("category selected - " + categoryName);
+        this._server.resetActiveUserPingTimeout(this);
         this._server.relayActiveConnectionMessageToHost(this, Events.CategorySelected, categoryName);
     };
 
@@ -62,6 +63,7 @@ export class UserConnection extends Connection {
      */
     answersHandler = (answerKeys: string[]): void => {
         console.log("answers update", answerKeys);
+        this._server.resetActiveUserPingTimeout(this);
         this._server.relayActiveConnectionMessageToHost(this, Events.Answers, answerKeys);
     };
 
@@ -70,6 +72,7 @@ export class UserConnection extends Connection {
      */
     fortuneHandler = (): void => {
         console.log("Event: Events.Fortune");
+        this._server.clearActiveUserPingTimeout(this);
         this._server.startFinishedTimeout(this);
     };
 }
