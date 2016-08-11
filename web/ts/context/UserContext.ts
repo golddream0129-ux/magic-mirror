@@ -13,6 +13,7 @@ import {TimeoutScreen} from "../component/user/TimeoutScreen";
 import {WelcomeScreen} from "../component/WelcomeScreen";
 import {Category} from "../model/Category";
 import {QuestionAnswers, Question} from "../model/Question";
+import {Fortune} from "../model/Fortune";
 
 export class UserContext extends ClientContext {
 
@@ -56,8 +57,8 @@ export class UserContext extends ClientContext {
                 getCurrentQuestion: (): Question => {
                     return this.getCurrentQuestion();
                 },
-                getFortune: (): void => {
-                    this.getFortune();
+                getFortune: (): Fortune => {
+                    return this.getFortune(this._vue.$get("selectedCategory").name, this._vue.$get("answers"));
                 },
             },
             components: {

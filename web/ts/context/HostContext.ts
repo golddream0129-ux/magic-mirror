@@ -10,6 +10,7 @@ import {ClientContext, SharedScreen} from "./ClientContext";
 import {Events} from "../../../server/connection/Connection";
 import {LostUserScreen} from "../component/host/LostUserScreen";
 import {CategoryList} from "./../App";
+import {Fortune} from "../model/Fortune";
 
 export class HostContext extends ClientContext {
 
@@ -46,6 +47,9 @@ export class HostContext extends ClientContext {
                 },
                 getCurrentQuestion: () => {
                     return this.getCurrentQuestion();
+                },
+                getFortune: (): Fortune => {
+                    return this.getFortune(this._vue.$get("selectedCategory").name, this._vue.$get("answers"));
                 },
             },
             components: {
