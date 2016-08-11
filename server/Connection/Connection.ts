@@ -59,7 +59,8 @@ export abstract class Connection {
      * Disconnects the socket connection
      */
     public disconnect(): void {
-        this._socket.disconnect(true);
+        // Don't drop the connection, otherwise the client may try to reconnect
+        this._socket.disconnect(false);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
