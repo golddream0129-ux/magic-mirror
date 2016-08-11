@@ -244,6 +244,21 @@ export class Server {
         }, DANCING_TIMEOUT);
     }
 
+    /**
+     * Starts the countdown before the hosts go to sleep again
+     */
+    startFinishedTimeout(connection: UserConnection): void {
+
+        // Only allow the current active user to start their own finished timer
+        if (connection !== this._activeUserConnection) {
+            return;
+        }
+
+        setTimeout((): void => {
+            this.removeActiveUserConnection();
+        }, FORTUNE_TIMEOUT);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // Helper methods
     // -----------------------------------------------------------------------------------------------------------------
@@ -476,7 +491,7 @@ export class Server {
 
         this.removeUserUnderOfferConnection(connection);
 
-        this.removeActiveUserConnection(connection);
+        this.lostActiveUserConnection(connection);
     }
 
     /**
@@ -491,21 +506,47 @@ export class Server {
     }
 
     /**
-     * Removes the currently active user
+     * Removes the currently active user if their connection is lost
      */
+    private lostActiveUserConnection(connection?: UserConnection) {
+        console.log("removing active user");
+        console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
+        if (connection && (this._activeUserConnection !== connection)) {
+            return;
+        }
+
+        this._activeUserConnection = undefined;
+        clearTimeout(this._userHostTimeout);
+        this._userHostTimeout = undefined;
+        this.emitToHosts(Events.LostUser);
+        setTimeout(() => {
+            this.emitToHosts(Events.Reset);
+            this.offerToNextUser();
+        }, LOST_USER_TIMEOUT);
+    }
+
     private removeActiveUserConnection(connection?: UserConnection) {
         console.log("removing active user");
         console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
-        if (!connection || (this._activeUserConnection === connection)) {
-            this._activeUserConnection = undefined;
-            clearTimeout(this._userHostTimeout);
-            this._userHostTimeout = undefined;
-            this.emitToHosts(Events.LostUser);
-            setTimeout(() => {
-                this.emitToHosts(Events.Reset);
-                this.offerToNextUser();
-            }, LOST_USER_TIMEOUT);
+        if (connection && (this._activeUserConnection !== connection)) {
+            return;
         }
+
+        this._activeUserConnection = undefined;
+        clearTimeout(this._userHostTimeout);
+        this._userHostTimeout = undefined;
+        this.emitToHosts(Events.Reset);
+        setTimeout(() => {
+            this.offerToNextUser();
+        }, LOST_USER_TIMEOUT);
+    }
+
+    /**
+     * Removes the current active user and offers the connection to the next user
+     * @param connection
+     */
+    private removeActiveUserConnection(connection?: UserConnection) {
+
     }
 
     // -----------------------------------------------------------------------------------------------------------------
