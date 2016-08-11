@@ -157,7 +157,7 @@ export interface CategoryList {
     [name: string]: Category;
 }
 
-interface FortuneMatrix {
+export interface FortuneMatrix {
     [category: string]: {
         [answer1: string]: {
             [answer2: string]: {

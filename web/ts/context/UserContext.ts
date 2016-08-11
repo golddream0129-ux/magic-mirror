@@ -50,11 +50,14 @@ export class UserContext extends ClientContext {
                 mirrorOnline: true,
             },
             methods: {
-                getCurrentQuestionNo: () => {
+                getCurrentQuestionNo: (): number => {
                     return this.getCurrentQuestionNo();
                 },
-                getCurrentQuestion: () => {
+                getCurrentQuestion: (): Question => {
                     return this.getCurrentQuestion();
+                },
+                getFortune: (): void => {
+                    this.getFortune();
                 },
             },
             components: {

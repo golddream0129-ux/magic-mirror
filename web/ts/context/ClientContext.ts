@@ -1,7 +1,8 @@
-import {CategoryList} from "../App";
+import {CategoryList, FortuneMatrix} from "../App";
 import {Events} from "../../../server/Connection/Connection";
 import {Category} from "../model/Category";
 import {Question} from "../model/Question";
+import {Fortune} from "../model/Fortune";
 
 /**
  * Base client context class to extend other types from
@@ -21,9 +22,10 @@ export abstract class ClientContext {
      * @constructor
      * @param {string} _el
      * @param {SocketIOClient.Socket} _socket
-     * @param _categories
+     * @param {CategoryList} _categories
+     * @param {FortuneMatrix} _fortunes
      */
-    constructor(private _el: string, private _socket: SocketIOClient.Socket, private _categories: CategoryList) {
+    constructor(private _el: string, private _socket: SocketIOClient.Socket, private _categories: CategoryList, private _fortunes: FortuneMatrix) {
     }
 
     /**
@@ -113,6 +115,10 @@ export abstract class ClientContext {
         let currentQuestionNo = this.getCurrentQuestionNo();
 
         return questions[currentQuestionNo];
+    }
+
+    public getFortune(categoryName: string, answers: {answer1: string, answer2: string, answer3: string}): Fortune {
+        return this._fortunes[categoryName][answers[1]][answers[2]][answers[3]];
     }
 
     // -----------------------------------------------------------------------------------------------------------------
