@@ -533,9 +533,7 @@ export class Server {
         clearTimeout(this._userHostTimeout);
         this._userHostTimeout = undefined;
         this.emitToHosts(Events.Reset);
-        setTimeout(() => {
-            this.offerToNextUser();
-        }, LOST_USER_TIMEOUT);
+        this.offerToNextUser();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
