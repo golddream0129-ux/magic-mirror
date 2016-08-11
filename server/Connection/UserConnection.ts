@@ -55,7 +55,7 @@ export class UserConnection extends Connection {
     };
 
     /**
-     * Event: Events.categorySelected
+     * Event: Events.Answer
      *
      * @param {string[]} answerKeys
      */
