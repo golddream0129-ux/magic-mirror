@@ -14,6 +14,13 @@ export abstract class ClientContext {
      */
     protected _vue: vuejs.Vue;
 
+    /**
+     * While true, don't emit messages to server
+     *
+     * @type {boolean}
+     */
+    private _muteEmits: boolean;
+
     // -----------------------------------------------------------------------------------------------------------------
     // Initialisation methods
     // -----------------------------------------------------------------------------------------------------------------
@@ -133,8 +140,15 @@ export abstract class ClientContext {
      */
     resetHandler = ()  => {
         console.log("Event: Events.Reset");
+
+        // Don't trigger server updates for changes to selected category / answers change
+        this._muteEmits = true;
+
         this._vue.$set("selectedCategory", null);
         this._vue.$set("answers", {});
+
+        // Re-enable emits
+        this._muteEmits = false;
 
         this.contextSpecificReset();
     };
@@ -170,6 +184,10 @@ export abstract class ClientContext {
      * @param args
      */
     public emit(...args: any[]) {
+        if (this._muteEmits) {
+            console.log("Not emitting, as muted");
+        }
+
         console.log("Triggering: " + args[0], args.slice(1));
         this._socket.emit.apply(this._socket, args);
     }
