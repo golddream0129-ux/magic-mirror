@@ -167,7 +167,7 @@ export class Server {
             this._userConnectionUnderOffer.emit(Events.ReadyTimer, countdownTimer);
 
             if (0 === countdownTimer) {
-                this.cancelOffertoUser();
+                this.cancelOfferToUser();
             }
         }, 1000);
     }
@@ -175,7 +175,7 @@ export class Server {
     /**
      * Cancels the offer to the user currently under offer
      */
-    private cancelOffertoUser = (): void => {
+    private cancelOfferToUser = (): void => {
         if (this._userOfferCountdownTimerInterval) {
             clearInterval(this._userOfferCountdownTimerInterval);
             this._userOfferCountdownTimerInterval = undefined;
@@ -504,7 +504,7 @@ export class Server {
         console.log("removing user under offer");
         console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
         if (!connection || (this._userConnectionUnderOffer === connection)) {
-            this.cancelOffertoUser();
+            this.cancelOfferToUser();
         }
     }
 
