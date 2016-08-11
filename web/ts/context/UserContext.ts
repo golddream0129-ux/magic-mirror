@@ -14,6 +14,7 @@ import {WelcomeScreen} from "../component/WelcomeScreen";
 import {Category} from "../model/Category";
 import {QuestionAnswers, Question} from "../model/Question";
 import {Fortune} from "../model/Fortune";
+import {DisconnectedScreen} from "../component/user/DisconnectedScreen";
 
 export class UserContext extends ClientContext {
 
@@ -29,6 +30,7 @@ export class UserContext extends ClientContext {
         socket.on(Events.ReadyTimer, this.readyTimerHandler);
         socket.on(Events.Timeout, this.timeoutHandler);
         socket.on(Events.Activate, this.activateHandler);
+        socket.on(Events.Disconnect, this.disconnectHandler);
     }
 
     /**
@@ -72,6 +74,7 @@ export class UserContext extends ClientContext {
                 Questions: QuestionsScreen,
                 Fortune: FortuneScreen,
                 Timeout: TimeoutScreen,
+                Disconnected: DisconnectedScreen,
             }
         });
     }
@@ -229,6 +232,20 @@ export class UserContext extends ClientContext {
     };
 
     /**
+     * Event: Events.Disconnected
+     */
+    disconnectHandler = (): void => {
+        console.log("Event: Events.Disconnected");
+
+        // Don't redirect if they were deliberately cut off by the server
+        if (this._vue.$get("screen") === UserScreen[UserScreen.Timeout]) {
+            return;
+        }
+
+        this._vue.$set("screen", UserScreen[UserScreen.Disconnected]);
+    };
+
+    /**
      * Event: Events.MirrorOffline
      */
     mirrorOfflineHandler = (): void => {
@@ -245,4 +262,5 @@ export enum UserScreen {
     Ready,
     PoweredByDance,
     Timeout,
+    Disconnected,
 }
