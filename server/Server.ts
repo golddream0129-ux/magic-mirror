@@ -13,6 +13,7 @@ import {UserConnection} from "./connection/UserConnection";
 const DANCING_TIMEOUT = 1000;
 const WELCOME_TIMEOUT = 1000;
 const LOST_USER_TIMEOUT = 3000;
+const FORTUNE_TIMEOUT = 1000;
 
 /**
  * Main node web server that handles client synchronisation
@@ -58,11 +59,6 @@ export class Server {
      * @private
      */
     private _activeUserConnection: UserConnection;
-
-    /**
-     * Timeout
-     */
-    private _requestNextUserTimeout;
 
     /**
      * Timeout for active user operations screen
