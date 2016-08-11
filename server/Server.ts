@@ -252,6 +252,7 @@ export class Server {
 
         setTimeout((): void => {
             this.removeActiveUserConnection();
+            this.emitToHosts(Events.Reset);
         }, FORTUNE_TIMEOUT);
     }
 
