@@ -169,6 +169,7 @@ export class UserContext extends ClientContext {
         }
 
         this._vue.$set("screen", SharedScreen[SharedScreen.Fortune]);
+        this.emit(Events.Fortune);
     };
 
     /**
