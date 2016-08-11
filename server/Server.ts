@@ -601,14 +601,20 @@ export class Server {
             return;
         }
 
-        this.emitToHosts(Events.LostUser);
-        this._activeUserConnection.emit(Events.Timeout);
+        // We need to store the connection separate from the _activeUserConnection, so we can clear
+        // _activeUserConnection and then, subsequently, send Events.Timeout to the connection
+        let expiredActiveUserConnection = this._activeUserConnection;
 
         this._activeUserConnection = undefined;
+
         if (this._userHostTimeout) {
             clearTimeout(this._userHostTimeout);
             this._userHostTimeout = undefined;
         }
+
+        this.emitToHosts(Events.LostUser);
+        expiredActiveUserConnection.emit(Events.Timeout);
+
         setTimeout(() => {
             this.emitToHosts(Events.Reset);
             this.offerToNextUser();
