@@ -116,6 +116,10 @@ export class HostContext extends ClientContext {
         console.log("Event: Events.Answers", answerKeys);
 
         this._vue.$set("answers", answerKeys);
+
+        if (this.getAnswerCount() === this.getQuestionCount()) {
+            this._vue.$set("screen", SharedScreen[SharedScreen.Fortune]);
+        }
     };
 
     // -----------------------------------------------------------------------------------------------------------------
