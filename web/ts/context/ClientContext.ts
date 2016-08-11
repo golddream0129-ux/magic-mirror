@@ -1,5 +1,7 @@
 import {CategoryList} from "../App";
 import {Events} from "../../../server/Connection/Connection";
+import {Category} from "../model/Category";
+import {Question} from "../model/Question";
 
 /**
  * Base client context class to extend other types from
@@ -63,6 +65,55 @@ export abstract class ClientContext {
      * Should add event handlers for Vue
      */
     protected abstract addVueEventHandlers(): void;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Vue data helpers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Gets the question count for the current category
+     *
+     * @return {number}
+     */
+    protected getQuestionCount(): number {
+        let category: Category = this._vue.$get("selectedCategory");
+
+        if (!category) {
+            return 0;
+        }
+
+        return Object.keys(category.questions).length;
+    }
+
+    /**
+     * Gets the answer count
+     *
+     * @return {number}
+     */
+    protected getAnswerCount(): number {
+        return Object.keys(this._vue.$get("answers")).length;
+    }
+
+    /**
+     * Returns the current question number based on the number of answers
+     *
+     * @return {number}
+     */
+    protected getCurrentQuestionNo(): number {
+        return this.getAnswerCount() + 1;
+    }
+
+    /**
+     * Returns the current question based on the existing answers
+     *
+     * @return {any}
+     */
+    protected getCurrentQuestion(): Question {
+        let questions = this._vue.$get("selectedCategory").questions;
+        let currentQuestionNo = this.getCurrentQuestionNo();
+
+        return questions[currentQuestionNo];
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     // Event handlers

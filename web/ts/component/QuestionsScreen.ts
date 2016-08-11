@@ -20,23 +20,12 @@ export const QuestionsScreen: ComponentOption = {
         return this.$root.$data;
     },
     methods: {
-        getAnswerCount: function () {
-            return Object.keys(this.$root.$get("answers")).length;
-        },
-        getCurrentQuestionNo: function () {
-            return this.getAnswerCount() + 1;
-        },
         getCurrentQuestion: function () {
-            let questions = this.$root.$get("selectedCategory").questions;
-
-            console.log("questions", questions);
-            console.log("currentQuestionNo", this.getCurrentQuestionNo());
-
-            return questions[this.getCurrentQuestionNo()];
+            return this.$root.getCurrentQuestion();
         },
         answerSelected: function (answer: Answer) {
             console.log("answer selected - " + answer.sequence);
-            this.$root.$set("answers[" + this.getCurrentQuestionNo() + "]", answer.sequence);
+            this.$root.$set("answers[" + this.$root.getCurrentQuestionNo() + "]", answer.sequence);
         }
     },
 };

@@ -11,8 +11,8 @@ import {Events} from "../../../server/Connection/Connection";
 import {QueueingScreen} from "../component/user/QueueingScreen";
 import {TimeoutScreen} from "../component/user/TimeoutScreen";
 import {WelcomeScreen} from "../component/WelcomeScreen";
-import {Category, CategoryQuestions} from "../model/Category";
-import {QuestionAnswers} from "../model/Question";
+import {Category} from "../model/Category";
+import {QuestionAnswers, Question} from "../model/Question";
 
 export class UserContext extends ClientContext {
 
@@ -48,6 +48,14 @@ export class UserContext extends ClientContext {
                 selectedCategory: null,
                 answers: {},
                 mirrorOnline: true,
+            },
+            methods: {
+                getCurrentQuestionNo: () => {
+                    return this.getCurrentQuestionNo();
+                },
+                getCurrentQuestion: () => {
+                    return this.getCurrentQuestion();
+                },
             },
             components: {
                 EnterName: EnterNameScreen,
@@ -142,7 +150,21 @@ export class UserContext extends ClientContext {
 
         this.emit(Events.Answers, answers);
 
-        console.log("Complete UserContext.answersUpdatedHandler()");
+        let answerCount = this.getAnswerCount();
+
+        // I no answers yet, just quit now
+        if (!answerCount) {
+            return;
+        }
+
+        let questionCount = this.getQuestionCount();
+
+        // If not answered all questions, remain here
+        if (answerCount !== questionCount) {
+            return;
+        }
+
+        this._vue.$set("screen", SharedScreen[SharedScreen.Fortune]);
     };
 
     /**
@@ -209,24 +231,6 @@ export class UserContext extends ClientContext {
 
         this._vue.$set("mirrorOnline", false);
     };
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // Helper methods
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Returns the questions for the currently selected category
-     *
-     * @return {CategoryQuestions}
-     */
-    getCategoryQuestions(): CategoryQuestions {
-        let category = this._vue.$get("selectedCategory");
-        if (!category || !category.questions) {
-            console.error("Unable to find category questions");
-            return;
-        }
-        return category.questions;
-    }
 }
 
 export enum UserScreen {

@@ -40,6 +40,14 @@ export class HostContext extends ClientContext {
                 selectedCategory: null,
                 answers: {},
             },
+            methods: {
+                getCurrentQuestionNo: () => {
+                    return this.getCurrentQuestionNo();
+                },
+                getCurrentQuestion: () => {
+                    return this.getCurrentQuestion();
+                },
+            },
             components: {
                 Sleep: SleepScreen,
                 Welcome: WelcomeScreen,
