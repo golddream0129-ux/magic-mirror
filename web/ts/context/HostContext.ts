@@ -23,6 +23,7 @@ export class HostContext extends ClientContext {
 
         socket.on(Events.LostUser, this.lostUserHandler);
         socket.on(Events.CategorySelected, this.categorySelectedHandler);
+        socket.on(Events.Answers, this.answersHandler);
     }
 
     /**
@@ -98,6 +99,15 @@ export class HostContext extends ClientContext {
         this._vue.$set("selectedCategory", categories[categoryName]);
 
         this._vue.$set("screen", SharedScreen[SharedScreen.Questions]);
+    };
+
+    /**
+     * Event: Events.Answers
+     */
+    answersHandler = (answerKeys: string[]): void => {
+        console.log("Event: Events.Answers", answerKeys);
+
+        this._vue.$set("answers", answerKeys);
     };
 
     // -----------------------------------------------------------------------------------------------------------------
