@@ -176,7 +176,10 @@ export class Server {
      * Cancels the offer to the user currently under offer
      */
     private cancelOffertoUser = (): void => {
-        clearInterval(this._userOfferCountdownTimerInterval);
+        if (this._userOfferCountdownTimerInterval) {
+            clearInterval(this._userOfferCountdownTimerInterval);
+            this._userOfferCountdownTimerInterval = undefined;
+        }
         this._userConnectionUnderOffer.emit(Events.Timeout);
 
         this._userConnectionUnderOffer = undefined;
@@ -198,7 +201,10 @@ export class Server {
         console.log("user ready - " + connection.getIdentifierString());
 
         // Either way, clear the timeout.  We'll handle things manually from here
-        clearTimeout(this._userOfferCountdownTimerInterval);
+        if (this._userOfferCountdownTimerInterval) {
+            clearTimeout(this._userOfferCountdownTimerInterval);
+            this._userOfferCountdownTimerInterval = undefined;
+        }
 
         this.activateUserConnection(connection);
     }
@@ -513,8 +519,10 @@ export class Server {
         }
 
         this._activeUserConnection = undefined;
-        clearTimeout(this._userHostTimeout);
-        this._userHostTimeout = undefined;
+        if (this._userHostTimeout) {
+            clearTimeout(this._userHostTimeout);
+            this._userHostTimeout = undefined;
+        }
         this.emitToHosts(Events.LostUser);
         setTimeout(() => {
             this.emitToHosts(Events.Reset);
@@ -530,7 +538,10 @@ export class Server {
         }
 
         this._activeUserConnection = undefined;
-        clearTimeout(this._userHostTimeout);
+        if (this._userHostTimeout) {
+            clearTimeout(this._userHostTimeout);
+            this._userHostTimeout = undefined;
+        }
         this._userHostTimeout = undefined;
         this.emitToHosts(Events.Reset);
         this.offerToNextUser();
