@@ -537,14 +537,6 @@ export class Server {
         }, LOST_USER_TIMEOUT);
     }
 
-    /**
-     * Removes the current active user and offers the connection to the next user
-     * @param connection
-     */
-    private removeActiveUserConnection(connection?: UserConnection) {
-
-    }
-
     // -----------------------------------------------------------------------------------------------------------------
     // Debugging methods
     // -----------------------------------------------------------------------------------------------------------------
