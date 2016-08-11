@@ -169,7 +169,7 @@ gulp.task("build", ["build:web", "build:server"]);
  * Task: build:watch
  */
 gulp.task("build:watch", ["build:web", "build:server"], function () {
-    gulp.watch([config.webDir + "/**/*", config.serverDir + "/**/*"], ["build:web", "build:server"]);
+    return gulp.watch([config.webDir + "/**/*", config.serverDir + "/**/*"], ["build:web", "build:server"]);
 });
 
 
@@ -181,7 +181,7 @@ gulp.task("build:watch", ["build:web", "build:server"], function () {
  * Task: dist:web:clean
  */
 gulp.task('dist:web:clean', function () {
-    del.sync(config.distDir + "/web/**/*");
+    return del.sync(config.distDir + "/web/**/*");
 });
 
 /**

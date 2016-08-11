@@ -1,25 +1,26 @@
-"use strict";
-
-import * as Vue from "vue";
+import ComponentOption = vuejs.ComponentOption;
 import {Category} from "../model/Category";
 
-const TEMPLATE = "<div class='category-selector'>" +
+const TEMPLATE = "<div class='screen-categories'>" +
+    "<div class='content'>" +
     "<header>" +
     "<h2>Select your category</h2>" +
     "</header>" +
     "<ul><li v-for='category in categories' @click='categorySelected(category)'>" +
     "<div class='category'>{{category.name|capitalize}}</div>" +
     "</li>" +
-    "</ul></div>";
+    "</ul>" +
+    "</div>" +
+    "</div>";
 
-export var CategorySelectorComponent = Vue.extend({
+export const CategoriesScreen: ComponentOption = {
     template: TEMPLATE,
-    props: ["categories"],
+    data: function(){
+        return this.$root.$data;
+    },
     methods: {
         categorySelected: function (category: Category) {
-            this.$root.setCategory(category);
+            this.$root.$set("selectedCategory", category);
         }
     },
-});
-
-Vue.component("category-selector", CategorySelectorComponent);
+};

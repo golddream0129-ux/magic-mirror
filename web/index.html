@@ -8,27 +8,31 @@
 </head>
 <body>
 <div id="app">
-    <div class="start-screen" v-if="displayStart()">
-        <div class="content">
-            <user-form></user-form>
-        </div>
-    </div>
-    <div class="wait-screen" v-if="displayPending()">
-        <div class="content">
-            <p>Please wait...</p>
-            <p>You are currently number <span class="queue-position">{{ queuePosition }}</span> in the queue</p>
-        </div>
-    </div>
-    <div class="main-screen" v-if="displayMain()">
-        <category-icon :category="currentCategory"></category-icon>
-        <category-icon :category="currentCategory"></category-icon>
-        <category-icon :category="currentCategory"></category-icon>
-        <category-icon :category="currentCategory"></category-icon>
+    <component :is="screen"></component>
 
-        <category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>
-        <question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>
-        <fortune :fortune="getFortune()" v-if="displayFortune()"></fortune>
-    </div>
+
+
+    <!--<div class="start-screen" v-if="displayStart()">-->
+        <!--<div class="content">-->
+            <!--<user-form></user-form>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="wait-screen" v-if="displayPending()">-->
+        <!--<div class="content">-->
+            <!--<p>Please wait...</p>-->
+            <!--<p>You are currently number <span class="queue-position">{{ queuePosition }}</span> in the queue</p>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="main-screen" v-if="displayMain()">-->
+        <!--<category-icon :category="currentCategory"></category-icon>-->
+        <!--<category-icon :category="currentCategory"></category-icon>-->
+        <!--<category-icon :category="currentCategory"></category-icon>-->
+        <!--<category-icon :category="currentCategory"></category-icon>-->
+
+        <!--<category-selector :categories="app.categories" v-if="displayCategorySelector()"></category-selector>-->
+        <!--<question-asker v-if="displayQuestionAsker()" :question="getCurrentQuestion()"></question-asker>-->
+        <!--<fortune :fortune="getFortune()" v-if="displayFortune()"></fortune>-->
+    <!--</div>-->
 </div>
 </body>
 </html>

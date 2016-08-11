@@ -1,221 +1,98 @@
 ///<reference path="../../typings/index.d.ts"/>
 
-"use strict";
-
-import * as Vue from "vue";
 import {Category} from "./model/Category";
-import {Answer} from "./model/Answer";
 import {Fortune} from "./model/Fortune";
-import {Events, ConnectionState} from "../../server/connection/Connection";
-import Socket = SocketIOClient.Socket;
-
-export const enum AppPage {
-    HostSleep,
-    UserDetails,
-    QueuePosition,
-    CategorySelect,
-    Question1,
-    Question2,
-    Question3,
-    Fortune
-}
-export const PAGE_CATEGORY_SELECT = "categorySelect";
-export const PAGE_QUESTION_ASKER = "questionAsker";
+import {ConnectionType, Events} from "../../server/Connection/Connection";
+import {HostContext} from "./context/HostContext";
+import {ClientContext} from "./context/ClientContext";
+import {UserContext} from "./context/UserContext";
 
 /**
- * Main App class
+ * Main client side App class
+ *
+ * Handles instantiating applicaiton
  */
 export class App {
 
     /**
-     * ID of the socket connection
-     *
-     * @type {string}
+     * @type {SocketIOClient.Socket}
+     * @private
      */
-    private connectionId: string;
+    private _socket: SocketIOClient.Socket;
 
     /**
-     * Loads all components
+     * @type {CategoryList}
+     * @private
      */
-    public static registerComponents(): void {
-        require("./component/UserFormComponent");
-        require("./component/CategorySelectorComponent");
-        require("./component/QuestionAskerComponent");
-        require("./component/FortuneComponent");
-        require("./component/CategoryIconComponent");
-    }
-
-    private socket: Socket;
-
-    private _vue: vuejs.Vue;
-
     private _categories: CategoryList = {};
 
-    private _fortunes = {};
+    /**
+     * @type {FortuneMatrix}
+     */
+    private _fortunes: FortuneMatrix;
+
+    /**
+     * @type {ClientContext}
+     */
+    private _context: ClientContext;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Initialisation methods
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * @constructor
      *
-     * @param el
+     * @param {string} _el
      */
-    constructor(private el: string) {
-        App.registerComponents();
-    }
+    constructor(private _el: string) {
 
-    /**
-     * Boots the app
-     */
-    boot(): void {
-        this.socket = io();
+        this._socket = io();
 
-        this.initializeVue();
-
-        this.socket.on(Events.setState, this.setStateHandler);
-
-        // @todo - Remove debugging lines
-        this.socket.on("id", this.setIdHandler);
-
-        this.socket.on(Events.reset , this.resetHandler);
-        this.socket.on(Events.setQueuePosition, this.setQueuePositionHandler);
-        this.socket.on(Events.setCategory, this.setCategoryHandler);
-        this.socket.on(Events.setAnswer, this.setAnswerHandler);
-    }
-
-    private initializeVue() {
-
-        let socket = this.socket;
-        let app = this;
-
-        this._vue = new Vue({
-            el: this.el,
-            data: {
-                app: this,
-                page: PAGE_CATEGORY_SELECT,
-                state: null,
-                userName: null,
-                queuePosition: 1,
-                currentCategory: null,
-                currentQuestionNo: null,
-                answers: {},
-            },
-            methods: {
-                reset: function () {
-                    socket.emit("reset");
-                },
-                setUserName: function (userName: string) {
-                    console.log("Setting user name to " + userName);
-                    this.$set("userName", userName);
-                    socket.emit(Events.setUserName, userName);
-                },
-                setCategory: function (category: Category) {
-                    socket.emit("setCategory", category.name);
-                },
-                getCurrentQuestion: function () {
-                    let categoryQuestions = this.$get("currentCategory").questions;
-                    let questionNo = this.$get("currentQuestionNo");
-
-                    return categoryQuestions[questionNo];
-                },
-                setAnswer: function (answer: Answer) {
-                    socket.emit("setAnswer", this.currentQuestionNo, answer.sequence);
-                },
-                getFortune: function () {
-                    return app.getFortune(this.currentCategory.name, this.answers);
-                },
-                displayStart: function () {
-                    return (ConnectionState.StartUser === this.state);
-                },
-                displayMain: function () {
-                    return (ConnectionState.Host === this.state || ConnectionState.ActiveUser === this.state);
-                },
-                displayPending: function () {
-                    return (ConnectionState.PendingUser === this.state);
-                },
-                displayCategorySelector: function () {
-                    return (this.page === PAGE_CATEGORY_SELECT);
-                },
-                displayQuestionAsker: function () {
-                    return (this.page === PAGE_QUESTION_ASKER && !this.displayFortune());
-                },
-                displayFortune: function () {
-                    return (
-                        this.currentCategory
-                        && Object.keys(this.answers).length === Object.keys(this.currentCategory.questions).length
-                    );
-                },
-            }
+        this._socket.on(Events.ClientType, (type: ConnectionType, id: string) => {
+            console.log("Event: " + Events.ClientType, type, id);
+            this.setContextFor(type, id);
         });
-
-        window["vue"] = this._vue;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // Event handlers
-    // -----------------------------------------------------------------------------------------------------------------
-
-    setStateHandler = (state: ConnectionState) => {
-        console.log("New state: " + state);
-        this._vue.$set("state", state);
-        switch (state) {
-            case ConnectionState.StartUser:
-                // Clear the user's name
-                this._vue.$set("userName", null);
-        }
-    };
-
-    setIdHandler = (id: string) => {
-        console.log("Event: id", id);
-
-        this.connectionId = id;
-    };
-
-    resetHandler = () => {
-        console.log("Event: reset");
-        if (ConnectionState.Host === this._vue.$get("state")) {
-            this._vue.$set("page", AppPage.HostSleep);
-        } else {
-            this._vue.$set("page", AppPage.UserDetails);
-        }
-
-        this._vue.$set("currentCategory", null);
-        this._vue.$set("currentQuestionNo", null);
-        this._vue.$set("answers", {});
-    };
-
     /**
-     * Handler for setQueuePosition event
+     * Sets the context based on the connection type
      *
-     * @param position
+     * @param {string} type
+     * @param {string} id
      */
-    setQueuePositionHandler = (position: number) => {
-        console.log("Event: setQueuePosition", position);
-        this._vue.$set("queuePosition", position);
-    };
+    setContextFor(type: ConnectionType, id: string): void {
+        console.log("Setting context for " + type);
+        switch (type) {
+            case "host":
+                this._context = new HostContext(this._el, this._socket, this._categories, this._fortunes);
+                break;
+            case "user":
+                this._context = new UserContext(this._el, this._socket, this._categories, this._fortunes);
+                break;
+            default:
+                throw "Unknown type - " + type;
+        }
 
-    setCategoryHandler = (categoryName: string) => {
-        console.log("Event: setCategory", categoryName);
-        this._vue.$set("currentCategory", this.categories[categoryName]);
-        this._vue.$set("currentQuestionNo", 1);
-        this._vue.$set("page", PAGE_QUESTION_ASKER);
-    };
-
-    setAnswerHandler = (questionNo, answerKey) => {
-        console.log("Event: setAnswer", questionNo, answerKey);
-        console.log("setAnswer", questionNo, answerKey);
-        Vue.set(this._vue.$data.answers, questionNo, answerKey);
-        this._vue.$set("currentQuestionNo", this._vue.$get("currentQuestionNo") + 1);
-    };
-
-    // -----------------
-    // Getters & Setters
-    // -----------------
-
-    /**
-     * @returns {Category[]}
-     */
-    get categories(): CategoryList {
-        return this._categories;
+        this.context.init();
     }
+
+    boot(): void {
+        // If we haven't received the client type yet, loop until we have
+        if (!this.context) {
+            console.log("No client context yet");
+            setTimeout(() => {
+                this.boot();
+            }, 100);
+            return;
+        }
+
+        console.log("Booted!");
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Data setting methods
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Adds a category to the available categories
@@ -223,10 +100,17 @@ export class App {
      * @param category
      */
     public addCategory(category: Category): void {
-        this._categories[category.name] = category;
+        this.categories[category.name] = category;
     }
 
+    /**
+     * Adds a fortune to the fortuens matrix
+     *
+     * @param {string} categoryName
+     * @param {Fortune} fortune
+     */
     public addFortune(categoryName: string, fortune: Fortune) {
+        this._fortunes = this._fortunes || {};
         this._fortunes[categoryName] = this._fortunes[categoryName] || {};
         this._fortunes[categoryName][fortune.answer1] = this._fortunes[categoryName][fortune.answer1] || {};
         this._fortunes[categoryName][fortune.answer1][fortune.answer2] = this._fortunes[categoryName][fortune.answer1][fortune.answer2] || {};
@@ -234,12 +118,51 @@ export class App {
         this._fortunes[categoryName][fortune.answer1][fortune.answer2][fortune.answer3] = fortune;
     }
 
-    public getFortune(categoryName: string, answers: {answer1: string, answer2: string, answer3: string}): Fortune {
-        return this._fortunes[categoryName][answers[1]][answers[2]][answers[3]];
+    // -----------------------------------------------------------------------------------------------------------------
+    // Getters & Setters
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    get el(): string {
+        return this._el;
+    }
+
+    /**
+     * @return {ClientContext}
+     */
+    get context(): ClientContext {
+        return this._context;
+    }
+
+    /**
+     * @return {CategoryList}
+     */
+    get categories(): CategoryList {
+        return this._categories;
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Debugging methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public dumpQueues() {
+        this._socket.emit(Events.DumpQueues);
     }
 }
 
-
 export interface CategoryList {
-    [index: string]: Category;
+    [name: string]: Category;
+}
+
+export interface FortuneMatrix {
+    [category: string]: {
+        [answer1: string]: {
+            [answer2: string]: {
+                [answer3: string]: Fortune
+            }
+        }
+    };
 }

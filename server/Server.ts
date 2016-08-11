@@ -1,16 +1,22 @@
 ///<reference path="../typings/index.d.ts"/>
 
-"use strict";
-
 import * as core from "express-serve-static-core";
 import * as express from "express";
 import * as http from "http";
 import * as socketIO from "socket.io";
-import {HostConnection} from "./connection/HostConnection";
+import {Connection} from "../server/connection/Connection";
+import {HostConnection} from "../server/connection/HostConnection";
+import {Events} from "./connection/Connection";
 import {UserConnection} from "./connection/UserConnection";
-import {Connection, ConnectionState, Events} from "./connection/Connection";
-import Socket = SocketIOClient.Socket;
 
+
+const DANCING_TIMEOUT = 1000;
+const WELCOME_TIMEOUT = 1000;
+const LOST_USER_TIMEOUT = 3000;
+
+/**
+ * Main node web server that handles client synchronisation
+ */
 export class Server {
 
     private _app: core.Express;
@@ -18,34 +24,50 @@ export class Server {
     private _io: SocketIO.Server;
 
     /**
-     * Connections from host machines
      *
-     * @type {HostConnection[]}
+     * @type {HostConnectionCollection}
      * @private
      */
-    private _hostConnections: HostConnection[] = [];
+    private _hostConnections: HostConnectionCollection = {};
 
     /**
-     * The currently active user connection
+     *
+     * @type {UserConnectionCollection}
+     * @private
+     */
+    private _newUserConnections: UserConnectionCollection = {};
+
+    /**
+     * @type {UserConnection[]}
+     * @private
+     */
+    private _queuedUserConnections: UserConnection[] = [];
+
+    /**
      * @type {UserConnection}
+     */
+    private _userConnectionUnderOffer: UserConnection;
+
+    /**
+     * @type {NodeJS.Timer}
+     */
+    private _userOfferCountdownTimerInterval: NodeJS.Timer;
+
+    /**
+     * @type UserConnection
+     * @private
      */
     private _activeUserConnection: UserConnection;
 
     /**
-     * User connections awaiting the user to complete their name
-     *
-     * @type {UserConnection[]}
-     * @private
+     * Timeout
      */
-    private _startedUserConnections: UserConnection[] = [];
+    private _requestNextUserTimeout;
 
     /**
-     * Pending user connections that are in the queue
-     *
-     * @type {UserConnection[]}
-     * @private
+     * Timeout for active user operations screen
      */
-    private _pendingUserConnections: UserConnection[] = [];
+    private _userHostTimeout;
 
     /**
      * @constructor
@@ -60,7 +82,10 @@ export class Server {
         this.addSocketConnectionHandler();
     }
 
-    start(): void {
+    /**
+     * Starts the server listing on port 3000
+     */
+    public listen() {
         this._server.listen(3000, function () {
             console.log("listening on *:3000");
         });
@@ -70,7 +95,9 @@ export class Server {
      * Adds static routes
      */
     addStaticFileHandler(): void {
+
         let staticServer: core.Handler = express.static(__dirname + "/../web");
+
         // noinspection TypeScriptValidateTypes
         this._app.use(staticServer);
     }
@@ -79,316 +106,513 @@ export class Server {
      * Adds handlers for socket
      */
     addSocketConnectionHandler(): void {
-        this._io.on(Events.connect, this.connectionHandler);
+        this._io.on(Events.Connect, this.newConnectionHandler);
     }
 
-    connectionHandler = (socket: SocketIO.Socket) => {
+    /**
+     * Handles all new connections
+     * @param socket
+     */
+    newConnectionHandler = (socket: SocketIO.Socket) => {
 
         let connection: Connection;
 
         if ("localhost:3000" === socket.handshake.headers.host) {
             let hostConnection = new HostConnection(this, socket);
-            this.addHostConnections(hostConnection);
+            this.addHostConnection(hostConnection);
             connection = hostConnection;
         } else {
             let userConnection = new UserConnection(this, socket);
-            this.addStartedUserConnection(userConnection);
+            this.addNewUserConnection(userConnection);
             connection = userConnection;
-
-            // @todo - Remove debugging line
-            this.dumpPendingConnections();
         }
 
         connection.init();
-
-        // We do this for all connections in case there are user's pending before the host connects
-        if (undefined === this.activeUserConnection) {
-            console.log("No active user");
-            this.activateNextUser();
-        }
     };
 
-    /**
-     * Moves a user from the started queue to the pending queue
-     *
-     * @param connection
-     */
-    addUserConnectionToQueue(connection: UserConnection): void {
+    // -----------------------------------------------------------------------------------------------------------------
+    // User management methods
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // Remove user from started connections
-        for (let i = this.startedUserConnections.length - 1; i >= 0; i--) {
-            let startedUserConnection: UserConnection = this.startedUserConnections[i];
-            if (connection === startedUserConnection) {
-                console.log("Removing connection " + Server.getConnectionIdentifier(startedUserConnection) + " from queue ");
-                this.startedUserConnections.splice(i, 1);
+    private updateUsersQueuePosition(connection?: UserConnection): void {
+        for (let i in this._queuedUserConnections) {
+            if (!connection || connection === this._queuedUserConnections[i]) {
+                this._queuedUserConnections[i].emit(Events.QueuePosition, Number(i) + 1);
             }
         }
-
-        // And add them to the pending queue
-        this.addPendingUserConnection(connection);
     }
 
-    activateNextUser(): void {
-        // If there are no queued users, unset the activeUserConnection property
-        if (!this.pendingUserConnections.length) {
-            console.log("Not activating next user, as no pending connections");
-            this.activeUserConnection = undefined;
+    /**
+     * Activates the next user
+     */
+    private offerToNextUser() {
+
+        // Do nothing if there aren't any queued users
+        if (!this._queuedUserConnections.length) {
             return;
         }
 
-        console.log("Activating next user - " + Server.getConnectionIdentifier(this.pendingUserConnections[0]));
+        // Do nothing if there's already a user under offer
+        if (this._userConnectionUnderOffer) {
+            return;
+        }
 
-        this.activeUserConnection = this.pendingUserConnections.shift();
-        console.log("Activating new connection (ID: " + this.activeUserConnection.id + ")");
-        // @todo - Remove debugging line
-        this.dumpPendingConnections();
-        this.activeUserConnection.activate();
+        this._userConnectionUnderOffer = this._queuedUserConnections.shift();
 
-        this.emitToHostAndActiveUserConnections("reset");
+        this.updateUsersQueuePosition();
+
+        let countdownTimer = 10;
+        console.log("offering to " + this._userConnectionUnderOffer.getIdentifierString());
+        this.emitToUserUnderOffer(Events.ReadyTimer, countdownTimer);
+        this.emitToUserUnderOffer(Events.Ready);
+
+        this._userOfferCountdownTimerInterval = setInterval(() => {
+            countdownTimer--;
+            this._userConnectionUnderOffer.emit(Events.ReadyTimer, countdownTimer);
+
+            if (0 === countdownTimer) {
+                this.cancelOffertoUser();
+            }
+        }, 1000);
     }
 
     /**
-     * Updates queue position for all pending users
+     * Cancels the offer to the user currently under offer
      */
-    updateQueuePositions(): void {
-        console.log("updating queue positions for all connections");
-        for (let i in this.pendingUserConnections) {
-            let connection = this.pendingUserConnections[i];
-            console.log("updating queue positions for #" + connection.id);
-            connection.socket.emit(Events.setQueuePosition, Number(i) + 1);
+    private cancelOffertoUser = (): void => {
+        clearInterval(this._userOfferCountdownTimerInterval);
+        this._userConnectionUnderOffer.emit(Events.Timeout);
+
+        this._userConnectionUnderOffer = undefined;
+
+        this.offerToNextUser();
+    };
+
+    /**
+     *
+     * @param {UserConnection} connection
+     * @param {boolean} ready
+     */
+    public userReady(connection: UserConnection, ready: boolean) {
+
+        if (connection !== this._userConnectionUnderOffer) {
+            console.log("ignoring ready request as not from the user under offer");
+        }
+
+        console.log("user ready - " + connection.getIdentifierString());
+
+        // Either way, clear the timeout.  We'll handle things manually from here
+        clearTimeout(this._userOfferCountdownTimerInterval);
+
+        this.activateUserConnection(connection);
+    }
+
+    /**
+     * Activates the user
+     *
+     * @param {UserConnection} connection
+     */
+    private activateUserConnection(connection: UserConnection) {
+
+        if (connection !== this._userConnectionUnderOffer) {
+            console.log("ignoring ready request as not from the user under offer");
+        }
+
+        this._userConnectionUnderOffer = undefined;
+
+        // User shouldn't be in the queue, but make sure
+        this.removeQueuedUserConnection(connection);
+
+        this._activeUserConnection = connection;
+
+        this.emitToActiveUser(Events.Activate, DANCING_TIMEOUT);
+
+        this.updateUsersQueuePosition();
+
+        // For now, we'll set a timeout on the dancing…
+
+        // @todo Replace with motion detection...
+        // @todo Add Dancing comment page?
+        this._userHostTimeout = setTimeout(() => {
+            this.emitToActiveUserAndHostConnections(Events.Welcome, WELCOME_TIMEOUT);
+
+            // Redirect after time to read
+            this._userHostTimeout = setTimeout(() => {
+                this._userHostTimeout = undefined;
+                this.emitToActiveUserAndHostConnections(Events.Categories);
+            }, WELCOME_TIMEOUT);
+        }, DANCING_TIMEOUT);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Helper methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Emits the give event to all host connections
+     *
+     * @param args
+     */
+    emitToHosts(...args: any[]): void {
+        console.log("emitting " + args[0] + " to all hosts", args.slice(1));
+        for (let i in this._hostConnections) {
+            let hostConnection = this._hostConnections[i];
+            hostConnection.emit.apply(hostConnection, args);
+        }
+    }
+
+    /**
+     * Emits to user connection currently under offer
+     *
+     * @param args
+     */
+    emitToUserUnderOffer(...args: any[]): void {
+
+        // Check we have a user under offer
+        if (!this._userConnectionUnderOffer) {
+            return;
+        }
+
+        this._userConnectionUnderOffer.emit.apply(this._userConnectionUnderOffer, args);
+    }
+
+    /**
+     * Emits the given event to the active user connection
+     *
+     * Checks for the active user first
+     *
+     * @param args
+     */
+    emitToActiveUser(...args: any[]): void {
+        // check for active user first
+        if (!this._activeUserConnection) {
+            return;
+        }
+
+        this._activeUserConnection.emit.apply(this._activeUserConnection, args);
+    }
+
+    /**
+     * Emits the given event to the active user, and all host connections
+     *
+     * @param args
+     */
+    emitToActiveUserAndHostConnections(...args: any[]): void {
+        this.emitToActiveUser.apply(this, args);
+        this.emitToHosts.apply(this, args);
+    }
+
+    /**
+     *
+     * @param {UserConnection} connection
+     * @param eventName
+     * @param args
+     */
+    relayActiveConnectionMessageToHost(connection: UserConnection, eventName: string, ...args): void {
+        if (connection !== this._activeUserConnection) {
+            return;
+        }
+
+        // Clone the array so as not to modify the original array, apssed by reference
+        args = args.slice(0);
+
+        // Prepend the event name to the args
+        args.unshift(eventName);
+
+        this.emitToHosts.apply(this, args);
+    }
+
+    /**
+     * Emits the give event to all user connections
+     *
+     * @param args
+     */
+    emitToAllUsers(...args: any[]): void {
+        console.log("emitting " + args[0] + " to all users", args.slice(1));
+        if (this._activeUserConnection) {
+            this._activeUserConnection.emit.apply(this._activeUserConnection, args);
+        }
+        for (let i = 0; i < this._queuedUserConnections.length; i++) {
+            let userConnection = this._queuedUserConnections[i];
+            userConnection.emit.apply(userConnection, args);
         }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Event emitters
+    // Getters & Setters
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Emits the given event to the host connections
+     * Adds a host connection to the hash of host connections
      *
-     * @param {string} eventName
-     * @param {any[]} args
+     * @param {HostConnection} connection
      */
-    emitToHostConnections(eventName: string, args: any[] = []) {
+    public addHostConnection(connection: HostConnection) {
+        console.log("adding host connection " + connection.getIdentifierString());
+        this._hostConnections[connection.id] = connection;
 
-        let argsClone: any[] = args.slice(0);
-
-        // Add the event name to the beginning of the args array
-        argsClone.unshift(eventName);
-
-        // Send to host connections
-        for (let i in this.hostConnections) {
-            let socket: SocketIO.Socket = this.hostConnections[i].socket;
-            socket.emit.apply(socket, argsClone);
+        // If this is the first host, let waiting clients know
+        if (1 === Object.keys(this._hostConnections).length) {
+            this.offerToNextUser();
         }
-    };
+    }
 
     /**
-     * Emits the given event to the host & active user connections
+     * Adds a user connection to the hash of new user connections
      *
-     * @param {string} eventName
-     * @param {any[]} args
+     * @param {UserConnection} connection
      */
-    emitToActiveUserConnections(eventName: string, args: any[] = []) {
-
-        let argsClone: any[] = args.slice(0);
-
-        // Add the event name to the beginning of the args array
-        argsClone.unshift(eventName);
-
-        // Send to active user
-        let socket: SocketIO.Socket = this.activeUserConnection.socket;
-
-        socket.emit.apply(socket, argsClone);
-    };
+    public addNewUserConnection(connection: UserConnection) {
+        console.log("adding new user connection " + connection.getIdentifierString());
+        this._newUserConnections[connection.id] = connection;
+    }
 
     /**
-     * Emits the given event to the host & active user connections
+     * Adds a user connection to the hash of new user connections
      *
-     * @param {string} eventName
-     * @param {any[]} args
+     * @param {UserConnection} connection
      */
-    emitToHostAndActiveUserConnections(eventName: string, args: any[] = []) {
+    public addQueuedUserConnection(connection: UserConnection) {
+        console.log("removing connection " + connection.getIdentifierString() + " from new user connections");
+        delete this._newUserConnections[connection.id];
+        console.log("adding connection " + connection.getIdentifierString() + " to user queue");
+        this._queuedUserConnections.push(connection);
 
-        console.log("emitting " + eventName + " to hosts & active users with args... ", args);
+        console.log(Object.keys(this._hostConnections));
+        if (!Object.keys(this._hostConnections).length) {
+            connection.emit(Events.MirrorOffline);
+            return;
+        }
 
-        this.emitToHostConnections(eventName, args);
-        this.emitToActiveUserConnections(eventName, args);
-    };
+        this.updateUsersQueuePosition(connection);
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // Connection event handlers
-    // -----------------------------------------------------------------------------------------------------------------
+        if (!this._activeUserConnection) {
+            this.offerToNextUser();
+        }
+    }
 
     /**
-     * Sends the selected connection to all the relevant connections
+     * Removes a user conenction from the queue
      *
-     * @param {string} categoryName
+     * @param {UserConnection} connection
      */
-    setCategory = (categoryName: string) => {
-        console.log("setting category to " + categoryName);
-        this.emitToHostAndActiveUserConnections(Events.setCategory, [categoryName]);
-    };
+    public removeQueuedUserConnection(connection: UserConnection) {
+        console.log("attempting to remove user from queue - " + connection.getIdentifierString());
+        for (let i = this._queuedUserConnections.length - 1; i >= 0; i--) {
+            console.log("i: " + i);
+            if (this._queuedUserConnections[i] === connection) {
+                console.log("Found & removed ");
+                this._queuedUserConnections.splice(i, 1);
+            }
+        }
+    }
 
     /**
-     * Sends the selected connection to all the relevant connections
+     * Drops a connection
      *
-     * @param {number} questionNo
-     * @param {string} answerKey
+     * @param {Connection} connection
      */
-    setAnswer = (questionNo: number, answerKey) => {
-        console.log("setting answer to " + answerKey);
-        this.emitToHostAndActiveUserConnections(Events.setAnswer, [questionNo, answerKey]);
-    };
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // Connection modification methods
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Drops connections
-     *
-     * @param connection
-     */
-    dropConnection(connection: Connection) {
-        console.log("Dropping connection " + Server.getConnectionIdentifier(connection));
-
+    disconnectionConnection(connection: Connection) {
         if (connection instanceof HostConnection) {
             this.dropHostConnection(connection);
         } else if (connection instanceof UserConnection) {
             this.dropUserConnection(connection);
+        } else {
+            throw "Unknown connection type";
         }
+
+        // Terminate the connection to be sure
+        connection.disconnect();
     }
 
     /**
-     * Drops a host connection by removing it from the hostConnections array
+     * Drops a host connection
      *
      * @param {HostConnection} connection
      */
-    dropHostConnection(connection: HostConnection): void {
-        for (let i = this.hostConnections.length - 1; i >= 0; i--) {
-            if (connection === this.hostConnections[1]) {
-                this.hostConnections.splice(i, 1);
-            }
+    private dropHostConnection(connection: HostConnection) {
+        console.log("dropping host connection " + connection.getIdentifierString());
+        delete this._hostConnections[connection.id];
+        this.dumpHostConnections();
+
+        if (!Object.keys(this._hostConnections).length) {
+            // Move the active user back onto the top of queue
+            this.putActiveUserBackAtBeginningOfQueue();
+
+            // And notify all the mirror is offline
+            this.emitToAllUsers(Events.MirrorOffline);
         }
     }
 
     /**
-     * Drops a host connection by removing it from the hostConnections array
-     *
-     * @param {UserConnection} connection
+     * Puts the active user back on the beginning of the queue
      */
-    dropUserConnection(connection: UserConnection): void {
-
-        console.log("Dropping user connection " + Server.getConnectionIdentifier(connection));
-
-        // Either remove the active user
-        if (connection === this.activeUserConnection) {
-            connection.socket.emit(Events.setState, ConnectionState.Disconnected);
-            this.activateNextUser();
+    putActiveUserBackAtBeginningOfQueue(): void {
+        if (!this._activeUserConnection) {
             return;
         }
 
-        // Or remove them from the pending users queue
-        for (let i = this.pendingUserConnections.length - 1; i >= 0; i--) {
-            if (connection === this.pendingUserConnections[i]) {
-                console.log("Removing connection #" + this.pendingUserConnections[i] + " from queue ");
-                this.pendingUserConnections.splice(i, 1);
-            }
-        }
+        this._queuedUserConnections.unshift(this._activeUserConnection);
+        this._activeUserConnection = undefined;
     }
 
-    get hostConnections(): HostConnection[] {
-        return this._hostConnections;
-    }
-
-    addHostConnections(connection: HostConnection) {
-        this.hostConnections.push(connection);
-    }
-
-    get activeUserConnection(): UserConnection {
-        return this._activeUserConnection;
-    }
-
-    set activeUserConnection(value: UserConnection) {
-        this._activeUserConnection = value;
-    }
 
     /**
-     * @return {UserConnection[]}
-     */
-    get startedUserConnections(): UserConnection[] {
-        return this._startedUserConnections;
-    }
-
-    public addStartedUserConnection(connection: UserConnection) {
-        console.log("Adding user connection " + Server.getConnectionIdentifier(connection) + " to the started queue");
-        this.startedUserConnections.push(connection);
-        this.dumpStartedConnections();
-    }
-
-    get pendingUserConnections(): UserConnection[] {
-        return this._pendingUserConnections;
-    }
-
-    /**
-     * Adds a user connection to the pending connections array
+     * Drops a user connection
      *
      * @param {UserConnection} connection
      */
-    private addPendingUserConnection(connection: UserConnection): void {
-        console.log("Adding user connection " + Server.getConnectionIdentifier(connection) + " to pending queue");
-        this.pendingUserConnections.push(connection);
-        this.updateQueuePositions();
-        connection.socket.emit(Events.setState, ConnectionState.PendingUser);
+    private dropUserConnection(connection: UserConnection) {
+        console.log("dropping user connection " + connection.getIdentifierString());
 
-        if (undefined === this.activeUserConnection) {
-            this.activateNextUser();
+        // Remove from new cuser connections
+        if (this._newUserConnections[connection.id]) {
+            delete this._newUserConnections[connection.id];
+        }
+        this.dumpNewUserConnections();
+
+        this.removeQueuedUserConnection(connection);
+        this.dumpQueuedUserConnections();
+
+        this.removeUserUnderOfferConnection(connection);
+
+        this.removeActiveUserConnection(connection);
+    }
+
+    /**
+     * Removes the currently active user
+     */
+    private removeUserUnderOfferConnection(connection?: UserConnection) {
+        console.log("removing user under offer");
+        console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
+        if (!connection || (this._userConnectionUnderOffer === connection)) {
+            this.cancelOffertoUser();
         }
     }
 
-    set pendingUserConnections(value: UserConnection[]) {
-        this._pendingUserConnections = value;
+    /**
+     * Removes the currently active user
+     */
+    private removeActiveUserConnection(connection?: UserConnection) {
+        console.log("removing active user");
+        console.log("connection: " + (connection ? connection.getIdentifierString() : "[not specified]"));
+        if (!connection || (this._activeUserConnection === connection)) {
+            this._activeUserConnection = undefined;
+            clearTimeout(this._userHostTimeout);
+            this._userHostTimeout = undefined;
+            this.emitToHosts(Events.LostUser);
+            setTimeout(() => {
+                this.emitToHosts(Events.Reset);
+                this.offerToNextUser();
+            }, LOST_USER_TIMEOUT);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     // Debugging methods
     // -----------------------------------------------------------------------------------------------------------------
 
-    /**
-     * Logs the current pending connection stack
-     */
-    private dumpStartedConnections() {
-        console.log("Started connections...");
-        for (let i in this.startedUserConnections) {
-            console.log(Server.getConnectionIdentifier(this.startedUserConnections[i]));
-        }
+    public dumpAllQueues(): void {
+        this.dumpHostConnections();
+        this.dumpNewUserConnections();
+        this.dumpQueuedUserConnections();
+        this.dumpUserUnderOfferConnection();
+        this.dumpActiveUserConnection();
     }
 
     /**
      * Logs the current pending connection stack
      */
-    private dumpPendingConnections() {
-        console.log("Pending connections...");
-        for (let i in this.pendingUserConnections) {
-            console.log(Server.getConnectionIdentifier(this.pendingUserConnections[i]));
+    private dumpHostConnections() {
+
+        let connectionCount: number = Object.keys(this._hostConnections).length;
+
+        console.log("Host connections (" + connectionCount + ")...");
+
+        if (!connectionCount) {
+            console.log("  [None]");
+            return;
+        }
+
+        for (let i in this._hostConnections) {
+            console.log("  " + this._hostConnections[i].getIdentifierString());
         }
     }
 
     /**
-     * Returns a string containing the connection ID & user name
-     *
-     * @param {Connection} connection
-     *
-     * @return {string}
+     * Logs the current pending connection stack
      */
-    public static getConnectionIdentifier(connection: Connection): string {
-        let returnString = "#" + connection.id;
+    private dumpNewUserConnections() {
 
-        if (connection instanceof UserConnection) {
-            returnString += "(" + connection.userName + ")";
+        let connectionCount: number = Object.keys(this._newUserConnections).length;
+
+        console.log("New user connections (" + connectionCount + ")...");
+
+        if (!connectionCount) {
+            console.log("  [None]");
+            return;
         }
 
-        return returnString;
+        for (let i in this._newUserConnections) {
+            console.log("  " + this._newUserConnections[i].getIdentifierString());
+        }
     }
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpQueuedUserConnections() {
+
+        let connectionCount: number = Object.keys(this._queuedUserConnections).length;
+
+        console.log("Queued user connections (" + connectionCount + ")...");
+
+        if (!connectionCount) {
+            console.log("  [None]");
+            return;
+        }
+
+        for (let i in this._queuedUserConnections) {
+            console.log("  " + this._queuedUserConnections[i].getIdentifierString());
+        }
+    }
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpUserUnderOfferConnection() {
+
+        console.log("User under offer connection...");
+
+        if (!this._userConnectionUnderOffer) {
+            console.log("  [None]");
+            return;
+        }
+
+        console.log("  " + this._userConnectionUnderOffer.getIdentifierString());
+    }
+
+    /**
+     * Logs the current pending connection stack
+     */
+    private dumpActiveUserConnection() {
+
+        console.log("Active user connection...");
+
+        if (!this._activeUserConnection) {
+            console.log("  [None]");
+            return;
+        }
+
+        console.log("  " + this._activeUserConnection.getIdentifierString());
+    }
+}
+
+
+interface HostConnectionCollection {
+    [id: string]: HostConnection;
+}
+
+interface UserConnectionCollection {
+    [id: string]: UserConnection;
 }
