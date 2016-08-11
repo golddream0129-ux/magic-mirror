@@ -22,6 +22,7 @@ export class UserConnection extends Connection {
         socket.on(Events.Ready, this.readyHandler);
         socket.on(Events.CategorySelected, this.categorySelectedHandler);
         socket.on(Events.Answers, this.answersHandler);
+        socket.on(Events.Fortune, this.fortuneHandler);
     }
 
     /**
@@ -62,5 +63,13 @@ export class UserConnection extends Connection {
     answersHandler = (answerKeys: string[]): void => {
         console.log("answers update", answerKeys);
         this._server.relayActiveConnectionMessageToHost(this, Events.Answers, answerKeys);
+    };
+
+    /**
+     * Event: Events.Fortune
+     */
+    fortuneHandler = (): void => {
+        console.log("Event: Events.Fortune");
+        this._server.startFinishedTimeout(this);
     };
 }
