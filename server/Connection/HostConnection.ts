@@ -1,5 +1,4 @@
-import {Connection} from "../../server/connection/Connection";
-import {ConnectionType} from "../../server.old/connection/Connection";
+import {Connection, ConnectionType} from "../../server/connection/Connection";
 
 /**
  * Connection to host (mirror) device used to send socket messages back & forth
