@@ -412,7 +412,7 @@ export class Server {
      *
      * @param {Connection} connection
      */
-    disconnectionConnection(connection: Connection) {
+    dropConnection(connection: Connection) {
         if (connection instanceof HostConnection) {
             this.dropHostConnection(connection);
         } else if (connection instanceof UserConnection) {
