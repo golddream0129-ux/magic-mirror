@@ -37,7 +37,6 @@ export class HostContext extends ClientContext {
                 screen: HostScreen[HostScreen.Sleep],
                 categories: this.categories,
                 selectedCategory: null,
-                currentQuestionNo: null,
                 answers: {},
             },
             components: {

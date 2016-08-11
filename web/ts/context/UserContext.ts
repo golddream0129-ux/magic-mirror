@@ -11,7 +11,8 @@ import {Events} from "../../../server/Connection/Connection";
 import {QueueingScreen} from "../component/user/QueueingScreen";
 import {TimeoutScreen} from "../component/user/TimeoutScreen";
 import {WelcomeScreen} from "../component/WelcomeScreen";
-import {Category} from "../model/Category";
+import {Category, CategoryQuestions} from "../model/Category";
+import {QuestionAnswers} from "../model/Question";
 
 export class UserContext extends ClientContext {
 
@@ -45,7 +46,6 @@ export class UserContext extends ClientContext {
                 ready: null,
                 categories: this.categories,
                 selectedCategory: null,
-                currentQuestionNo: 1,
                 answers: {},
                 mirrorOnline: true,
             },
@@ -71,6 +71,7 @@ export class UserContext extends ClientContext {
         this._vue.$watch("userName", this.usernameUpdatedHandler);
         this._vue.$watch("ready", this.readyUpdatedHandler);
         this._vue.$watch("selectedCategory", this.selectedCategoryHandler);
+        this._vue.$watch("answers", this.answersUpdatedHandler);
 
         this._vue.$watch("mirrorOnline", this.mirrorOnlineToggleHandler);
     }
@@ -129,6 +130,19 @@ export class UserContext extends ClientContext {
         console.log("category " + category.name + " selected");
         this.emit(Events.CategorySelected, category.name);
         this._vue.$set("screen", SharedScreen[SharedScreen.Questions]);
+    };
+
+    /**
+     * Vue watch: answers
+     *
+     * @param {QuestionAnswers} answers
+     */
+    answersUpdatedHandler = (answers: QuestionAnswers) => {
+        console.log("answers updated", answers);
+
+        this.emit(Events.Answers, answers);
+
+        console.log("Complete UserContext.answersUpdatedHandler()");
     };
 
     /**
@@ -194,6 +208,24 @@ export class UserContext extends ClientContext {
         console.log("Event: Events.MirrorOffline");
 
         this._vue.$set("mirrorOnline", false);
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Helper methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the questions for the currently selected category
+     *
+     * @return {CategoryQuestions}
+     */
+    getCategoryQuestions(): CategoryQuestions {
+        let category = this._vue.$get("selectedCategory");
+        if (!category || !category.questions) {
+            console.error("Unable to find category questions");
+            return;
+        }
+        return category.questions;
     }
 }
 

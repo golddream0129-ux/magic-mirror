@@ -135,6 +135,7 @@ export const Events = {
     Welcome: "welcome",
     Categories: "categories",
     CategorySelected: "categorySelected",
+    Answers: "answers",
     MirrorOffline: "mirrorOffline",
     Disconnect: "disconnect",
     DumpQueues: "dumpQueues",
