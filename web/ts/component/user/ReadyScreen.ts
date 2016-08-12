@@ -4,7 +4,8 @@ const TEMPLATE = "<div class='screen-ready'>" +
     "<div class='content'>" +
     "<p>It's your turn to consult</p>" +
     "<div class='mmm'>Muli's Magical Mirror</div>" +
-    "<p>Take your place in before the mirror.</p>" +
+    "<p>Take your place before the mirror.</p>" +
+    "<br/><br/>" +
     "<p>Are you ready?</p>" +
     "<div class='buttons'>" +
     "<a href='' class='btn btn-primary btn-yes' @click.prevent='yes'>Yes... {{ readyTimer }}</a>" +
