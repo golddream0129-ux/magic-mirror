@@ -21,7 +21,8 @@ const ARE_YOU_READY_TIMEOUT = 30;
  * How long to wait before powering on the mirror after user is ready
  * @type {number}
  */
-const DANCING_TIMEOUT = 1000;
+const DANCING_TIMEOUT_MIN = 15000;
+const DANCING_TIMEOUT_MAX = 30000;
 
 /**
  * How long (in ms) to display the welcome message
@@ -270,7 +271,9 @@ export class Server {
 
         this._activeUserConnection = connection;
 
-        this.emitToActiveUser(Events.Activate, DANCING_TIMEOUT);
+        let timeout = DANCING_TIMEOUT_MIN + Math.floor(Math.random() * (DANCING_TIMEOUT_MAX - DANCING_TIMEOUT_MIN + 1))
+
+        this.emitToActiveUser(Events.Activate, timeout);
 
         this.updateUsersQueuePosition();
 
@@ -287,7 +290,7 @@ export class Server {
                 this.emitToActiveUserAndHostConnections(Events.Categories);
                 this.resetActiveUserPingTimeout(this._activeUserConnection);
             }, WELCOME_TIMEOUT);
-        }, DANCING_TIMEOUT);
+        }, timeout);
     }
 
     /**
