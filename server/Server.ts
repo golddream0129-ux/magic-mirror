@@ -30,28 +30,28 @@ const DANCING_TIMEOUT_MAX = 14000;
  *
  * @type {number}
  */
-const WELCOME_TIMEOUT = 1000;
+const WELCOME_TIMEOUT = 5000;
 
 /**
  * How long (in ms) to display the "Where did you go?" message before sleeping & offering to next user
  *
  * @type {number}
  */
-const LOST_USER_TIMEOUT = 3000;
+const LOST_USER_TIMEOUT = 5000;
 
 /**
  * How long (in ms) to display the fortune on the mirror before going back to sleep & offering to next user
  *
  * @type {number}
  */
-const FORTUNE_TIMEOUT = 1000;
+const FORTUNE_TIMEOUT = 15000;
 
 /**
  * How long (in ms) to wait before timing out the active user for a lack of response
  *
  * @type {number}
  */
-const ACTIVE_TIMEOUT = 3000;
+const ACTIVE_TIMEOUT = 60000;
 
 /**
  * Main node web server that handles client synchronisation
