@@ -11,6 +11,13 @@ import {UserConnection} from "./connection/UserConnection";
 
 
 /**
+ * How long to wait (in seconds) for an offer to be accepted before offering ot the next person in the queue
+ *
+ * @type {number}
+ */
+const ARE_YOU_READY_TIMEOUT = 30;
+
+/**
  * How long to wait before powering on the mirror after user is ready
  * @type {number}
  */
@@ -191,8 +198,10 @@ export class Server {
 
         this.updateUsersQueuePosition();
 
-        let countdownTimer = 10;
+        let countdownTimer = ARE_YOU_READY_TIMEOUT;
+
         console.log("offering to " + this._userConnectionUnderOffer.getIdentifierString());
+
         this.emitToUserUnderOffer(Events.ReadyTimer, countdownTimer);
         this.emitToUserUnderOffer(Events.Ready);
 
