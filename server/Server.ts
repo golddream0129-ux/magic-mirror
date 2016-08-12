@@ -19,10 +19,11 @@ const ARE_YOU_READY_TIMEOUT = 30;
 
 /**
  * How long to wait before powering on the mirror after user is ready
+ *
  * @type {number}
  */
-const DANCING_TIMEOUT_MIN = 15000;
-const DANCING_TIMEOUT_MAX = 30000;
+const DANCING_TIMEOUT_MIN = 8000;
+const DANCING_TIMEOUT_MAX = 14000;
 
 /**
  * How long (in ms) to display the welcome message
