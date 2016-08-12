@@ -271,7 +271,7 @@ export class Server {
 
         this._activeUserConnection = connection;
 
-        let timeout = DANCING_TIMEOUT_MIN + Math.floor(Math.random() * (DANCING_TIMEOUT_MAX - DANCING_TIMEOUT_MIN + 1))
+        let timeout = DANCING_TIMEOUT_MIN + Math.floor(Math.random() * (DANCING_TIMEOUT_MAX - DANCING_TIMEOUT_MIN + 1));
 
         this.emitToActiveUser(Events.Activate, timeout);
 
