@@ -2,7 +2,10 @@ import ComponentOption = vuejs.ComponentOption;
 
 const TEMPLATE = "<div class='screen-ready'>" +
     "<div class='content'>" +
-    "<div class='question'>Are you ready?</div>" +
+    "<p>It's your turn to consult</p>" +
+    "<div class='mmm'>Muli's Magical Mirror</div>" +
+    "<p>Take your place in before the mirror.</p>" +
+    "<p>Are you ready?</p>" +
     "<div class='buttons'>" +
     "<a href='' class='btn btn-primary btn-yes' @click.prevent='yes'>Yes... {{ readyTimer }}</a>" +
     "</div>" +
