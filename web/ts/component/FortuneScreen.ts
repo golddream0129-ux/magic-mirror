@@ -2,7 +2,7 @@ import ComponentOption = vuejs.ComponentOption;
 
 const TEMPLATE = "<div class='screen-fortune'>" +
     "<div class='content'>" +
-    "<h2>Answers</h2>" +
+    "<img class='muli-img' src='imgs/muli1-cropped.jpg' alt='Muli'/>" +
     "<div>{{ fortune.fortune }}</div>" +
     "</div>" +
     "</div>";
