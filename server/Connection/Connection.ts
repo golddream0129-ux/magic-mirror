@@ -31,6 +31,7 @@ export abstract class Connection {
 
         this._socket.on(Events.Disconnect, () => {
             this._server.dropConnection(this);
+            this._server.emitToHosts(Events.LostUser);
         });
 
         this.emit(Events.ClientType, this.getType(), this.id);

@@ -323,6 +323,7 @@ export class Server {
             if (this._activeUserConnection) {
                 this._activeUserPingTimeout = undefined;
                 this.dropConnection(this._activeUserConnection);
+                this.emitToHosts(Events.Reset);
             }
         }, ACTIVE_TIMEOUT);
     };
@@ -612,7 +613,6 @@ export class Server {
             this._userHostTimeout = undefined;
         }
 
-        this.emitToHosts(Events.LostUser);
         expiredActiveUserConnection.emit(Events.Timeout);
 
         setTimeout(() => {
