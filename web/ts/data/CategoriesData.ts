@@ -5,7 +5,7 @@ import {Category} from "../model/Category";
 
 export const CategoriesData = {
     "love": new Category("love", {
-            1: new Question("How hairy?", {
+            1: new Question("How hairy are you?", {
                     A: new Answer("Kiwi Fuzz"),
                     B: new Answer("Gorilla Power"),
                     C: new Answer("Beluga"),
@@ -17,7 +17,7 @@ export const CategoriesData = {
                     B: new Answer("Muppets"),
                 }
             ),
-            3: new Question("Vegetable Soulmate", {
+            3: new Question("Select your vegetable soul mate", {
                     A: new Answer("Broccoli"),
                     B: new Answer("Pumpkin"),
                     C: new Answer("Aubergine"),
@@ -39,7 +39,7 @@ export const CategoriesData = {
                     B: new Answer("Stew"),
                 }
             ),
-            3: new Question("Flora Soulmate", {
+            3: new Question("Select your flora soul mate", {
                     A: new Answer("Flowering Cacti"),
                     B: new Answer("Heather"),
                     C: new Answer("Yew"),
@@ -49,7 +49,7 @@ export const CategoriesData = {
         }
     ),
     "body & mind": new Category("body & mind", {
-            1: new Question("How fruity?", {
+            1: new Question("How fruity are you?", {
                     A: new Answer("Pineapple"),
                     B: new Answer("Pomegranate"),
                     C: new Answer("Conference Pear"),
@@ -61,7 +61,7 @@ export const CategoriesData = {
                     B: new Answer("Pocahontas"),
                 }
             ),
-            3: new Question("Musical Soulmate", {
+            3: new Question("Select your musical soul mate", {
                     A: new Answer("Bongo Natty"),
                     B: new Answer("Uptown Funkster"),
                     C: new Answer("I'm a little teapot"),
@@ -83,7 +83,7 @@ export const CategoriesData = {
                     B: new Answer("Outside"),
                 }
             ),
-            3: new Question("Magical Wedding Soulmates", {
+            3: new Question("Select your magical wedding soul mates", {
                     A: new Answer("Yoshi & Yello"),
                     B: new Answer("Hannah & Adam"),
                     C: new Answer("Gimme a Fivesome"),
