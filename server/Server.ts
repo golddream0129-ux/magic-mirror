@@ -44,7 +44,7 @@ const LOST_USER_TIMEOUT = 5000;
  *
  * @type {number}
  */
-const FORTUNE_TIMEOUT = 15000;
+const FORTUNE_TIMEOUT = 45000;
 
 /**
  * How long (in ms) to wait before timing out the active user for a lack of response
